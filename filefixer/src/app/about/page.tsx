@@ -4,9 +4,33 @@ import { ShieldCheck, Cpu, ArrowRight, HardDrive, Lock, Palette } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/branding/Logo";
 
-export const metadata = {
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
   title: "About FileFixer — The Private Browser-Native File Workshop",
   description: "Learn about the mission, architecture, and technology behind FileFixer.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About FileFixer — The Private Browser-Native File Workshop",
+    description: "Learn about the mission, architecture, and technology behind FileFixer.",
+    url: "/about",
+    images: [
+      {
+        url: "/branding/filefixer-og.png",
+        width: 1200,
+        height: 630,
+        alt: "About FileFixer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About FileFixer — The Private Browser-Native File Workshop",
+    description: "Learn about the mission, architecture, and technology behind FileFixer.",
+    images: ["/branding/filefixer-og.png"],
+  },
 };
 
 export default function AboutPage() {

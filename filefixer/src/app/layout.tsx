@@ -17,11 +17,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://filefixer.app"),
+  metadataBase: new URL("https://filefixer.vercel.app"),
   title: "FileFixer — Fix your files. Keep them private.",
   description:
     "Compress, convert, resize, merge, split and organize your files directly in your browser. 100% private, no cloud uploads, no account required.",
   manifest: "/manifest.json",
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },
@@ -39,14 +42,14 @@ export const metadata: Metadata = {
     title: "FileFixer — Fix your files. Keep them private.",
     description:
       "Compress, convert, resize, merge, split and organize your files directly in your browser. 100% private, zero server uploads.",
-    url: "https://filefixer.app",
+    url: "/",
     siteName: "FileFixer",
     images: [
       {
         url: "/branding/filefixer-og.png",
         width: 1200,
         height: 630,
-        alt: "FileFixer — Browser-native Private File Workshop",
+        alt: "FileFixer — Fix your files. Keep them private.",
       },
     ],
     locale: "en_US",
