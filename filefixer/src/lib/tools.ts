@@ -1,0 +1,246 @@
+import {
+  Minimize2,
+  Maximize2,
+  RefreshCw,
+  Crop,
+  Shield,
+  FilePlus,
+  Scissors,
+  FileDown,
+  Layers,
+  Images,
+  FileSearch,
+  Sparkles,
+  Clock,
+  LucideIcon,
+} from "lucide-react";
+
+export type ToolCategory = "Images" | "PDF" | "Batch" | "Utilities";
+export type ToolCategoryKey = "all" | "images" | "pdf" | "batch" | "utilities";
+
+export interface ToolItem {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category: ToolCategory;
+  categoryKey: "images" | "pdf" | "batch" | "utilities";
+  categoryLabel: string;
+  icon: LucideIcon;
+  badge?: string;
+  featureIndicator?: string;
+  supportedFormats?: string[];
+  isPopular?: boolean;
+}
+
+export const CATEGORIES: { key: ToolCategoryKey; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "images", label: "Images" },
+  { key: "pdf", label: "PDF" },
+  { key: "batch", label: "Batch" },
+  { key: "utilities", label: "Utilities" },
+];
+
+export const TOOLS: ToolItem[] = [
+  // IMAGE TOOLS
+  {
+    id: "compress-image",
+    name: "Compress Image",
+    slug: "/compress-image",
+    description: "Reduce image file size so it is easier to upload, send, or store without losing visual quality.",
+    category: "Images",
+    categoryKey: "images",
+    categoryLabel: "Image Tools",
+    icon: Minimize2,
+    badge: "Popular",
+    featureIndicator: "Batch supported",
+    supportedFormats: ["JPG", "PNG", "WebP"],
+    isPopular: true,
+  },
+  {
+    id: "resize-image",
+    name: "Resize Image",
+    slug: "/resize-image",
+    description: "Change image dimensions or scale for social media, passports, and website assets.",
+    category: "Images",
+    categoryKey: "images",
+    categoryLabel: "Image Tools",
+    icon: Maximize2,
+    badge: "Presets",
+    featureIndicator: "Aspect ratio lock",
+    supportedFormats: ["JPG", "PNG", "WebP"],
+    isPopular: true,
+  },
+  {
+    id: "convert-image",
+    name: "Convert Image",
+    slug: "/convert-image",
+    description: "Switch image files between JPG, PNG, and WebP formats instantly in single or bulk batches.",
+    category: "Images",
+    categoryKey: "images",
+    categoryLabel: "Image Tools",
+    icon: RefreshCw,
+    badge: "Batch",
+    featureIndicator: "Transparency fill",
+    supportedFormats: ["JPG", "PNG", "WebP"],
+  },
+  {
+    id: "crop-image",
+    name: "Crop & Rotate",
+    slug: "/crop-image",
+    description: "Trim unwanted edges, straighten orientations, and rotate or flip photos with a live preview.",
+    category: "Images",
+    categoryKey: "images",
+    categoryLabel: "Image Tools",
+    icon: Crop,
+    featureIndicator: "Visual box & 90° flip",
+    supportedFormats: ["JPG", "PNG", "WebP"],
+  },
+  {
+    id: "image-metadata",
+    name: "Image Metadata & Privacy",
+    slug: "/image-metadata",
+    description: "Inspect camera settings and eliminate location GPS tags to protect your privacy before sharing.",
+    category: "Images",
+    categoryKey: "images",
+    categoryLabel: "Image Tools",
+    icon: Shield,
+    badge: "Privacy",
+    featureIndicator: "EXIF & GPS strip",
+    supportedFormats: ["JPG", "PNG", "WebP"],
+  },
+
+  // PDF TOOLS
+  {
+    id: "pdf-merge",
+    name: "Merge PDF",
+    slug: "/pdf-merge",
+    description: "Combine multiple PDF documents into a single organized file in any custom order.",
+    category: "PDF",
+    categoryKey: "pdf",
+    categoryLabel: "PDF Tools",
+    icon: FilePlus,
+    badge: "Popular",
+    featureIndicator: "Reorderable queue",
+    supportedFormats: ["PDF"],
+    isPopular: true,
+  },
+  {
+    id: "pdf-split",
+    name: "Split & Extract PDF",
+    slug: "/pdf-split",
+    description: "Extract individual pages or custom page ranges from a document into separate PDF files.",
+    category: "PDF",
+    categoryKey: "pdf",
+    categoryLabel: "PDF Tools",
+    icon: Scissors,
+    badge: "Fast",
+    featureIndicator: "Range & page picker",
+    supportedFormats: ["PDF"],
+    isPopular: true,
+  },
+  {
+    id: "pdf-compress",
+    name: "Compress PDF",
+    slug: "/pdf-compress",
+    description: "Shrink heavy PDF files by optimizing internal streams and discarding redundant metadata.",
+    category: "PDF",
+    categoryKey: "pdf",
+    categoryLabel: "PDF Tools",
+    icon: FileDown,
+    featureIndicator: "Stream compaction",
+    supportedFormats: ["PDF"],
+  },
+  {
+    id: "pdf-workspace",
+    name: "PDF Visual Workspace",
+    slug: "/pdf-workspace",
+    description: "Organize document pages interactively—rotate, delete, duplicate, and reorder with thumbnail cards.",
+    category: "PDF",
+    categoryKey: "pdf",
+    categoryLabel: "PDF Tools",
+    icon: Layers,
+    badge: "Interactive",
+    featureIndicator: "Visual page organizer",
+    supportedFormats: ["PDF"],
+  },
+  {
+    id: "images-to-pdf",
+    name: "Images to PDF",
+    slug: "/images-to-pdf",
+    description: "Convert a collection of photos, document scans, or receipts into a clean, ready-to-share PDF.",
+    category: "PDF",
+    categoryKey: "pdf",
+    categoryLabel: "PDF Tools",
+    icon: Images,
+    featureIndicator: "A4 & Letter auto-fit",
+    supportedFormats: ["JPG", "PNG", "WebP"],
+  },
+
+  // BATCH TOOLS
+  {
+    id: "batch",
+    name: "Batch Multi-Pipeline",
+    slug: "/batch",
+    description: "Apply Resize, Convert, Compress, and Sequential Rename to dozens of files in one automated run.",
+    category: "Batch",
+    categoryKey: "batch",
+    categoryLabel: "Batch Tools",
+    icon: Layers,
+    badge: "Power Tool",
+    featureIndicator: "Multi-op & ZIP export",
+    supportedFormats: ["JPG", "PNG", "WebP"],
+  },
+  {
+    id: "batch-rename",
+    name: "Batch Sequence Rename",
+    slug: "/batch-rename",
+    description: "Standardize chaotic filenames into numbered sequences with customizable naming templates.",
+    category: "Batch",
+    categoryKey: "batch",
+    categoryLabel: "Batch Tools",
+    icon: Layers,
+    featureIndicator: "Live sequence preview",
+    supportedFormats: ["All files"],
+  },
+
+  // FILE UTILITIES
+  {
+    id: "smart-compress",
+    name: "Smart 'Under X MB'",
+    slug: "/smart-compress",
+    description: "Automatically test progressively stronger compression passes until your file meets an exact size limit.",
+    category: "Utilities",
+    categoryKey: "utilities",
+    categoryLabel: "File Utilities",
+    icon: Sparkles,
+    badge: "Signature",
+    featureIndicator: "Multi-pass telemetry",
+    supportedFormats: ["Images", "PDF"],
+    isPopular: true,
+  },
+  {
+    id: "inspect",
+    name: "Universal File Inspector",
+    slug: "/inspect",
+    description: "Reveal technical details, MIME types, resolutions, EXIF camera tags, and PDF dictionaries.",
+    category: "Utilities",
+    categoryKey: "utilities",
+    categoryLabel: "File Utilities",
+    icon: FileSearch,
+    featureIndicator: "Safe in-browser audit",
+    supportedFormats: ["All files"],
+  },
+  {
+    id: "history",
+    name: "Local Processing History",
+    slug: "/history",
+    description: "Review bandwidth saved and past processing logs stored privately in your browser's IndexedDB.",
+    category: "Utilities",
+    categoryKey: "utilities",
+    categoryLabel: "File Utilities",
+    icon: Clock,
+    featureIndicator: "Clearable anytime",
+    supportedFormats: ["Local data"],
+  },
+];

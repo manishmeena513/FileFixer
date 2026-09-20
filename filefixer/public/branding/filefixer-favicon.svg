@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95 110" width="100%" height="100%" fill="none">
+<defs>
+    <linearGradient id="ff-bg-dark-fav" x1="6" y1="8" x2="85" y2="103" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="35%" stop-color="#3B82F6" />
+      <stop offset="70%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    
+  </defs>
+  <g >
+    <!-- Top Section & Left Spine -->
+    <path d="M 59 8 L 19 8 C 11 8 6 13 6 21 L 6 82 C 6 86.5 10 88.5 14 85 L 24 74 C 21.5 68 21 61 23 54 C 26 44 34 39 45 39 L 85 39 L 85 34.5 L 59 8 Z" fill="url(#ff-bg-dark-fav)" />
+    <!-- Fold Flap -->
+    <path d="M 59 8 L 59 31.5 C 59 33.5 61 34.5 63 34.5 L 85 34.5 Z" fill="#FFFFFF" />
+    <!-- Middle Bar -->
+    <path d="M 42 45 L 81 45 C 83.5 45 85.5 47 85.5 49.5 L 85.5 56.5 C 85.5 59 83.5 61 81 61 L 45 61 C 41 61 38.5 57.5 40 53.5 C 41 50 40.5 46.5 42 45 Z" fill="url(#ff-bg-dark-fav)" />
+    <!-- Bottom Bar with 45deg Chamfer -->
+    <path d="M 38 69 L 84 69 L 57 103 L 32 103 C 27 103 24 98 28 92 L 38 69 Z" fill="url(#ff-bg-dark-fav)" />
+    <!-- Wrench Tool -->
+    <path d="M 39 47 C 34 50 30 55 28 62 C 27.5 66 26 71 23 75 L 12 87 C 7 92 6 97 8 100 C 10 102.5 14 103 17 100 L 30 88 C 33 85 37 82 41 81 C 46 80 52 78 57 68 C 57.5 67 56 66 54 67 L 47 69 C 43 70 40 68 39 64 C 38.5 60 41 56 45 54 L 49 51 C 50.5 50 49 48 47 48 L 39 47 Z" fill="#FFFFFF" />
+  </g>
+</svg>
