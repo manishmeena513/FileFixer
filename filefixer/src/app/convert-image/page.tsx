@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { FileCard } from "@/components/upload/FileCard";
+import { BeforeAfterStats } from "@/components/results/BeforeAfter";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/components/ui/toaster";
@@ -18,6 +19,7 @@ import { useFileStore } from "@/stores/fileStore";
 import { convertImage } from "@/lib/image/convert";
 import { SupportedImageFormat, triggerDownload } from "@/lib/file-utils";
 import { downloadAsZip } from "@/lib/zip";
+import { addHistoryRecord } from "@/lib/storage/history";
 
 const FORMAT_OPTIONS: { label: string; mime: SupportedImageFormat; ext: string }[] = [
   { label: "JPG / JPEG", mime: "image/jpeg", ext: "jpg" },
@@ -63,6 +65,12 @@ export default function ConvertImagePage() {
         });
         setOutput(f.id, res.blob, res.outputFilename, res.blob.size);
         completed++;
+        await addHistoryRecord({
+          filename: f.name,
+          tool: `Convert to ${targetFormat.replace("image/", "").toUpperCase()}`,
+          originalSize: f.size,
+          outputSize: res.blob.size,
+        });
       } catch (err: any) {
         console.error(err);
         updateStatus(f.id, "error", err.message || "Conversion failed");
@@ -264,15 +272,33 @@ export default function ConvertImagePage() {
 
           {/* Download single */}
           {singleFile && singleFile.status === "done" && singleFile.outputBlob && (
-            <Button
-              variant="default"
-              size="lg"
-              className="w-full bg-[hsl(var(--success))] hover:bg-emerald-600 text-white"
-              onClick={() => handleDownloadSingle(singleFile.id)}
-            >
-              <Download className="h-4 w-4" />
-              Download Converted Image
-            </Button>
+            <div className="space-y-3">
+              <BeforeAfterStats
+                originalSize={singleFile.size}
+                outputSize={singleFile.outputSize ?? singleFile.outputBlob.size}
+                originalDimensions={
+                  singleFile.width && singleFile.height
+                    ? `${singleFile.width}×${singleFile.height}`
+                    : undefined
+                }
+                outputDimensions={
+                  singleFile.width && singleFile.height
+                    ? `${singleFile.width}×${singleFile.height}`
+                    : undefined
+                }
+                originalFormat={singleFile.name.split(".").pop()}
+                outputFormat={(singleFile.outputName || "").split(".").pop()}
+              />
+              <Button
+                variant="default"
+                size="lg"
+                className="w-full min-h-[48px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-white font-semibold"
+                onClick={() => handleDownloadSingle(singleFile.id)}
+              >
+                <Download className="h-4 w-4" />
+                Download Converted Image
+              </Button>
+            </div>
           )}
 
           {/* Download batch ZIP */}

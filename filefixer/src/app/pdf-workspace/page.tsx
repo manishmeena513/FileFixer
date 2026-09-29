@@ -1,46 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Layers,
   RotateCw,
   Trash2,
-  Copy,
   ArrowLeft,
   ArrowRight,
   Download,
   RefreshCw,
   FileText,
   CheckCircle2,
-  Plus,
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toaster";
 import { loadWorkspacePages, saveWorkspacePdf, WorkspacePage } from "@/lib/pdf/workspace";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { addHistoryRecord } from "@/lib/storage/history";
+import { useFileStore } from "@/stores/fileStore";
 
 export default function PdfWorkspacePage() {
   const { toast } = useToast();
+  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [pages, setPages] = useState<WorkspacePage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [savedResult, setSavedResult] = useState<{ blob: Blob; name: string } | null>(null);
 
-  const handleFiles = async (files: File[]) => {
-    const pdf = files.find((f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf");
-    if (!pdf) {
-      toast({
-        title: "Invalid file",
-        description: "Please select a PDF document.",
-        variant: "error",
-      });
-      return;
-    }
-
+  const loadPdfIntoWorkspace = async (pdf: File) => {
     setSelectedFile(pdf);
     setIsLoading(true);
     setSavedResult(null);
@@ -59,6 +48,32 @@ export default function PdfWorkspacePage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (!selectedFile && storeFiles.length > 0) {
+      const firstPdf = storeFiles.find(
+        (f) => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")
+      );
+      if (firstPdf) {
+        loadPdfIntoWorkspace(firstPdf.file);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleFiles = async (files: File[]) => {
+    const pdf = files.find((f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf");
+    if (!pdf) {
+      toast({
+        title: "Invalid file",
+        description: "Please select a PDF document.",
+        variant: "error",
+      });
+      return;
+    }
+    addStoreFiles([pdf]);
+    await loadPdfIntoWorkspace(pdf);
   };
 
   const movePage = (index: number, direction: "left" | "right") => {

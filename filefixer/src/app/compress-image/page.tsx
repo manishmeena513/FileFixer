@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Minimize2,
   Download,
@@ -9,8 +9,6 @@ import {
   Sliders,
   Target,
   Sparkles,
-  Info,
-  CheckCircle2,
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { FileCard } from "@/components/upload/FileCard";
@@ -21,21 +19,49 @@ import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/components/ui/toaster";
 import { useFileStore } from "@/stores/fileStore";
 import { compressImage, CompressionOptions } from "@/lib/image/compress";
-import { triggerDownload, createObjectURL } from "@/lib/file-utils";
+import { triggerDownload } from "@/lib/file-utils";
 import { downloadAsZip } from "@/lib/zip";
+import { addHistoryRecord } from "@/lib/storage/history";
 
 export default function CompressImagePage() {
-  const { files, addFiles, removeFile, clearFiles, updateStatus, setOutput } = useFileStore();
+  const { files, addFiles, removeFile, clearFiles, updateStatus, setOutput } =
+    useFileStore();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
-  const [mode, setMode] = useState<"recommended" | "targetSize" | "quality">("recommended");
+  const [mode, setMode] = useState<"recommended" | "targetSize" | "quality">(
+    "recommended"
+  );
   const [targetSizeMB, setTargetSizeMB] = useState<number>(1.0);
   const [qualityPct, setQualityPct] = useState<number>(80);
 
-  // Single file preview state
+  // Single file preview state with proper URL cleanup
   const singleFile = files.length === 1 ? files[0] : null;
-  const originalPreviewUrl = singleFile ? createObjectURL(singleFile.file) : null;
-  const optimizedPreviewUrl = singleFile?.outputBlob ? createObjectURL(singleFile.outputBlob) : null;
+  const [originalPreviewUrl, setOriginalPreviewUrl] = useState<string | null>(
+    null
+  );
+  const [optimizedPreviewUrl, setOptimizedPreviewUrl] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (!singleFile) {
+      setOriginalPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(singleFile.file);
+    setOriginalPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [singleFile]);
+
+  useEffect(() => {
+    if (!singleFile?.outputBlob) {
+      setOptimizedPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(singleFile.outputBlob);
+    setOptimizedPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [singleFile?.outputBlob]);
 
   const handleFiles = (newFiles: File[]) => {
     const validImages = newFiles.filter((f) => f.type.startsWith("image/"));
@@ -67,6 +93,12 @@ export default function CompressImagePage() {
         const res = await compressImage(f.file, options);
         setOutput(f.id, res.blob, res.outputName, res.outputSize);
         completedCount++;
+        await addHistoryRecord({
+          filename: f.name,
+          tool: "Compress Image",
+          originalSize: f.size,
+          outputSize: res.outputSize,
+        });
       } catch (err: any) {
         console.error(err);
         updateStatus(f.id, "error", err.message || "Compression failed");
@@ -303,11 +335,25 @@ export default function CompressImagePage() {
               <BeforeAfterStats
                 originalSize={singleFile.size}
                 outputSize={singleFile.outputSize}
+                originalDimensions={
+                  singleFile.width && singleFile.height
+                    ? `${singleFile.width}×${singleFile.height}`
+                    : undefined
+                }
+                outputDimensions={
+                  singleFile.width && singleFile.height
+                    ? `${singleFile.width}×${singleFile.height}`
+                    : undefined
+                }
+                originalFormat={singleFile.name.split(".").pop()}
+                outputFormat={
+                  (singleFile.outputName || singleFile.name).split(".").pop()
+                }
               />
               <Button
                 variant="default"
                 size="lg"
-                className="w-full bg-[hsl(var(--success))] hover:bg-emerald-600 text-white"
+                className="w-full min-h-[48px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-white font-semibold"
                 onClick={() => handleDownloadSingle(singleFile.id)}
               >
                 <Download className="h-4 w-4" />

@@ -1,35 +1,28 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FileSearch,
   FileText,
   Image as ImageIcon,
-  Camera,
-  Calendar,
-  Layers,
-  CheckCircle2,
-  AlertCircle,
   MapPin,
   Cpu,
   Info,
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { inspectFile, FileMetadata } from "@/lib/inspect";
+import { useFileStore } from "@/stores/fileStore";
 
 export default function InspectPage() {
+  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [metadata, setMetadata] = useState<FileMetadata | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleFiles = async (files: File[]) => {
-    if (files.length === 0) return;
-    const file = files[0];
+  const runInspection = async (file: File) => {
     setSelectedFile(file);
     setIsLoading(true);
-
     try {
       const data = await inspectFile(file);
       setMetadata(data);
@@ -38,6 +31,20 @@ export default function InspectPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (!selectedFile && storeFiles.length > 0) {
+      runInspection(storeFiles[0].file);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleFiles = async (files: File[]) => {
+    if (files.length === 0) return;
+    const file = files[0];
+    addStoreFiles([file]);
+    await runInspection(file);
   };
 
   return (

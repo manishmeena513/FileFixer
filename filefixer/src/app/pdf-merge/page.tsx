@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FilePlus,
   ArrowUp,
@@ -13,10 +13,11 @@ import {
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toaster";
 import { mergePDFs } from "@/lib/pdf/merge";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
+import { useFileStore } from "@/stores/fileStore";
+import { addHistoryRecord } from "@/lib/storage/history";
 
 interface MergeItem {
   id: string;
@@ -25,10 +26,28 @@ interface MergeItem {
 
 export default function PdfMergePage() {
   const { toast } = useToast();
+  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
   const [items, setItems] = useState<MergeItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [mergedBlob, setMergedBlob] = useState<Blob | null>(null);
   const [mergedStats, setMergedStats] = useState<{ count: number; size: number } | null>(null);
+
+  useEffect(() => {
+    if (items.length === 0 && storeFiles.length > 0) {
+      const pdfs = storeFiles.filter(
+        (f) => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")
+      );
+      if (pdfs.length > 0) {
+        setItems(
+          pdfs.map((p) => ({
+            id: `${Date.now()}-${Math.random()}`,
+            file: p.file,
+          }))
+        );
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFiles = (files: File[]) => {
     const valid = files.filter((f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf");
@@ -40,6 +59,7 @@ export default function PdfMergePage() {
       });
       return;
     }
+    addStoreFiles(valid);
     const newItems = valid.map((f) => ({
       id: `${Date.now()}-${Math.random()}`,
       file: f,
@@ -76,9 +96,16 @@ export default function PdfMergePage() {
     setIsProcessing(true);
     try {
       const filesToMerge = items.map((it) => it.file);
+      const origTotal = filesToMerge.reduce((acc, f) => acc + f.size, 0);
       const res = await mergePDFs(filesToMerge);
       setMergedBlob(res.blob);
       setMergedStats({ count: res.pageCount, size: res.blob.size });
+      await addHistoryRecord({
+        filename: `Merged (${items.length} PDFs)`,
+        tool: "Merge PDFs",
+        originalSize: origTotal,
+        outputSize: res.blob.size,
+      });
       toast({
         title: "Merge completed",
         description: `Combined into a single PDF with ${res.pageCount} pages.`,

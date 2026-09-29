@@ -12,11 +12,16 @@ export interface ManagedFile {
   size: number;
   type: string;
   thumbnailUrl?: string;
+  width?: number;
+  height?: number;
   status: ProcessingStatus;
   error?: string;
   outputBlob?: Blob;
   outputName?: string;
   outputSize?: number;
+  outputWidth?: number;
+  outputHeight?: number;
+  addedAt?: number;
 }
 
 export interface ResizePreset {

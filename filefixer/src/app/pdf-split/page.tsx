@@ -24,9 +24,12 @@ import {
 } from "@/lib/pdf/split";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { downloadAsZip } from "@/lib/zip";
+import { useFileStore } from "@/stores/fileStore";
+import { addHistoryRecord } from "@/lib/storage/history";
 
 export default function PdfSplitPage() {
   const { toast } = useToast();
+  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [isLoadingDoc, setIsLoadingDoc] = useState(false);
@@ -39,6 +42,16 @@ export default function PdfSplitPage() {
 
   // Result states
   const [extractedResult, setExtractedResult] = useState<{ blob: Blob; name: string } | null>(null);
+
+  useEffect(() => {
+    if (!selectedFile && storeFiles.length > 0) {
+      const firstPdf = storeFiles.find(
+        (f) => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")
+      );
+      if (firstPdf) setSelectedFile(firstPdf.file);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!selectedFile) {
@@ -76,6 +89,7 @@ export default function PdfSplitPage() {
       });
       return;
     }
+    addStoreFiles([pdf]);
     setSelectedFile(pdf);
   };
 
@@ -126,6 +140,12 @@ export default function PdfSplitPage() {
 
       const res = await extractPages(selectedFile, pageIndices);
       setExtractedResult({ blob: res.blob, name: res.outputFilename });
+      await addHistoryRecord({
+        filename: selectedFile.name,
+        tool: `Split PDF (${pageIndices.length} pages)`,
+        originalSize: selectedFile.size,
+        outputSize: res.blob.size,
+      });
       toast({
         title: "Extraction complete",
         description: `Extracted ${pageIndices.length} page(s) successfully.`,
@@ -149,7 +169,14 @@ export default function PdfSplitPage() {
 
     try {
       const parts = await splitAllPages(selectedFile);
+      const totalOut = parts.reduce((acc, p) => acc + p.blob.size, 0);
       await downloadAsZip(parts, `${selectedFile.name.replace(/\.[^/.]+$/, "")}_all_pages.zip`);
+      await addHistoryRecord({
+        filename: selectedFile.name,
+        tool: `Split PDF All (${parts.length} pages)`,
+        originalSize: selectedFile.size,
+        outputSize: totalOut,
+      });
       toast({
         title: "Split all complete",
         description: `Downloaded ZIP with ${parts.length} separate single-page PDFs.`,

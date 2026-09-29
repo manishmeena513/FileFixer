@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { WorkspaceDrawer } from "@/components/workspace/WorkspaceDrawer";
 import { Toaster } from "@/components/ui/toaster";
 import { PwaRegistration } from "@/components/pwa/PwaRegistration";
 
@@ -67,6 +69,7 @@ export const viewport: Viewport = {
   themeColor: "#2563eb",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -85,8 +88,11 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <WorkspaceDrawer />
+          <MobileBottomNav />
         </Toaster>
       </body>
     </html>
   );
 }
+

@@ -1,15 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ShieldAlert,
-  ShieldCheck,
   Download,
   Trash2,
   RefreshCw,
   Camera,
   MapPin,
-  Calendar,
   AlertTriangle,
   CheckCircle2,
 } from "lucide-react";
@@ -20,25 +18,18 @@ import { useToast } from "@/components/ui/toaster";
 import { readImageMetadata, stripImageMetadata, DetailedExif } from "@/lib/image/metadata";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { addHistoryRecord } from "@/lib/storage/history";
+import { useFileStore } from "@/stores/fileStore";
 
 export default function ImageMetadataPage() {
   const { toast } = useToast();
+  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [metadata, setMetadata] = useState<DetailedExif | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isStripping, setIsStripping] = useState(false);
   const [cleanedBlob, setCleanedBlob] = useState<{ blob: Blob; name: string } | null>(null);
 
-  const handleFiles = async (files: File[]) => {
-    const img = files.find((f) => f.type.startsWith("image/"));
-    if (!img) {
-      toast({
-        title: "Invalid file",
-        description: "Please select an image file (JPG, PNG, WebP).",
-        variant: "error",
-      });
-      return;
-    }
+  const loadFileMetadata = async (img: File) => {
     setSelectedFile(img);
     setIsLoading(true);
     setCleanedBlob(null);
@@ -51,6 +42,30 @@ export default function ImageMetadataPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (!selectedFile && storeFiles.length > 0) {
+      const firstImg = storeFiles.find((f) => f.type.startsWith("image/"));
+      if (firstImg) {
+        loadFileMetadata(firstImg.file);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleFiles = async (files: File[]) => {
+    const img = files.find((f) => f.type.startsWith("image/"));
+    if (!img) {
+      toast({
+        title: "Invalid file",
+        description: "Please select an image file (JPG, PNG, WebP).",
+        variant: "error",
+      });
+      return;
+    }
+    addStoreFiles([img]);
+    await loadFileMetadata(img);
   };
 
   const handleStripMetadata = async () => {

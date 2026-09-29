@@ -1,23 +1,19 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Layers,
-  Download,
   Archive,
   Eye,
-  FileText,
-  Sliders,
-  Sparkles,
-  CheckCircle2,
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toaster";
-import { formatBytes, getExtension, stripExtension, triggerDownload } from "@/lib/file-utils";
+import { getExtension, stripExtension } from "@/lib/file-utils";
 import { downloadAsZip } from "@/lib/zip";
+import { useFileStore } from "@/stores/fileStore";
+import { addHistoryRecord } from "@/lib/storage/history";
 
 interface RenameItem {
   id: string;
@@ -26,6 +22,7 @@ interface RenameItem {
 
 export default function BatchRenamePage() {
   const { toast } = useToast();
+  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
   const [items, setItems] = useState<RenameItem[]>([]);
 
   // Template options
@@ -36,8 +33,21 @@ export default function BatchRenamePage() {
   const [spaceReplacement, setSpaceReplacement] = useState("_");
   const [includeDate, setIncludeDate] = useState(false);
 
+  useEffect(() => {
+    if (items.length === 0 && storeFiles.length > 0) {
+      setItems(
+        storeFiles.map((sf) => ({
+          id: `${Date.now()}-${Math.random()}`,
+          file: sf.file,
+        }))
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleFiles = (files: File[]) => {
     if (files.length === 0) return;
+    addStoreFiles(files);
     const newItems = files.map((f) => ({
       id: `${Date.now()}-${Math.random()}`,
       file: f,
@@ -52,7 +62,7 @@ export default function BatchRenamePage() {
     return items.map((it, idx) => {
       const origName = it.file.name;
       const ext = getExtension(origName);
-      const base = stripExtension(origName);
+      const _base = stripExtension(origName);
 
       const num = startingNumber + idx;
 
@@ -93,7 +103,14 @@ export default function BatchRenamePage() {
       blob: item.file,
     }));
 
+    const totalBytes = previewList.reduce((acc, it) => acc + it.file.size, 0);
     await downloadAsZip(entries, "renamed_files.zip");
+    await addHistoryRecord({
+      filename: `Renamed (${entries.length} files)`,
+      tool: "Batch Rename",
+      originalSize: totalBytes,
+      outputSize: totalBytes,
+    });
     toast({
       title: "Batch rename complete",
       description: `Downloaded ZIP with ${entries.length} renamed files.`,

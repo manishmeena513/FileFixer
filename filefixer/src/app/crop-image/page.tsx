@@ -19,9 +19,12 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import { transformImage } from "@/lib/image/transform";
 import { triggerDownload, createObjectURL, revokeObjectURL } from "@/lib/file-utils";
+import { useFileStore } from "@/stores/fileStore";
+import { addHistoryRecord } from "@/lib/storage/history";
 
 export default function CropImagePage() {
   const { toast } = useToast();
+  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -33,6 +36,15 @@ export default function CropImagePage() {
   const [flipH, setFlipH] = useState<boolean>(false);
   const [flipV, setFlipV] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Auto-load first image from Workspace if available
+  useEffect(() => {
+    if (!selectedFile && storeFiles.length > 0) {
+      const firstImg = storeFiles.find((f) => f.type.startsWith("image/"));
+      if (firstImg) setSelectedFile(firstImg.file);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!selectedFile) {
@@ -93,6 +105,12 @@ export default function CropImagePage() {
 
       const baseName = selectedFile.name.replace(/\.[^/.]+$/, "");
       triggerDownload(blob, `${baseName}_edited.jpg`);
+      await addHistoryRecord({
+        filename: selectedFile.name,
+        tool: "Crop & Rotate Image",
+        originalSize: selectedFile.size,
+        outputSize: blob.size,
+      });
       toast({
         title: "Export complete",
         description: "Image successfully cropped and downloaded.",
@@ -133,13 +151,16 @@ export default function CropImagePage() {
         <DropZone
           onFiles={(files) => {
             const img = files.find((f) => f.type.startsWith("image/"));
-            if (img) setSelectedFile(img);
+            if (img) {
+              addStoreFiles([img]);
+              setSelectedFile(img);
+            }
           }}
           accept={[".jpg", ".jpeg", ".png", ".webp"]}
           multiple={false}
           label="Drop an image to crop and rotate"
           sublabel="JPG, PNG, or WebP"
-          className="py-20"
+          className="py-16"
         />
       ) : (
         <div className="space-y-6">

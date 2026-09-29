@@ -1,17 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FileText,
   Download,
   CheckCircle2,
   RefreshCw,
-  TrendingDown,
-  Sparkles,
-  Sliders,
-  ShieldCheck,
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
+import { BeforeAfterStats } from "@/components/results/BeforeAfter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -19,14 +16,26 @@ import { useToast } from "@/components/ui/toaster";
 import { compressPDF, PdfCompressResult } from "@/lib/pdf/compress";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { addHistoryRecord } from "@/lib/storage/history";
+import { useFileStore } from "@/stores/fileStore";
 
 export default function PdfCompressPage() {
   const { toast } = useToast();
+  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [level, setLevel] = useState<"balanced" | "smaller" | "custom">("balanced");
   const [stripMeta, setStripMeta] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<PdfCompressResult | null>(null);
+
+  useEffect(() => {
+    if (!selectedFile && storeFiles.length > 0) {
+      const firstPdf = storeFiles.find(
+        (f) => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")
+      );
+      if (firstPdf) setSelectedFile(firstPdf.file);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleFiles = (files: File[]) => {
     const pdf = files.find((f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf");
@@ -38,6 +47,7 @@ export default function PdfCompressPage() {
       });
       return;
     }
+    addStoreFiles([pdf]);
     setSelectedFile(pdf);
     setResult(null);
   };
@@ -207,27 +217,39 @@ export default function PdfCompressPage() {
 
             {/* Results card */}
             {result && (
-              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-emerald-400 flex-shrink-0" />
-                  <div>
-                    <p className="font-bold text-sm text-[hsl(var(--foreground))]">
-                      Compressed PDF Ready
-                    </p>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">
-                      {formatBytes(result.originalSize)} → <strong className="text-emerald-400 font-bold">{formatBytes(result.outputSize)}</strong> ({result.savingsPct.toFixed(1)}% smaller · {result.pageCount} pages)
-                    </p>
+              <div className="space-y-4">
+                <BeforeAfterStats
+                  originalSize={result.originalSize}
+                  outputSize={result.outputSize}
+                  originalFormat="PDF"
+                  outputFormat={`PDF • ${result.pageCount} pages`}
+                />
+                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="h-6 w-6 text-emerald-400 shrink-0" />
+                    <div>
+                      <p className="font-bold text-sm text-[hsl(var(--foreground))]">
+                        Compressed PDF Ready
+                      </p>
+                      <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">
+                        {formatBytes(result.originalSize)} →{" "}
+                        <strong className="text-emerald-400 font-bold">
+                          {formatBytes(result.outputSize)}
+                        </strong>{" "}
+                        ({result.savingsPct.toFixed(1)}% smaller · {result.pageCount} pages)
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <Button
-                  size="lg"
-                  onClick={handleDownload}
-                  className="w-full sm:w-auto bg-[hsl(var(--success))] hover:bg-emerald-600 text-white"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download Compressed PDF
-                </Button>
+                  <Button
+                    size="lg"
+                    onClick={handleDownload}
+                    className="w-full sm:w-auto min-h-[48px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-white font-semibold"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download Compressed PDF
+                  </Button>
+                </div>
               </div>
             )}
           </div>

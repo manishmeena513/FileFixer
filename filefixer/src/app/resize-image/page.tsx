@@ -14,12 +14,14 @@ import {
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { FileCard } from "@/components/upload/FileCard";
+import { BeforeAfterStats } from "@/components/results/BeforeAfter";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toaster";
 import { useFileStore } from "@/stores/fileStore";
 import { resizeImage, RESIZE_PRESETS, ResizeOptions } from "@/lib/image/resize";
 import { getImageDimensions, triggerDownload, stripExtension, getExtension } from "@/lib/file-utils";
 import { downloadAsZip } from "@/lib/zip";
+import { addHistoryRecord } from "@/lib/storage/history";
 
 export default function ResizeImagePage() {
   const { files, addFiles, removeFile, clearFiles, updateStatus, setOutput } = useFileStore();
@@ -117,8 +119,14 @@ export default function ResizeImagePage() {
         const base = stripExtension(f.name);
         const ext = getExtension(f.name) || "jpg";
         const outputName = `${base}_${width}x${height}.${ext}`;
-        setOutput(f.id, res.blob, outputName, res.blob.size);
+        setOutput(f.id, res.blob, outputName, res.blob.size, width, height);
         completed++;
+        await addHistoryRecord({
+          filename: f.name,
+          tool: `Resize Image (${width}×${height})`,
+          originalSize: f.size,
+          outputSize: res.blob.size,
+        });
       } catch (err: any) {
         console.error(err);
         updateStatus(f.id, "error", err.message || "Failed to resize");
@@ -357,15 +365,29 @@ export default function ResizeImagePage() {
 
           {/* Download options */}
           {singleFile && singleFile.status === "done" && singleFile.outputBlob && (
-            <Button
-              variant="default"
-              size="lg"
-              className="w-full bg-[hsl(var(--success))] hover:bg-emerald-600 text-white"
-              onClick={() => handleDownloadSingle(singleFile.id)}
-            >
-              <Download className="h-4 w-4" />
-              Download Resized Image
-            </Button>
+            <div className="space-y-3">
+              <BeforeAfterStats
+                originalSize={singleFile.size}
+                outputSize={singleFile.outputSize ?? singleFile.outputBlob.size}
+                originalDimensions={
+                  singleFile.width && singleFile.height
+                    ? `${singleFile.width}×${singleFile.height}`
+                    : undefined
+                }
+                outputDimensions={`${singleFile.outputWidth ?? width}×${singleFile.outputHeight ?? height}`}
+                originalFormat={singleFile.name.split(".").pop()}
+                outputFormat={(singleFile.outputName || singleFile.name).split(".").pop()}
+              />
+              <Button
+                variant="default"
+                size="lg"
+                className="w-full min-h-[48px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-white font-semibold"
+                onClick={() => handleDownloadSingle(singleFile.id)}
+              >
+                <Download className="h-4 w-4" />
+                Download Resized Image
+              </Button>
+            </div>
           )}
 
           {files.length > 1 && anyCompleted && (

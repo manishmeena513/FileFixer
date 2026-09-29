@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Images,
   ArrowUp,
@@ -9,14 +9,14 @@ import {
   Download,
   RefreshCw,
   CheckCircle2,
-  FileCheck,
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/toaster";
 import { convertImagesToPdf, ImagesToPdfOptions } from "@/lib/pdf/imagesToPdf";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
+import { useFileStore } from "@/stores/fileStore";
+import { addHistoryRecord } from "@/lib/storage/history";
 
 interface ImageItem {
   id: string;
@@ -26,6 +26,7 @@ interface ImageItem {
 
 export default function ImagesToPdfPage() {
   const { toast } = useToast();
+  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
   const [items, setItems] = useState<ImageItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progressText, setProgressText] = useState("");
@@ -38,6 +39,22 @@ export default function ImagesToPdfPage() {
   // Result
   const [resultBlob, setResultBlob] = useState<Blob | null>(null);
 
+  useEffect(() => {
+    if (items.length === 0 && storeFiles.length > 0) {
+      const imgs = storeFiles.filter((f) => f.type.startsWith("image/"));
+      if (imgs.length > 0) {
+        setItems(
+          imgs.map((img) => ({
+            id: `${Date.now()}-${Math.random()}`,
+            file: img.file,
+            previewUrl: URL.createObjectURL(img.file),
+          }))
+        );
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleFiles = (files: File[]) => {
     const valid = files.filter((f) => f.type.startsWith("image/"));
     if (valid.length === 0) {
@@ -48,6 +65,7 @@ export default function ImagesToPdfPage() {
       });
       return;
     }
+    addStoreFiles(valid);
     const newItems = valid.map((f) => ({
       id: `${Date.now()}-${Math.random()}`,
       file: f,
@@ -68,7 +86,11 @@ export default function ImagesToPdfPage() {
   };
 
   const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
+    setItems((prev) => {
+      const target = prev.find((it) => it.id === id);
+      if (target) URL.revokeObjectURL(target.previewUrl);
+      return prev.filter((item) => item.id !== id);
+    });
     setResultBlob(null);
   };
 
@@ -84,6 +106,7 @@ export default function ImagesToPdfPage() {
         margin,
       };
 
+      const origTotal = items.reduce((acc, it) => acc + it.file.size, 0);
       const res = await convertImagesToPdf(
         items.map((it) => it.file),
         options,
@@ -93,6 +116,12 @@ export default function ImagesToPdfPage() {
       );
 
       setResultBlob(res.blob);
+      await addHistoryRecord({
+        filename: `Images to PDF (${items.length} pages)`,
+        tool: "Images to PDF",
+        originalSize: origTotal,
+        outputSize: res.blob.size,
+      });
       toast({
         title: "PDF Created",
         description: `Successfully compiled ${items.length} images into a single PDF.`,

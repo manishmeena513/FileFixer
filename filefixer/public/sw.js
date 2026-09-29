@@ -1,8 +1,10 @@
-const CACHE_NAME = "filefixer-v1";
+const CACHE_NAME = "filefixer-v2";
 const ASSETS_TO_CACHE = [
   "/",
+  "/tools",
   "/manifest.json",
-  "/favicon.ico"
+  "/favicon.ico",
+  "/icon.svg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -31,13 +33,14 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => {
-        // Offline fallback if needed
-        return caches.match("/");
-      });
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
+          return networkResponse;
+        })
+        .catch(() => {
+          return cachedResponse || caches.match("/");
+        });
+      return cachedResponse || fetchPromise;
     })
   );
 });

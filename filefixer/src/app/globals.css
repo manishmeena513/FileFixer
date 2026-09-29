@@ -43,6 +43,13 @@
   --ring: 221 83% 53%;
 
   --radius: 0.625rem;
+
+  /* Centralized Animation Tokens */
+  --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
 }
 
 .dark {
@@ -80,7 +87,7 @@
 
   --border: 222 14% 20%;
   --input: 222 14% 17%;
-  --ring: 186 100% 42%;
+  --ring: 217 91% 60%;
 }
 
 * {
@@ -90,6 +97,7 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -99,6 +107,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-x: hidden;
 }
 
 /* Custom scrollbar */
@@ -123,10 +132,31 @@ body {
   outline-offset: 2px;
 }
 
-/* Drop zone drag-over highlight */
+/* Safe area utilities for Mobile / Installed PWA */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Drop zone states */
+.drop-zone-idle {
+  transition:
+    transform var(--duration-normal) var(--ease-out-smooth),
+    border-color var(--duration-normal) var(--ease-out-smooth),
+    background-color var(--duration-normal) var(--ease-out-smooth),
+    box-shadow var(--duration-normal) var(--ease-out-smooth);
+}
+
 .drop-zone-active {
   border-color: hsl(var(--primary)) !important;
-  background-color: hsl(186 100% 42% / 0.08) !important;
+  background-color: hsl(var(--primary) / 0.08) !important;
+  transform: scale(1.01);
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.12), 0 12px 32px -8px hsl(var(--primary) / 0.2);
 }
 
 /* Comparison slider */
@@ -136,6 +166,7 @@ body {
   border-radius: var(--radius);
   cursor: ew-resize;
   user-select: none;
+  touch-action: pan-y;
 }
 
 .compare-slider-handle {
@@ -149,15 +180,150 @@ body {
 }
 
 .compare-slider-handle::before {
-  content: "";
+  content: "↔";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: hsl(var(--primary-foreground));
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: hsl(var(--primary));
   border: 2px solid hsl(var(--primary-foreground));
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: transform var(--duration-fast) var(--ease-spring);
 }
+
+.compare-slider:active .compare-slider-handle::before {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Centralized Keyframe Animations */
+@keyframes ff-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ff-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ff-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ff-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@keyframes ff-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
+  }
+  50% {
+    box-shadow: 0 0 28px -4px hsl(var(--primary) / 0.16);
+  }
+}
+
+@keyframes ff-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in {
+  animation: ff-fade-in var(--duration-normal) var(--ease-out-smooth) both;
+}
+
+.animate-slide-up {
+  animation: ff-slide-up var(--duration-normal) var(--ease-out-smooth) both;
+}
+
+.animate-scale-in {
+  animation: ff-scale-in var(--duration-fast) var(--ease-out-smooth) both;
+}
+
+.animate-shake {
+  animation: ff-shake 350ms ease-in-out;
+}
+
+.animate-pulse-glow {
+  animation: ff-pulse-glow 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--primary) / 0.85) 25%,
+    hsl(205 95% 62%) 50%,
+    hsl(var(--primary) / 0.85) 75%
+  );
+  background-size: 200% 100%;
+  animation: ff-shimmer 1.8s linear infinite;
+}
+
+/* Interactive Card & Button Micro-interactions */
+.interactive-card {
+  transition:
+    transform var(--duration-fast) var(--ease-out-smooth),
+    border-color var(--duration-fast) var(--ease-out-smooth),
+    box-shadow var(--duration-fast) var(--ease-out-smooth),
+    background-color var(--duration-fast) var(--ease-out-smooth);
+}
+
+@media (hover: hover) {
+  .interactive-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.14);
+  }
+}
+
+.interactive-card:active {
+  transform: scale(0.99);
+}
+
+/* Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .interactive-card:hover,
+  .drop-zone-active {
+    transform: none !important;
+  }
+}
+
