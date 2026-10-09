@@ -65,6 +65,14 @@ interface FileStore {
   latestDeliveredFile: DownloadQueueItem | null;
   setLatestDeliveredFile: (item: DownloadQueueItem | null) => void;
 
+  // Voluntary Support
+  isSupportPromptVisible: boolean;
+  isSupportModalOpen: boolean;
+  triggerSupportPrompt: () => void;
+  openSupportModal: () => void;
+  closeSupportModal: () => void;
+  dismissSupportPrompt: () => void;
+
   // File Management
   addFiles: (rawFiles: File[], targetProjectId?: string) => ManagedFile[];
   replaceFiles: (rawFiles: File[]) => ManagedFile[];
@@ -137,6 +145,36 @@ export const useFileStore = create<FileStore>((set, get) => ({
 
   latestDeliveredFile: null,
   setLatestDeliveredFile: (item) => set({ latestDeliveredFile: item }),
+
+  isSupportPromptVisible: false,
+  isSupportModalOpen: false,
+
+  triggerSupportPrompt: () => {
+    if (typeof window === "undefined") return;
+    try {
+      if (sessionStorage.getItem("filefixer_support_prompt_shown") === "true") {
+        return;
+      }
+      sessionStorage.setItem("filefixer_support_prompt_shown", "true");
+      setTimeout(() => {
+        set({ isSupportPromptVisible: true });
+      }, 1200);
+    } catch {
+      // Ignore storage restrictions if running in strict sandbox
+    }
+  },
+
+  openSupportModal: () => {
+    set({ isSupportPromptVisible: false, isSupportModalOpen: true });
+  },
+
+  closeSupportModal: () => {
+    set({ isSupportModalOpen: false });
+  },
+
+  dismissSupportPrompt: () => {
+    set({ isSupportPromptVisible: false });
+  },
 
   setWorkspaceOpen: (open) => set({ isWorkspaceOpen: open }),
   toggleWorkspace: () => set((s) => ({ isWorkspaceOpen: !s.isWorkspaceOpen })),

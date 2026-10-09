@@ -21,10 +21,12 @@ import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFileStore } from "@/stores/fileStore";
+import { useToast } from "@/components/ui/toaster";
 import { loadWorkspacePages, saveWorkspacePdf, WorkspacePage } from "@/lib/pdf/workspace";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 
 export default function PdfStudioPage() {
+  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { files: storeFiles, addFiles, pushDownload, setLatestDeliveredFile } = useFileStore();
 
@@ -111,6 +113,12 @@ export default function PdfStudioPage() {
         outputSize: res.blob.size,
         status: "ready",
         blob: res.blob,
+      });
+
+      toast({
+        title: "PDF Studio export ready",
+        description: `Saved ${res.outputFilename} successfully.`,
+        variant: "success",
       });
     } catch (err: any) {
       alert(`Save failed: ${err.message}`);

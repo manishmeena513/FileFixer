@@ -1,10 +1,11 @@
-const CACHE_NAME = "filefixer-v2";
+const CACHE_NAME = "filefixer-v3";
 const ASSETS_TO_CACHE = [
   "/",
   "/tools",
   "/manifest.json",
   "/favicon.ico",
-  "/icon.svg"
+  "/icon.svg",
+  "/images/filefixer_support_qr.png"
 ];
 
 self.addEventListener("install", (event) => {

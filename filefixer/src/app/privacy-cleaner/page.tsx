@@ -19,11 +19,13 @@ import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useFileStore } from "@/stores/fileStore";
+import { useToast } from "@/components/ui/toaster";
 import { stripImageMetadata, readImageMetadata } from "@/lib/image/metadata";
 import { inspectFile, FileMetadata } from "@/lib/inspect";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 
 export default function PrivacyCleanerPage() {
+  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { files: storeFiles, addFiles, pushDownload, setLatestDeliveredFile } = useFileStore();
 
@@ -78,6 +80,12 @@ export default function PrivacyCleanerPage() {
         outputSize: resultBlob.size,
         status: "ready",
         blob: resultBlob,
+      });
+
+      toast({
+        title: "Privacy metadata scrubbed",
+        description: `Successfully cleaned ${cleanedFileName}.`,
+        variant: "success",
       });
     } catch (err: any) {
       alert(`Privacy cleaning failed: ${err.message}`);

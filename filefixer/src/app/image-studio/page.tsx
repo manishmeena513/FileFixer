@@ -31,6 +31,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { BeforeAfterStats, CompareSlider } from "@/components/results/BeforeAfter";
 import { useFileStore } from "@/stores/fileStore";
+import { useToast } from "@/components/ui/toaster";
 import { formatBytes, triggerDownload, SupportedImageFormat } from "@/lib/file-utils";
 import { compressImage } from "@/lib/image/compress";
 import { resizeImage } from "@/lib/image/resize";
@@ -39,6 +40,7 @@ import { transformImage } from "@/lib/image/transform";
 import { stripImageMetadata, readImageMetadata } from "@/lib/image/metadata";
 
 export default function ImageStudioPage() {
+  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { files: storeFiles, addFiles, pushDownload, setLatestDeliveredFile } = useFileStore();
 
@@ -146,6 +148,12 @@ export default function ImageStudioPage() {
             : 0,
         status: "ready",
         blob: curBlob,
+      });
+
+      toast({
+        title: "Image Studio export ready",
+        description: `Optimized ${finalName} successfully.`,
+        variant: "success",
       });
     } catch (err: any) {
       alert(`Image processing failed: ${err.message}`);

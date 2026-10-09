@@ -12,6 +12,8 @@ import { FileDeliveredModal } from "@/components/download/FileDeliveredModal";
 import { DownloadCenterModal } from "@/components/download/DownloadCenterModal";
 import { Toaster } from "@/components/ui/toaster";
 import { PwaRegistration } from "@/components/pwa/PwaRegistration";
+import { SupportPrompt } from "@/components/support/SupportPrompt";
+import { SupportModal } from "@/components/support/SupportModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -100,6 +102,8 @@ export default function RootLayout({
           <DownloadDock />
           <FileDeliveredModal />
           <DownloadCenterModal />
+          <SupportPrompt />
+          <SupportModal />
         </Toaster>
       </body>
     </html>

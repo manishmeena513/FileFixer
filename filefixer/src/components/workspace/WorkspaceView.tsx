@@ -47,11 +47,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/toaster";
 import { BeforeAfterStats, CompareSlider } from "@/components/results/BeforeAfter";
 
 type WorkspaceTab = "optimize" | "transform" | "convert" | "privacy" | "deliver";
 
 export function WorkspaceView() {
+  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     files,
@@ -273,6 +275,12 @@ export function WorkspaceView() {
         savingsPct,
         status: "ready",
         blob: resultBlob,
+      });
+
+      toast({
+        title: "Workspace action completed",
+        description: `Successfully processed ${outputName}.`,
+        variant: "success",
       });
 
       setActiveTab("deliver");

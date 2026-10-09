@@ -49,6 +49,7 @@ export function CommandCenter() {
     files,
     setActiveFileId,
     setWorkspaceOpen,
+    openSupportModal,
   } = useFileStore();
 
   const [query, setQuery] = useState("");
@@ -222,6 +223,18 @@ export function CommandCenter() {
         icon: FileText,
         action: () => navigateTo("/images-to-pdf"),
         keywords: ["images to pdf", "photos to pdf", "scans", "receipts", "make pdf"],
+      },
+      {
+        id: "action-support-filefixer",
+        category: "Quick Actions",
+        title: "❤️ Support FileFixer",
+        subtitle: "Voluntary support for free, privacy-first file utilities",
+        icon: Sparkles,
+        action: () => {
+          setCommandCenterOpen(false);
+          openSupportModal();
+        },
+        keywords: ["support", "donate", "upi", "tip", "contribute", "sponsor"],
       },
 
       // Starter Workflows

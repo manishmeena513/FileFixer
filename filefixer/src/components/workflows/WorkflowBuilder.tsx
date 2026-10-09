@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { useFileStore } from "@/stores/fileStore";
+import { useToast } from "@/components/ui/toaster";
 import { WorkflowStep } from "@/types";
 import { resizeImage } from "@/lib/image/resize";
 import { convertImage } from "@/lib/image/convert";
@@ -145,6 +146,7 @@ const STARTER_PRESETS: { name: string; description: string; steps: WorkflowStep[
 ];
 
 export function WorkflowBuilder() {
+  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { files: storeFiles, addFiles, pushDownload, setLatestDeliveredFile } = useFileStore();
 
@@ -282,6 +284,12 @@ export function WorkflowBuilder() {
 
     // Automatically package ZIP
     if (outputs.length > 0) {
+      toast({
+        title: "Workflow completed",
+        description: `Successfully processed ${outputs.length} file(s) across ${steps.length} steps.`,
+        variant: "success",
+      });
+
       await downloadAsZip(
         outputs.map((o) => ({ filename: o.name, blob: o.blob })),
         "filefixer-workflow-output.zip"

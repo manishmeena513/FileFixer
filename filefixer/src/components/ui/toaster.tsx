@@ -9,6 +9,7 @@ import {
   ToastDescription,
   ToastClose,
 } from "./toast";
+import { useFileStore } from "@/stores/fileStore";
 
 export interface ToastData {
   id: string;
@@ -38,6 +39,20 @@ export function Toaster({ children }: { children: React.ReactNode }) {
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 4000);
+
+    // Trigger voluntary support prompt on successful processing operations
+    if (data.variant === "success") {
+      const titleLower = data.title.toLowerCase();
+      const isExcluded =
+        titleLower.includes("download") ||
+        titleLower.includes("cleared") ||
+        titleLower.includes("history") ||
+        titleLower.includes("copied");
+
+      if (!isExcluded) {
+        useFileStore.getState().triggerSupportPrompt();
+      }
+    }
   }, []);
 
   return (
