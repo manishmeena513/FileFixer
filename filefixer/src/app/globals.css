@@ -260,6 +260,33 @@ body {
   }
 }
 
+@keyframes ff-check-draw {
+  0% {
+    stroke-dashoffset: 48;
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ff-dock-slide-in {
+  from {
+    transform: translateY(24px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
 .animate-fade-in {
   animation: ff-fade-in var(--duration-normal) var(--ease-out-smooth) both;
 }
@@ -278,6 +305,15 @@ body {
 
 .animate-pulse-glow {
   animation: ff-pulse-glow 4s ease-in-out infinite;
+}
+
+.animate-dock-in {
+  animation: ff-dock-slide-in var(--duration-normal) var(--ease-spring) both;
+}
+
+.animate-check-draw {
+  stroke-dasharray: 48;
+  animation: ff-check-draw 500ms var(--ease-spring) forwards;
 }
 
 .animate-shimmer {

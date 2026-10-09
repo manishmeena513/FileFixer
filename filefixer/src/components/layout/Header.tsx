@@ -17,16 +17,30 @@ import {
   LayoutGrid,
   ChevronDown,
   FolderKanban,
+  Search,
+  Command,
+  Workflow,
+  Keyboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import { Logo } from "@/components/branding/Logo";
 import { useFileStore } from "@/stores/fileStore";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/tools", label: "All Tools" },
+  { href: "/workspace", label: "Workspace" },
+  {
+    label: "Studios",
+    href: "/image-studio",
+    children: [
+      { href: "/image-studio", label: "Image Studio" },
+      { href: "/pdf-studio", label: "PDF Studio" },
+      { href: "/batch", label: "Batch Studio" },
+      { href: "/workflows", label: "Workflow Builder" },
+      { href: "/privacy-cleaner", label: "Privacy Cleaner" },
+    ],
+  },
   {
     label: "Images",
     href: "/compress-image",
@@ -50,34 +64,23 @@ const navLinks = [
       { href: "/images-to-pdf", label: "Images to PDF" },
     ],
   },
-  {
-    label: "Batch",
-    href: "/batch",
-    children: [
-      { href: "/batch", label: "Batch Multi-Pipeline" },
-      { href: "/batch-rename", label: "Batch Rename" },
-      { href: "/inspect", label: "File Inspector" },
-    ],
-  },
+  { href: "/tools", label: "All Tools" },
   { href: "/history", label: "History" },
-  { href: "/about", label: "About" },
 ];
 
 const mobileLinks = [
+  { href: "/workspace", label: "File Workspace 3.0", icon: FolderKanban },
+  { href: "/image-studio", label: "Image Studio", icon: ImageIcon },
+  { href: "/pdf-studio", label: "PDF Studio", icon: FileText },
+  { href: "/batch", label: "Batch Studio", icon: Layers },
+  { href: "/workflows", label: "Workflow Builder", icon: Workflow },
+  { href: "/privacy-cleaner", label: "Privacy Cleaner", icon: Shield },
   { href: "/tools", label: "All Tools Directory", icon: LayoutGrid },
   { href: "/compress-image", label: "Compress Image", icon: ImageIcon },
-  { href: "/resize-image", label: "Resize Image", icon: ImageIcon },
-  { href: "/convert-image", label: "Convert Image", icon: ImageIcon },
-  { href: "/crop-image", label: "Crop & Rotate", icon: ImageIcon },
   { href: "/smart-compress", label: "Smart Under-X-MB", icon: Sparkles },
-  { href: "/image-metadata", label: "EXIF Stripper", icon: Shield },
   { href: "/pdf-merge", label: "Merge PDFs", icon: FileText },
   { href: "/pdf-split", label: "Split PDF", icon: FileText },
   { href: "/pdf-compress", label: "Compress PDF", icon: FileText },
-  { href: "/pdf-workspace", label: "PDF Workspace", icon: Layers },
-  { href: "/images-to-pdf", label: "Images to PDF", icon: FileText },
-  { href: "/batch", label: "Batch Pipeline", icon: Layers },
-  { href: "/batch-rename", label: "Batch Rename", icon: Layers },
   { href: "/inspect", label: "File Inspector", icon: FileSearch },
   { href: "/history", label: "Local History", icon: Clock },
   { href: "/privacy", label: "Privacy Center", icon: Shield },
@@ -87,7 +90,7 @@ const mobileLinks = [
 export function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { files, toggleWorkspace } = useFileStore();
+  const { files, setCommandCenterOpen, setShortcutsOpen } = useFileStore();
 
   const fileCount = files.length;
 
@@ -97,15 +100,30 @@ export function Header() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center group transition-opacity hover:opacity-95"
+          className="flex items-center group transition-opacity hover:opacity-95 mr-4"
           aria-label="FileFixer Home"
         >
           <Logo variant="full" size="md" />
         </Link>
 
+        {/* Universal Command Center Search Trigger */}
+        <button
+          type="button"
+          onClick={() => setCommandCenterOpen(true)}
+          className="flex items-center gap-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-1.5 text-xs text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary)/0.6)] hover:text-[hsl(var(--foreground))] transition-all shadow-xs"
+          aria-label="Open Command Center (Ctrl+K)"
+        >
+          <Search className="h-3.5 w-3.5 text-[hsl(var(--primary))]" />
+          <span className="hidden sm:inline">Search tools & actions...</span>
+          <span className="sm:hidden">Search</span>
+          <kbd className="hidden md:inline-flex items-center gap-0.5 rounded bg-[hsl(var(--secondary))] px-1.5 py-0.5 text-[10px] font-mono text-[hsl(var(--muted-foreground))] border border-[hsl(var(--border))]">
+            Ctrl+K
+          </kbd>
+        </button>
+
         {/* Desktop nav */}
         <nav
-          className="hidden items-center gap-0.5 md:flex"
+          className="hidden items-center gap-0.5 lg:flex ml-2"
           aria-label="Main navigation"
         >
           {navLinks.map((link) =>
@@ -114,7 +132,7 @@ export function Header() {
                 <button
                   type="button"
                   className={cn(
-                    "flex items-center gap-1 rounded-[var(--radius)] px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center gap-1 rounded-[var(--radius)] px-2.5 py-2 text-xs xl:text-sm font-medium transition-colors",
                     link.children.some((c) => pathname === c.href)
                       ? "text-[hsl(var(--primary))] bg-[hsl(var(--secondary))]"
                       : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
@@ -130,7 +148,7 @@ export function Header() {
                         key={child.href}
                         href={child.href}
                         className={cn(
-                          "block px-4 py-2 text-sm transition-colors",
+                          "block px-4 py-2 text-xs xl:text-sm transition-colors",
                           pathname === child.href
                             ? "text-[hsl(var(--primary))] bg-[hsl(var(--secondary))] font-medium"
                             : "text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
@@ -147,7 +165,7 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "rounded-[var(--radius)] px-3 py-2 text-sm font-medium transition-colors",
+                  "rounded-[var(--radius)] px-2.5 py-2 text-xs xl:text-sm font-medium transition-colors",
                   pathname === link.href
                     ? "text-[hsl(var(--primary))] bg-[hsl(var(--secondary))]"
                     : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
@@ -161,17 +179,16 @@ export function Header() {
 
         {/* Right side tools */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Workspace Trigger Button */}
-          <button
-            type="button"
-            onClick={toggleWorkspace}
+          {/* Workspace Route Link with live badge */}
+          <Link
+            href="/workspace"
             className={cn(
-              "inline-flex min-h-[40px] items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
+              "inline-flex min-h-[38px] items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all",
               fileCount > 0
                 ? "border-[hsl(var(--primary)/0.4)] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.18)]"
                 : "border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
             )}
-            aria-label={`Open Session Workspace (${fileCount} files)`}
+            aria-label={`Open Workspace (${fileCount} files)`}
           >
             <FolderKanban className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Workspace</span>
@@ -185,66 +202,60 @@ export function Header() {
             >
               {fileCount}
             </span>
+          </Link>
+
+          {/* Shortcuts Modal Trigger */}
+          <button
+            type="button"
+            onClick={() => setShortcutsOpen(true)}
+            className="hidden sm:flex h-9 w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors"
+            title="Keyboard Shortcuts (?)"
+            aria-label="Keyboard shortcuts"
+          >
+            <Keyboard className="h-4 w-4" />
           </button>
 
           <ThemeToggle />
 
-          {/* Privacy badge */}
-          <Link
-            href="/privacy"
-            className="hidden items-center gap-1.5 xl:inline-flex rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-500 dark:text-emerald-400 hover:bg-emerald-500/15 transition-colors"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            100% Client-Side
-          </Link>
-
-          {/* Mobile toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden h-11 w-11"
-            onClick={() => setMobileOpen((v) => !v)}
+          {/* Mobile hamburger */}
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] lg:hidden"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
           >
-            {mobileOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </Button>
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="border-t border-[hsl(var(--border))] bg-[hsl(var(--background))] md:hidden max-h-[80vh] overflow-y-auto animate-fade-in">
-          <nav
-            className="mx-auto max-w-7xl px-4 py-4"
-            aria-label="Mobile navigation"
-          >
-            <div className="grid grid-cols-2 gap-2">
-              {mobileLinks.map(({ href, label, icon: Icon }) => (
+        <div className="border-b border-[hsl(var(--border))] bg-[hsl(var(--background))] px-4 pb-6 pt-3 lg:hidden max-h-[80vh] overflow-y-auto animate-slide-up">
+          <div className="space-y-1">
+            {mobileLinks.map((link) => {
+              const Icon = link.icon;
+              return (
                 <Link
-                  key={href}
-                  href={href}
+                  key={link.href}
+                  href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
-                    "flex min-h-[44px] items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-colors",
-                    pathname === href
-                      ? "bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] border border-[hsl(var(--primary)/0.25)]"
-                      : "bg-[hsl(var(--card))] border border-[hsl(var(--border))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
+                    "flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    pathname === link.href
+                      ? "text-[hsl(var(--primary))] bg-[hsl(var(--secondary))]"
+                      : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
                   )}
                 >
-                  <Icon className="h-4 w-4 shrink-0 text-[hsl(var(--primary))]" />
-                  <span className="truncate">{label}</span>
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span>{link.label}</span>
                 </Link>
-              ))}
-            </div>
-          </nav>
+              );
+            })}
+          </div>
         </div>
       )}
     </header>
   );
 }
-

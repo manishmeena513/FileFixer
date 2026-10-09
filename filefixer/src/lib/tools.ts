@@ -12,6 +12,10 @@ import {
   FileSearch,
   Sparkles,
   Clock,
+  FolderKanban,
+  Workflow,
+  FileImage,
+  FileText,
   LucideIcon,
 } from "lucide-react";
 
@@ -42,6 +46,78 @@ export const CATEGORIES: { key: ToolCategoryKey; label: string }[] = [
 ];
 
 export const TOOLS: ToolItem[] = [
+  // CORE WORKSTATIONS
+  {
+    id: "workspace",
+    name: "File Workspace",
+    slug: "/workspace",
+    description: "Central browser-based workstation with live preview, temporary projects, and multi-tool inspector.",
+    category: "Utilities",
+    categoryKey: "utilities",
+    categoryLabel: "File Utilities",
+    icon: FolderKanban,
+    badge: "3.0 Signature",
+    featureIndicator: "Multi-file workstation",
+    supportedFormats: ["Images", "PDF"],
+    isPopular: true,
+  },
+  {
+    id: "workflows",
+    name: "Visual Workflow Builder",
+    slug: "/workflows",
+    description: "Build draggable sequential pipelines to resize, convert, compress, and strip metadata in one run.",
+    category: "Batch",
+    categoryKey: "batch",
+    categoryLabel: "Batch Tools",
+    icon: Workflow,
+    badge: "New",
+    featureIndicator: "Custom automation",
+    supportedFormats: ["Images"],
+    isPopular: true,
+  },
+  {
+    id: "image-studio",
+    name: "Image Studio",
+    slug: "/image-studio",
+    description: "All-in-one image workstation: crop, resize, compress, convert, and strip metadata on a live canvas.",
+    category: "Images",
+    categoryKey: "images",
+    categoryLabel: "Image Tools",
+    icon: FileImage,
+    badge: "Workstation",
+    featureIndicator: "Unified image canvas",
+    supportedFormats: ["JPG", "PNG", "WebP"],
+    isPopular: true,
+  },
+  {
+    id: "pdf-studio",
+    name: "PDF Studio",
+    slug: "/pdf-studio",
+    description: "Visual PDF page workstation: drag to reorder, rotate, delete, duplicate, merge, and compress pages.",
+    category: "PDF",
+    categoryKey: "pdf",
+    categoryLabel: "PDF Tools",
+    icon: FileText,
+    badge: "Workstation",
+    featureIndicator: "Interactive page grid",
+    supportedFormats: ["PDF"],
+    isPopular: true,
+  },
+  {
+    id: "privacy-cleaner",
+    name: "Privacy Cleaner",
+    slug: "/privacy-cleaner",
+    description: "Inspect and eliminate sensitive GPS coordinates, camera serial numbers, and author tags.",
+    category: "Utilities",
+    categoryKey: "utilities",
+    categoryLabel: "File Utilities",
+    icon: Shield,
+    badge: "Security",
+    featureIndicator: "Zero-leak sanitization",
+    supportedFormats: ["Images", "PDF"],
+    isPopular: true,
+  },
+
   // IMAGE TOOLS
   {
     id: "compress-image",
@@ -180,7 +256,7 @@ export const TOOLS: ToolItem[] = [
   // BATCH TOOLS
   {
     id: "batch",
-    name: "Batch Multi-Pipeline",
+    name: "Batch Studio",
     slug: "/batch",
     description: "Apply Resize, Convert, Compress, and Sequential Rename to dozens of files in one automated run.",
     category: "Batch",
@@ -190,6 +266,7 @@ export const TOOLS: ToolItem[] = [
     badge: "Power Tool",
     featureIndicator: "Multi-op & ZIP export",
     supportedFormats: ["JPG", "PNG", "WebP"],
+    isPopular: true,
   },
   {
     id: "batch-rename",

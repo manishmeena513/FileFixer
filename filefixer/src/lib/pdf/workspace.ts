@@ -6,6 +6,7 @@ export interface WorkspacePage {
   originalPageIndex: number; // 0-indexed in source PDF
   displayNumber: number;
   rotation: number; // 0, 90, 180, 270
+  thumbnailUrl?: string;
 }
 
 export async function loadWorkspacePages(file: File): Promise<WorkspacePage[]> {

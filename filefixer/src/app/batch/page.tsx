@@ -38,7 +38,7 @@ import { calcSavings } from "@/lib/utils";
 export default function BatchHubPage() {
   const { toast } = useToast();
   const addMoreInputRef = useRef<HTMLInputElement>(null);
-  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
+  const { files: storeFiles, addFiles: addStoreFiles, pushDownload } = useFileStore();
 
   const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -132,6 +132,17 @@ export default function BatchHubPage() {
     const origTotal = validResults.reduce((acc, r) => acc + r.originalSize, 0);
     const outTotal = validResults.reduce((acc, r) => acc + r.outputSize, 0);
 
+    validResults.forEach((r) => {
+      pushDownload({
+        fileName: r.outputName,
+        originalSize: r.originalSize,
+        outputSize: r.outputSize,
+        savingsPct: r.originalSize > r.outputSize ? ((r.originalSize - r.outputSize) / r.originalSize) * 100 : 0,
+        status: "ready",
+        blob: r.blob,
+      });
+    });
+
     toast({
       title: "Batch pipeline finished",
       description: `Processed ${validResults.length} of ${files.length} files. Saved ${formatBytes(Math.max(0, origTotal - outTotal))}.`,
@@ -141,7 +152,7 @@ export default function BatchHubPage() {
     if (validResults.length > 0) {
       await addHistoryRecord({
         filename: `Batch (${validResults.length} images)`,
-        tool: "Batch Processing Hub",
+        tool: "Batch Studio",
         originalSize: origTotal,
         outputSize: outTotal,
       });
@@ -236,7 +247,7 @@ export default function BatchHubPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
-              Batch Processing Hub
+              Batch Studio
             </h1>
             <p className="text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
               Multi-stage local pipeline: Resize → Convert → Compress → Rename in one pass.

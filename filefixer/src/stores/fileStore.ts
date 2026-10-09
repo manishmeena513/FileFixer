@@ -1,7 +1,14 @@
 "use client";
 
 import { create } from "zustand";
-import type { ManagedFile, ProcessingStatus } from "@/types";
+import type {
+  ManagedFile,
+  ProcessingStatus,
+  LocalProject,
+  FileHistoryEntry,
+  DownloadQueueItem,
+  DownloadStatus,
+} from "@/types";
 
 let idCounter = 0;
 function genId() {
@@ -30,10 +37,36 @@ function probeImageDimensions(
 
 interface FileStore {
   files: ManagedFile[];
+  activeFileId: string | null;
   isWorkspaceOpen: boolean;
+
+  // Projects
+  projects: LocalProject[];
+  activeProjectId: string | null;
+  createProject: (name: string, description?: string) => LocalProject;
+  deleteProject: (id: string) => void;
+  setActiveProjectId: (id: string | null) => void;
+  assignFileToProject: (fileId: string, projectId?: string) => void;
+
+  // Modals & Navigation
   setWorkspaceOpen: (open: boolean) => void;
   toggleWorkspace: () => void;
-  addFiles: (rawFiles: File[]) => ManagedFile[];
+  setActiveFileId: (id: string | null) => void;
+
+  isCommandCenterOpen: boolean;
+  setCommandCenterOpen: (open: boolean) => void;
+
+  isShortcutsOpen: boolean;
+  setShortcutsOpen: (open: boolean) => void;
+
+  isDownloadCenterOpen: boolean;
+  setDownloadCenterOpen: (open: boolean) => void;
+
+  latestDeliveredFile: DownloadQueueItem | null;
+  setLatestDeliveredFile: (item: DownloadQueueItem | null) => void;
+
+  // File Management
+  addFiles: (rawFiles: File[], targetProjectId?: string) => ManagedFile[];
   replaceFiles: (rawFiles: File[]) => ManagedFile[];
   removeFile: (id: string) => void;
   clearFiles: () => void;
@@ -52,28 +85,128 @@ interface FileStore {
   ) => void;
   setThumbnail: (id: string, thumbnailUrl: string) => void;
   setDimensions: (id: string, width: number, height: number) => void;
+
+  // Undo / Redo
+  pushFileHistory: (
+    id: string,
+    action: string,
+    nextFile: File,
+    nextBlob?: Blob,
+    nextName?: string,
+    width?: number,
+    height?: number
+  ) => void;
+  undo: (id: string) => boolean;
+  redo: (id: string) => boolean;
+
+  // Downloads Dock
+  downloadQueue: DownloadQueueItem[];
+  pushDownload: (item: Omit<DownloadQueueItem, "id" | "timestamp">) => string;
+  updateDownloadStatus: (
+    id: string,
+    status: DownloadStatus,
+    patch?: Partial<DownloadQueueItem>
+  ) => void;
+  removeDownload: (id: string) => void;
+  clearDownloads: () => void;
 }
 
 export const useFileStore = create<FileStore>((set, get) => ({
   files: [],
+  activeFileId: null,
   isWorkspaceOpen: false,
+
+  projects: [
+    {
+      id: "project-default",
+      name: "Default Session",
+      description: "Active browser workspace files",
+      createdAt: Date.now(),
+    },
+  ],
+  activeProjectId: null,
+
+  isCommandCenterOpen: false,
+  setCommandCenterOpen: (open) => set({ isCommandCenterOpen: open }),
+
+  isShortcutsOpen: false,
+  setShortcutsOpen: (open) => set({ isShortcutsOpen: open }),
+
+  isDownloadCenterOpen: false,
+  setDownloadCenterOpen: (open) => set({ isDownloadCenterOpen: open }),
+
+  latestDeliveredFile: null,
+  setLatestDeliveredFile: (item) => set({ latestDeliveredFile: item }),
 
   setWorkspaceOpen: (open) => set({ isWorkspaceOpen: open }),
   toggleWorkspace: () => set((s) => ({ isWorkspaceOpen: !s.isWorkspaceOpen })),
+  setActiveFileId: (id) => set({ activeFileId: id }),
 
-  addFiles: (rawFiles) => {
-    const now = Date.now();
-    const newFiles: ManagedFile[] = rawFiles.map((file) => ({
-      id: genId(),
-      file,
-      name: file.name,
-      size: file.size,
-      type: file.type || (file.name.toLowerCase().endsWith(".pdf") ? "application/pdf" : ""),
-      status: "idle",
-      addedAt: now,
+  createProject: (name, description) => {
+    const proj: LocalProject = {
+      id: `proj-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      name,
+      description,
+      createdAt: Date.now(),
+    };
+    set((s) => ({ projects: [...s.projects, proj] }));
+    return proj;
+  },
+
+  deleteProject: (id) => {
+    set((s) => ({
+      projects: s.projects.filter((p) => p.id !== id),
+      activeProjectId: s.activeProjectId === id ? null : s.activeProjectId,
+      files: s.files.map((f) =>
+        f.projectId === id ? { ...f, projectId: undefined } : f
+      ),
     }));
+  },
 
-    set((state) => ({ files: [...state.files, ...newFiles] }));
+  setActiveProjectId: (id) => set({ activeProjectId: id }),
+
+  assignFileToProject: (fileId, projectId) => {
+    set((s) => ({
+      files: s.files.map((f) =>
+        f.id === fileId ? { ...f, projectId } : f
+      ),
+    }));
+  },
+
+  addFiles: (rawFiles, targetProjectId) => {
+    const now = Date.now();
+    const projectId = targetProjectId ?? get().activeProjectId ?? undefined;
+
+    const newFiles: ManagedFile[] = rawFiles.map((file) => {
+      const id = genId();
+      const initialEntry: FileHistoryEntry = {
+        id: `hist-0`,
+        action: "Initial file load",
+        timestamp: now,
+        fileSnapshot: file,
+      };
+
+      return {
+        id,
+        file,
+        name: file.name,
+        size: file.size,
+        type:
+          file.type ||
+          (file.name.toLowerCase().endsWith(".pdf") ? "application/pdf" : ""),
+        status: "idle",
+        addedAt: now,
+        projectId,
+        historyStack: [initialEntry],
+        historyIndex: 0,
+      };
+    });
+
+    set((state) => {
+      const updatedFiles = [...state.files, ...newFiles];
+      const nextActiveId = state.activeFileId ?? (newFiles[0]?.id || null);
+      return { files: updatedFiles, activeFileId: nextActiveId };
+    });
 
     for (const mf of newFiles) {
       probeImageDimensions(mf.file, mf.id, get().setDimensions);
@@ -83,17 +216,34 @@ export const useFileStore = create<FileStore>((set, get) => ({
 
   replaceFiles: (rawFiles) => {
     const now = Date.now();
-    const newFiles: ManagedFile[] = rawFiles.map((file) => ({
-      id: genId(),
-      file,
-      name: file.name,
-      size: file.size,
-      type: file.type || (file.name.toLowerCase().endsWith(".pdf") ? "application/pdf" : ""),
-      status: "idle",
-      addedAt: now,
-    }));
+    const newFiles: ManagedFile[] = rawFiles.map((file) => {
+      const id = genId();
+      const initialEntry: FileHistoryEntry = {
+        id: `hist-0`,
+        action: "Initial file load",
+        timestamp: now,
+        fileSnapshot: file,
+      };
 
-    set({ files: newFiles });
+      return {
+        id,
+        file,
+        name: file.name,
+        size: file.size,
+        type:
+          file.type ||
+          (file.name.toLowerCase().endsWith(".pdf") ? "application/pdf" : ""),
+        status: "idle",
+        addedAt: now,
+        historyStack: [initialEntry],
+        historyIndex: 0,
+      };
+    });
+
+    set({
+      files: newFiles,
+      activeFileId: newFiles[0]?.id || null,
+    });
 
     for (const mf of newFiles) {
       probeImageDimensions(mf.file, mf.id, get().setDimensions);
@@ -102,16 +252,26 @@ export const useFileStore = create<FileStore>((set, get) => ({
   },
 
   removeFile: (id) =>
-    set((state) => ({
-      files: state.files.filter((f) => f.id !== id),
-    })),
+    set((state) => {
+      const remaining = state.files.filter((f) => f.id !== id);
+      const nextActive =
+        state.activeFileId === id
+          ? remaining[0]?.id || null
+          : state.activeFileId;
+      return { files: remaining, activeFileId: nextActive };
+    }),
 
-  clearFiles: () => set({ files: [] }),
+  clearFiles: () => set({ files: [], activeFileId: null }),
 
   clearCompleted: () =>
-    set((state) => ({
-      files: state.files.filter((f) => f.status !== "done"),
-    })),
+    set((state) => {
+      const remaining = state.files.filter((f) => f.status !== "done");
+      const nextActive =
+        state.activeFileId && remaining.some((f) => f.id === state.activeFileId)
+          ? state.activeFileId
+          : remaining[0]?.id || null;
+      return { files: remaining, activeFileId: nextActive };
+    }),
 
   resetStatuses: () =>
     set((state) => ({
@@ -143,6 +303,16 @@ export const useFileStore = create<FileStore>((set, get) => ({
       type: nextType,
       lastModified: Date.now(),
     });
+
+    get().pushFileHistory(
+      id,
+      "Promote processed output to input",
+      nextFile,
+      undefined,
+      nextName,
+      target.outputWidth ?? target.width,
+      target.outputHeight ?? target.height
+    );
 
     set((state) => ({
       files: state.files.map((f) =>
@@ -177,7 +347,14 @@ export const useFileStore = create<FileStore>((set, get) => ({
       ),
     })),
 
-  setOutput: (id, outputBlob, outputName, outputSize, outputWidth, outputHeight) =>
+  setOutput: (
+    id,
+    outputBlob,
+    outputName,
+    outputSize,
+    outputWidth,
+    outputHeight
+  ) =>
     set((state) => ({
       files: state.files.map((f) =>
         f.id === id
@@ -207,5 +384,156 @@ export const useFileStore = create<FileStore>((set, get) => ({
         f.id === id ? { ...f, width, height } : f
       ),
     })),
-}));
 
+  pushFileHistory: (
+    id,
+    action,
+    nextFile,
+    nextBlob,
+    nextName,
+    width,
+    height
+  ) => {
+    set((state) => ({
+      files: state.files.map((f) => {
+        if (f.id !== id) return f;
+        const stack = f.historyStack ? [...f.historyStack] : [];
+        const currentIndex = f.historyIndex ?? stack.length - 1;
+        // Trim redo branch
+        const trimmed = stack.slice(0, currentIndex + 1);
+
+        const newEntry: FileHistoryEntry = {
+          id: `hist-${Date.now()}`,
+          action,
+          timestamp: Date.now(),
+          fileSnapshot: nextFile,
+          outputBlobSnapshot: nextBlob,
+          outputNameSnapshot: nextName,
+          outputSizeSnapshot: nextBlob?.size,
+          width,
+          height,
+        };
+
+        return {
+          ...f,
+          historyStack: [...trimmed, newEntry],
+          historyIndex: trimmed.length,
+        };
+      }),
+    }));
+  },
+
+  undo: (id) => {
+    const target = get().files.find((f) => f.id === id);
+    if (!target || !target.historyStack || (target.historyIndex ?? 0) <= 0) {
+      return false;
+    }
+
+    const prevIndex = (target.historyIndex ?? 1) - 1;
+    const entry = target.historyStack[prevIndex];
+    if (!entry) return false;
+
+    set((state) => ({
+      files: state.files.map((f) => {
+        if (f.id !== id) return f;
+        return {
+          ...f,
+          file: entry.fileSnapshot,
+          name: entry.fileSnapshot.name,
+          size: entry.fileSnapshot.size,
+          type: entry.fileSnapshot.type || f.type,
+          outputBlob: entry.outputBlobSnapshot,
+          outputName: entry.outputNameSnapshot,
+          outputSize: entry.outputSizeSnapshot,
+          width: entry.width ?? f.width,
+          height: entry.height ?? f.height,
+          historyIndex: prevIndex,
+        };
+      }),
+    }));
+    return true;
+  },
+
+  redo: (id) => {
+    const target = get().files.find((f) => f.id === id);
+    if (
+      !target ||
+      !target.historyStack ||
+      (target.historyIndex ?? 0) >= target.historyStack.length - 1
+    ) {
+      return false;
+    }
+
+    const nextIndex = (target.historyIndex ?? 0) + 1;
+    const entry = target.historyStack[nextIndex];
+    if (!entry) return false;
+
+    set((state) => ({
+      files: state.files.map((f) => {
+        if (f.id !== id) return f;
+        return {
+          ...f,
+          file: entry.fileSnapshot,
+          name: entry.fileSnapshot.name,
+          size: entry.fileSnapshot.size,
+          type: entry.fileSnapshot.type || f.type,
+          outputBlob: entry.outputBlobSnapshot,
+          outputName: entry.outputNameSnapshot,
+          outputSize: entry.outputSizeSnapshot,
+          width: entry.width ?? f.width,
+          height: entry.height ?? f.height,
+          historyIndex: nextIndex,
+        };
+      }),
+    }));
+    return true;
+  },
+
+  // Download Queue Dock
+  downloadQueue: [],
+
+  pushDownload: (item) => {
+    const id = `dl-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const fullItem: DownloadQueueItem = {
+      ...item,
+      id,
+      timestamp: Date.now(),
+    };
+
+    set((s) => ({
+      downloadQueue: [fullItem, ...s.downloadQueue].slice(0, 20),
+      latestDeliveredFile: item.status === "downloaded" ? fullItem : s.latestDeliveredFile,
+    }));
+    return id;
+  },
+
+  updateDownloadStatus: (id, status, patch) => {
+    set((s) => ({
+      downloadQueue: s.downloadQueue.map((item) =>
+        item.id === id ? { ...item, status, ...patch } : item
+      ),
+      latestDeliveredFile:
+        status === "downloaded"
+          ? {
+              ...(s.downloadQueue.find((item) => item.id === id) || {
+                id,
+                fileName: "file",
+                originalSize: 0,
+                outputSize: 0,
+                status: "downloaded",
+                timestamp: Date.now(),
+              }),
+              status,
+              ...patch,
+            }
+          : s.latestDeliveredFile,
+    }));
+  },
+
+  removeDownload: (id) =>
+    set((s) => ({
+      downloadQueue: s.downloadQueue.filter((item) => item.id !== id),
+    })),
+
+  clearDownloads: () => set({ downloadQueue: [] }),
+}));

@@ -353,7 +353,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--primary)/0.3)] bg-[hsl(var(--primary)/0.08)] px-3.5 py-1.5 text-xs font-semibold tracking-wide text-[hsl(var(--primary))] mb-5 animate-fade-in">
             <LogoMark size={15} animated={false} />
-            <span>FILEFIXER 2.0 • LOCAL FILE WORKSPACE</span>
+            <span>FILEFIXER 3.0 • THE FILE WORKSPACE</span>
           </div>
 
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl animate-slide-up">
@@ -403,15 +403,13 @@ export default function HomePage() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setWorkspaceOpen(true)}
-                      className="min-h-[38px]"
+                    <Link
+                      href="/workspace"
+                      className="inline-flex min-h-[38px] items-center gap-1.5 rounded-lg border border-[hsl(var(--primary)/0.4)] bg-[hsl(var(--primary)/0.12)] px-3 py-1.5 text-xs font-semibold text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.2)] transition-colors"
                     >
                       <FolderKanban className="h-3.5 w-3.5" />
-                      Workspace
-                    </Button>
+                      Open Full Workspace
+                    </Link>
                     <Button
                       variant="ghost"
                       size="sm"
