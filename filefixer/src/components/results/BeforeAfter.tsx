@@ -48,7 +48,7 @@ export function BeforeAfterStats({
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
             Original
           </p>
-          <p className="mt-1 text-xl sm:text-2xl font-bold text-[hsl(var(--foreground))]">
+          <p className="mt-1 text-xl sm:text-2xl font-bold text-[hsl(var(--foreground))] tabular-nums">
             {formatBytes(originalSize)}
           </p>
           {(originalDimensions || originalFormat) && (
@@ -66,7 +66,7 @@ export function BeforeAfterStats({
             <ArrowRight className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
           </div>
           {isGood && (
-            <span className="flex items-center gap-0.5 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-400">
+            <span className="flex items-center gap-0.5 rounded-full bg-emerald-500/15 px-2 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
               <TrendingDown className="h-3 w-3" />
               -{pct}%
             </span>
@@ -78,7 +78,7 @@ export function BeforeAfterStats({
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--primary))]">
             Optimized
           </p>
-          <p className="mt-1 text-xl sm:text-2xl font-bold text-emerald-400">
+          <p className="mt-1 text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
             {formatBytes(actualOutputSize)}
           </p>
           {(actualOutputDims || outputFormat) && (
@@ -93,7 +93,7 @@ export function BeforeAfterStats({
 
       {/* Summary message */}
       {isGood ? (
-        <div className="mt-4 flex items-center justify-between rounded-xl bg-emerald-500/10 px-3.5 py-2 text-xs font-medium text-emerald-400 border border-emerald-500/20">
+        <div className="mt-4 flex items-center justify-between rounded-xl bg-emerald-500/10 px-3.5 py-2 text-xs font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 tabular-nums">
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
             Saved {formatBytes(saved)} ({pct}% smaller)

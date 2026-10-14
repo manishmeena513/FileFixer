@@ -25,14 +25,12 @@ export function FileCard({ file, onRemove, showOutput = true }: FileCardProps) {
   const [localThumb, setLocalThumb] = useState<string | null>(null);
 
   useEffect(() => {
-    if (file.thumbnailUrl || !isImage) {
-      setLocalThumb(null);
-      return;
-    }
+    if (file.thumbnailUrl || !isImage) return;
     const url = URL.createObjectURL(file.file);
     setLocalThumb(url);
     return () => {
       URL.revokeObjectURL(url);
+      setLocalThumb(null);
     };
   }, [file.file, file.thumbnailUrl, isImage]);
 

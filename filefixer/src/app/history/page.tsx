@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { useToast } from "@/components/ui/toaster";
 import { getAllHistory, clearAllHistory, deleteHistoryRecord, HistoryRecord } from "@/lib/storage/history";
 import { formatBytes } from "@/lib/file-utils";
@@ -91,28 +92,28 @@ export default function HistoryPage() {
       {/* Summary KPI Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 text-center">
-          <span className="text-xs text-[hsl(var(--muted-foreground))] uppercase font-semibold">
+          <span className="text-xs text-[hsl(var(--muted-foreground))] uppercase font-semibold tracking-wider">
             Files Processed Locally
           </span>
-          <p className="text-2xl font-bold text-[hsl(var(--foreground))] mt-1">
+          <p className="text-2xl font-bold text-[hsl(var(--foreground))] mt-1 tabular-nums">
             {records.length}
           </p>
         </div>
 
         <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 text-center">
-          <span className="text-xs text-[hsl(var(--muted-foreground))] uppercase font-semibold">
+          <span className="text-xs text-[hsl(var(--muted-foreground))] uppercase font-semibold tracking-wider">
             Total Bandwidth Saved
           </span>
-          <p className="text-2xl font-bold text-emerald-400 mt-1">
+          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 tabular-nums">
             {formatBytes(totalSavedBytes)}
           </p>
         </div>
 
         <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 text-center">
-          <span className="text-xs text-[hsl(var(--muted-foreground))] uppercase font-semibold">
+          <span className="text-xs text-[hsl(var(--muted-foreground))] uppercase font-semibold tracking-wider">
             Privacy Status
           </span>
-          <p className="text-xs font-bold text-emerald-400 mt-2 flex items-center justify-center gap-1.5">
+          <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-2 flex items-center justify-center gap-1.5">
             <ShieldCheck className="h-4 w-4" /> Zero Cloud Persistence
           </p>
         </div>
@@ -126,19 +127,19 @@ export default function HistoryPage() {
             Loading IndexedDB history...
           </div>
         ) : records.length === 0 ? (
-          <div className="p-12 text-center space-y-2">
-            <HardDrive className="h-8 w-8 text-[hsl(var(--muted-foreground))] mx-auto opacity-50" />
-            <p className="text-sm font-semibold text-[hsl(var(--foreground))]">No processing history yet</p>
-            <p className="text-xs text-[hsl(var(--muted-foreground))]">
-              Files you optimize or convert in FileFixer will log statistics locally here.
-            </p>
+          <div className="p-6">
+            <EmptyState
+              icon={HardDrive}
+              title="No processing history yet"
+              description="Files you optimize, convert, or inspect in FileFixer will log bandwidth and compression statistics locally in your browser."
+            />
           </div>
         ) : (
           <div className="divide-y divide-[hsl(var(--border))]">
             {records.map((r) => (
               <div
                 key={r.id}
-                className="flex items-center justify-between p-4 text-xs gap-4 transition-colors hover:bg-[hsl(var(--secondary)/0.3)]"
+                className="flex items-center justify-between p-4 text-xs gap-4 transition-colors hover:bg-[hsl(var(--secondary)/0.5)]"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
@@ -155,12 +156,12 @@ export default function HistoryPage() {
                 </div>
 
                 <div className="text-right">
-                  <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center justify-end gap-2 tabular-nums">
                     <span className="text-[hsl(var(--muted-foreground))]">{formatBytes(r.originalSize)}</span>
-                    <span>→</span>
-                    <span className="font-bold text-emerald-400">{formatBytes(r.outputSize)}</span>
+                    <span className="text-[hsl(var(--muted-foreground))]">→</span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatBytes(r.outputSize)}</span>
                     {r.savingsPct > 0 && (
-                      <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-400">
+                      <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
                         -{r.savingsPct}%
                       </span>
                     )}
@@ -170,8 +171,9 @@ export default function HistoryPage() {
                 <button
                   type="button"
                   onClick={() => handleDeleteOne(r.id)}
-                  className="rounded p-1 text-[hsl(var(--muted-foreground))] hover:text-red-400 transition-colors"
+                  className="rounded p-1 text-[hsl(var(--muted-foreground))] hover:text-red-500 transition-colors"
                   title="Delete record"
+                  aria-label={`Delete record for ${r.filename}`}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

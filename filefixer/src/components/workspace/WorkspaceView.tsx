@@ -154,23 +154,23 @@ export function WorkspaceView() {
   const [activeOutputUrl, setActiveOutputUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!activeFile) {
-      setActivePreviewUrl(null);
-      return;
-    }
+    if (!activeFile?.file) return;
     const url = URL.createObjectURL(activeFile.file);
     setActivePreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
+    return () => {
+      URL.revokeObjectURL(url);
+      setActivePreviewUrl(null);
+    };
   }, [activeFile?.file]);
 
   useEffect(() => {
-    if (!activeFile?.outputBlob) {
-      setActiveOutputUrl(null);
-      return;
-    }
+    if (!activeFile?.outputBlob) return;
     const url = URL.createObjectURL(activeFile.outputBlob);
     setActiveOutputUrl(url);
-    return () => URL.revokeObjectURL(url);
+    return () => {
+      URL.revokeObjectURL(url);
+      setActiveOutputUrl(null);
+    };
   }, [activeFile?.outputBlob]);
 
   // Add files handler
@@ -284,9 +284,9 @@ export function WorkspaceView() {
       });
 
       setActiveTab("deliver");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      alert(`Operation failed: ${err.message || "Unknown error"}`);
+      alert(`Operation failed: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setIsProcessing(false);
     }
@@ -316,8 +316,8 @@ export function WorkspaceView() {
       const nextFile = new File([blob], activeFile.name, { type: blob.type || activeFile.type });
       pushFileHistory(activeFile.id, `Rotate ${angle}°`, nextFile, blob, activeFile.name);
       useFileStore.getState().setOutput(activeFile.id, blob, activeFile.name, blob.size);
-    } catch (err: any) {
-      alert(`Rotation failed: ${err.message}`);
+    } catch (err: unknown) {
+      alert(`Rotation failed: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setIsProcessing(false);
     }
@@ -334,8 +334,8 @@ export function WorkspaceView() {
       const nextFile = new File([blob], activeFile.name, { type: blob.type || activeFile.type });
       pushFileHistory(activeFile.id, `Flip ${axis}`, nextFile, blob, activeFile.name);
       useFileStore.getState().setOutput(activeFile.id, blob, activeFile.name, blob.size);
-    } catch (err: any) {
-      alert(`Flip failed: ${err.message}`);
+    } catch (err: unknown) {
+      alert(`Flip failed: ${err instanceof Error ? err.message : "Unknown error"}`);
     } finally {
       setIsProcessing(false);
     }

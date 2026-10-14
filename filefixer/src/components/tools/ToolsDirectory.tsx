@@ -16,6 +16,7 @@ import { TOOLS, CATEGORIES, ToolCategoryKey, ToolItem } from "@/lib/tools";
 import { ToolCard } from "@/components/tools/ToolCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export function ToolsDirectory() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -206,19 +207,17 @@ export function ToolsDirectory() {
       <div className="max-w-6xl mx-auto">
         {/* Empty Search State */}
         {filteredTools.length === 0 ? (
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-12 text-center space-y-4 max-w-md mx-auto my-8">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] mx-auto">
-              <FileQuestion className="h-7 w-7" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-base font-bold text-[hsl(var(--foreground))]">No tools found</h3>
-              <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                No tool matches &quot;{searchQuery}&quot;. Try searching for another keyword, file extension, or clear filters.
-              </p>
-            </div>
-            <Button variant="default" size="sm" onClick={handleClear}>
-              Clear Search
-            </Button>
+          <div className="max-w-md mx-auto my-8">
+            <EmptyState
+              icon={FileQuestion}
+              title="No tools found"
+              description={`No tool matches "${searchQuery}". Try searching for another keyword, file extension, or clear filters.`}
+              action={
+                <Button variant="default" size="sm" onClick={handleClear}>
+                  Clear Search
+                </Button>
+              }
+            />
           </div>
         ) : isDefaultView ? (
           /* Grouped by Category on Default View */

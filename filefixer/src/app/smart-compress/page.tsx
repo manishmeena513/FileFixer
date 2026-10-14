@@ -51,13 +51,13 @@ export default function SmartCompressPage() {
 
   // Manage object URLs cleanly for image comparison
   useEffect(() => {
-    if (!selectedFile || !selectedFile.type.startsWith("image/")) {
-      setOrigPreviewUrl(null);
-      return;
-    }
+    if (!selectedFile || !selectedFile.type.startsWith("image/")) return;
     const url = URL.createObjectURL(selectedFile);
     setOrigPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
+    return () => {
+      URL.revokeObjectURL(url);
+      setOrigPreviewUrl(null);
+    };
   }, [selectedFile]);
 
   useEffect(() => {
@@ -65,13 +65,13 @@ export default function SmartCompressPage() {
       !finalResult ||
       !selectedFile ||
       !selectedFile.type.startsWith("image/")
-    ) {
-      setOutPreviewUrl(null);
-      return;
-    }
+    ) return;
     const url = URL.createObjectURL(finalResult.bestBlob);
     setOutPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
+    return () => {
+      URL.revokeObjectURL(url);
+      setOutPreviewUrl(null);
+    };
   }, [finalResult, selectedFile]);
 
   const presets = [

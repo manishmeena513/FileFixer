@@ -95,7 +95,7 @@ export async function processBatchItem(
       blob: currentBlob,
       status: "done",
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     return {
       id: `${Date.now()}-${index}`,
       originalName: file.name,
@@ -104,7 +104,7 @@ export async function processBatchItem(
       outputSize: originalSize,
       blob: file,
       status: "error",
-      error: err.message || "Failed in batch pipeline",
+      error: err instanceof Error ? err.message : "Failed in batch pipeline",
     };
   }
 }

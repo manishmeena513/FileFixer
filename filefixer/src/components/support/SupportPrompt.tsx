@@ -61,8 +61,9 @@ export function SupportPrompt() {
         <div className="flex items-center gap-2">
           <Button
             size="sm"
+            variant="accent"
             onClick={openSupportModal}
-            className="flex-1 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(186,100%,36%)] font-semibold text-xs shadow-xs"
+            className="flex-1 font-semibold text-xs shadow-xs"
           >
             ❤️ Support FileFixer
           </Button>

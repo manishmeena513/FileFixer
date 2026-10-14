@@ -44,23 +44,23 @@ export default function CompressImagePage() {
   );
 
   useEffect(() => {
-    if (!singleFile) {
-      setOriginalPreviewUrl(null);
-      return;
-    }
+    if (!singleFile?.file) return;
     const url = URL.createObjectURL(singleFile.file);
     setOriginalPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [singleFile]);
+    return () => {
+      URL.revokeObjectURL(url);
+      setOriginalPreviewUrl(null);
+    };
+  }, [singleFile?.file]);
 
   useEffect(() => {
-    if (!singleFile?.outputBlob) {
-      setOptimizedPreviewUrl(null);
-      return;
-    }
+    if (!singleFile?.outputBlob) return;
     const url = URL.createObjectURL(singleFile.outputBlob);
     setOptimizedPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
+    return () => {
+      URL.revokeObjectURL(url);
+      setOptimizedPreviewUrl(null);
+    };
   }, [singleFile?.outputBlob]);
 
   const handleFiles = (newFiles: File[]) => {

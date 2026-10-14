@@ -204,6 +204,17 @@ export function Header() {
             </span>
           </Link>
 
+          {/* Privacy Indicator */}
+          <Link
+            href="/privacy"
+            className="hidden lg:inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-400 hover:bg-emerald-500/15 transition-colors"
+            title="Local browser processing — files never leave your device"
+            aria-label="Local browser processing: files stay on your device"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <span>On-Device</span>
+          </Link>
+
           {/* Shortcuts Modal Trigger */}
           <button
             type="button"

@@ -6,25 +6,29 @@
 }
 
 :root {
-  /* Light mode palette */
-  --background: 210 20% 98%;
-  --foreground: 222 14% 12%;
+  /* Light mode palette: Pristine Clean (#F7F9FC) */
+  --background: 214 38% 98%;
+  --foreground: 222 47% 11%;
 
   --card: 0 0% 100%;
-  --card-foreground: 222 14% 12%;
+  --card-foreground: 222 47% 11%;
+
+  --surface-elevated: 0 0% 100%;
+  --surface-secondary: 210 40% 96%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 222 14% 12%;
+  --popover-foreground: 222 47% 11%;
 
-  /* Brand Primary: Vivid Royal Blue (#2563EB) */
+  /* Brand Primary: Vivid Royal Blue (#2563EB) & Subtle (#3B82F6) */
   --primary: 221 83% 53%;
   --primary-foreground: 0 0% 100%;
+  --accent-subtle: 217 91% 60%;
 
-  --secondary: 214 20% 94%;
-  --secondary-foreground: 222 14% 18%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
 
-  --muted: 214 20% 92%;
-  --muted-foreground: 215 16% 45%;
+  --muted: 214 32% 92%;
+  --muted-foreground: 215 16% 47%;
 
   --accent: 221 83% 53%;
   --accent-foreground: 0 0% 100%;
@@ -38,11 +42,12 @@
   --warning: 38 92% 50%;
   --warning-foreground: 0 0% 0%;
 
-  --border: 214 20% 86%;
-  --input: 214 20% 88%;
+  --border: 214 32% 91%;
+  --border-subtle: 214 24% 94%;
+  --input: 214 32% 88%;
   --ring: 221 83% 53%;
 
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
   /* Centralized Animation Tokens */
   --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
@@ -53,25 +58,29 @@
 }
 
 .dark {
-  /* Dark mode palette: Deep Obsidian Navy (#0B1220) */
-  --background: 220 48% 8%;
-  --foreground: 210 20% 98%;
+  /* Dark mode palette: Deep Midnight Obsidian (#0B1020) */
+  --background: 224 49% 9%;
+  --foreground: 210 40% 98%;
 
-  --card: 220 40% 12%;
-  --card-foreground: 210 20% 98%;
+  --card: 220 39% 11%;
+  --card-foreground: 210 40% 98%;
 
-  --popover: 220 40% 11%;
-  --popover-foreground: 210 20% 98%;
+  --surface-elevated: 220 39% 11%;
+  --surface-secondary: 221 38% 15%;
 
-  /* Brand Accent: Vibrant Blue (#3882F6 / #2563EB) */
+  --popover: 220 39% 11%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Brand Accent: Vibrant Blue (#3B82F6) & Subtle Accent (#60A5FA) */
   --primary: 217 91% 60%;
   --primary-foreground: 0 0% 100%;
+  --accent-subtle: 213 94% 68%;
 
-  --secondary: 220 30% 16%;
-  --secondary-foreground: 210 20% 90%;
+  --secondary: 221 38% 15%;
+  --secondary-foreground: 210 40% 95%;
 
-  --muted: 220 30% 15%;
-  --muted-foreground: 215 16% 65%;
+  --muted: 221 38% 15%;
+  --muted-foreground: 215 20% 65%;
 
   --accent: 217 91% 60%;
   --accent-foreground: 0 0% 100%;
@@ -85,8 +94,9 @@
   --warning: 38 92% 50%;
   --warning-foreground: 0 0% 0%;
 
-  --border: 222 14% 20%;
-  --input: 222 14% 17%;
+  --border: 217 33% 18%;
+  --border-subtle: 217 28% 14%;
+  --input: 217 33% 18%;
   --ring: 217 91% 60%;
 }
 
@@ -130,6 +140,25 @@ body {
 :focus-visible {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
+}
+
+/* Tabular figures for exact numbers, sizes and metrics */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  -moz-font-feature-settings: "tnum";
+  -webkit-font-feature-settings: "tnum";
+  font-feature-settings: "tnum";
+}
+
+/* Surface utilities */
+.surface-card {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+.surface-secondary {
+  background-color: hsl(var(--secondary));
+  border-color: hsl(var(--border-subtle));
 }
 
 /* Safe area utilities for Mobile / Installed PWA */

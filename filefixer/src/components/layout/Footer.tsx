@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { ShieldCheck, Cpu, HardDrive } from "lucide-react";
 import { Logo } from "@/components/branding/Logo";
+import { FooterSupportButton } from "@/components/support/FooterSupportButton";
 
 export function Footer() {
   return (
@@ -141,6 +142,9 @@ export function Footer() {
                 <Link href="/terms" className="hover:text-[hsl(var(--foreground))] transition-colors">
                   Terms of Service
                 </Link>
+              </li>
+              <li className="pt-1">
+                <FooterSupportButton />
               </li>
               <li className="pt-2 text-[11px] text-[hsl(var(--muted-foreground))] flex items-center gap-1.5">
                 <Cpu className="h-3 w-3" /> Canvas & WebAssembly

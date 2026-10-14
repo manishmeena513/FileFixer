@@ -204,6 +204,7 @@ export default function HomePage() {
     removeFile,
     clearFiles,
     setWorkspaceOpen,
+    openSupportModal,
   } = useFileStore();
 
   const handleDroppedFiles = (dropped: File[]) => {
@@ -358,14 +359,13 @@ export default function HomePage() {
 
           <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl animate-slide-up">
             Fix your files.{" "}
-            <span className="bg-gradient-to-r from-[hsl(var(--primary))] via-sky-400 to-emerald-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[hsl(var(--primary))] via-sky-400 to-blue-500 bg-clip-text text-transparent">
               Keep them private.
             </span>
           </h1>
 
-          <p className="mx-auto mt-4 sm:mt-6 max-w-2xl text-sm sm:text-lg text-[hsl(var(--muted-foreground))] leading-relaxed animate-slide-up">
-            Compress, convert, resize, merge, and split files locally in your browser.
-            No server uploads. No accounts. Zero tracking.
+          <p className="mx-auto mt-4 sm:mt-6 max-w-2xl text-sm sm:text-base md:text-lg text-[hsl(var(--muted-foreground))] leading-relaxed animate-slide-up">
+            Compress, convert, organize, and inspect files with simple tools designed to keep processing on your device wherever supported.
           </p>
 
           {/* Smart File Drop Zone OR Smart File Action Selector */}
@@ -640,7 +640,74 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. PRIVACY CENTER ARCHITECTURE FLOW */}
+      {/* 4. SUPPORTED FORMATS & OPERATIONS */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-8">
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[hsl(var(--foreground))]">
+              Supported Formats & Operations
+            </h2>
+            <p className="mt-1.5 text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
+              Reliable, standards-compliant file utilities running directly in your browser tab.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.4)] p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <FileImage className="h-4 w-4 text-[hsl(var(--primary))]" />
+                <h3 className="text-sm font-bold text-[hsl(var(--foreground))]">Image Formats</h3>
+              </div>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
+                JPG, PNG, WebP, and SVG. Supports quality compression, pixel scaling, format conversions, cropping, and EXIF/GPS scrubbing.
+              </p>
+              <div className="flex flex-wrap gap-1 pt-1">
+                {["JPG", "PNG", "WEBP", "SVG"].map((fmt) => (
+                  <span key={fmt} className="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-1.5 py-0.5 text-[10px] font-mono text-[hsl(var(--muted-foreground))]">
+                    {fmt}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.4)] p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-emerald-400" />
+                <h3 className="text-sm font-bold text-[hsl(var(--foreground))]">PDF Documents</h3>
+              </div>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
+                Standard PDF documents. Combine multiple files, split pages, extract ranges, rotate orientations, and compress file size.
+              </p>
+              <div className="flex flex-wrap gap-1 pt-1">
+                {["MERGE", "SPLIT", "REORDER", "ROTATE", "COMPRESS"].map((fmt) => (
+                  <span key={fmt} className="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-1.5 py-0.5 text-[10px] font-mono text-[hsl(var(--muted-foreground))]">
+                    {fmt}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.4)] p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <Layers className="h-4 w-4 text-purple-400" />
+                <h3 className="text-sm font-bold text-[hsl(var(--foreground))]">Batch & Pipelines</h3>
+              </div>
+              <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
+                Multi-image batch pipelines, sequence renaming, and instant in-browser ZIP package bundling with zero server uploads.
+              </p>
+              <div className="flex flex-wrap gap-1 pt-1">
+                {["BATCH", "ZIP", "WORKFLOWS", "RENAME"].map((fmt) => (
+                  <span key={fmt} className="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-1.5 py-0.5 text-[10px] font-mono text-[hsl(var(--muted-foreground))]">
+                    {fmt}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. PRIVACY CENTER ARCHITECTURE FLOW */}
       <section className="border-y border-[hsl(var(--border))] bg-[hsl(var(--card)/0.4)] py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
@@ -730,7 +797,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. FAQ */}
+      {/* 6. TASTEFUL VOLUNTARY SUPPORT CALLOUT */}
+      <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
+          <div className="space-y-1">
+            <h3 className="text-base font-bold text-[hsl(var(--foreground))]">
+              Support Free, Private Tools
+            </h3>
+            <p className="text-xs sm:text-sm text-[hsl(var(--muted-foreground))] max-w-lg leading-relaxed">
+              FileFixer is completely free, open, and private with zero ads or tracking. If FileFixer helps your workflow, voluntary support helps keep it independent.
+            </p>
+          </div>
+          <Button
+            onClick={openSupportModal}
+            className="shrink-0 bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] font-semibold text-xs shadow-xs min-h-[40px] px-5"
+          >
+            ❤️ Support FileFixer
+          </Button>
+        </div>
+      </section>
+
+      {/* 7. FAQ */}
       <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[hsl(var(--primary))] uppercase tracking-wider mb-2">
