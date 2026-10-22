@@ -466,7 +466,7 @@ export default function HomePage() {
                           <div
                             className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
                               act.primary
-                                ? "bg-[hsl(var(--primary))] text-white"
+                                ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
                                 : "bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"
                             }`}
                           >

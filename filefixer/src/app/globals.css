@@ -7,7 +7,7 @@
 
 :root {
   /* Light mode palette: Pristine Clean (#F7F9FC) */
-  --background: 214 38% 98%;
+  --background: 216 45% 97.8%;
   --foreground: 222 47% 11%;
 
   --card: 0 0% 100%;
@@ -23,20 +23,21 @@
   --primary: 221 83% 53%;
   --primary-foreground: 0 0% 100%;
   --accent-subtle: 217 91% 60%;
+  --accent-subtle-foreground: 222 47% 11%; /* #0F172A dark slate, 4.86:1 contrast against #3B82F6 */
 
   --secondary: 210 40% 96%;
   --secondary-foreground: 222 47% 11%;
 
   --muted: 214 32% 92%;
-  --muted-foreground: 215 16% 47%;
+  --muted-foreground: 215 25% 27%; /* #334155 slate-700, 9.82:1 contrast */
 
   --accent: 221 83% 53%;
   --accent-foreground: 0 0% 100%;
 
-  --destructive: 0 75% 55%;
+  --destructive: 0 72% 51%; /* #DC2626 red-600, 4.83:1 contrast with white text */
   --destructive-foreground: 0 0% 100%;
 
-  --success: 142 71% 38%;
+  --success: 142 72% 29%; /* #15803D emerald-700, 4.76:1 text on lightBg, 5.02:1 with white text */
   --success-foreground: 0 0% 100%;
 
   --warning: 38 92% 50%;
@@ -59,7 +60,7 @@
 
 .dark {
   /* Dark mode palette: Deep Midnight Obsidian (#0B1020) */
-  --background: 224 49% 9%;
+  --background: 226 49% 8.4%;
   --foreground: 210 40% 98%;
 
   --card: 220 39% 11%;
@@ -73,8 +74,9 @@
 
   /* Brand Accent: Vibrant Blue (#3B82F6) & Subtle Accent (#60A5FA) */
   --primary: 217 91% 60%;
-  --primary-foreground: 0 0% 100%;
+  --primary-foreground: 222 47% 11%; /* #0F172A dark slate, 4.85:1 contrast on #3B82F6 */
   --accent-subtle: 213 94% 68%;
+  --accent-subtle-foreground: 222 47% 11%; /* #0F172A dark slate, 7.04:1 contrast against #60A5FA */
 
   --secondary: 221 38% 15%;
   --secondary-foreground: 210 40% 95%;
@@ -83,13 +85,13 @@
   --muted-foreground: 215 20% 65%;
 
   --accent: 217 91% 60%;
-  --accent-foreground: 0 0% 100%;
+  --accent-foreground: 222 47% 11%; /* #0F172A */
 
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 0 0% 100%;
+  --destructive: 0 91% 71%; /* #F87171 red-400: 6.85:1 on #0B1020, 6.37:1 on card, 5.63:1 on surface-secondary */
+  --destructive-foreground: 222 47% 11%; /* #0F172A dark slate: 6.45:1 contrast on #F87171 */
 
   --success: 142 71% 45%;
-  --success-foreground: 0 0% 100%;
+  --success-foreground: 222 47% 11%; /* #0F172A dark slate, 7.83:1 contrast on #22C55E */
 
   --warning: 38 92% 50%;
   --warning-foreground: 0 0% 0%;
@@ -116,8 +118,13 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.2s ease, color 0.2s ease;
   overflow-x: hidden;
+}
+
+/* Smooth theme transition only applied during user toggle */
+.theme-transitioning,
+.theme-transitioning * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
 }
 
 /* Custom scrollbar */
@@ -142,8 +149,14 @@ body {
   outline-offset: 2px;
 }
 
-/* Tabular figures for exact numbers, sizes and metrics */
-.tabular-nums {
+/* Universal Tabular Figures for metrics, badges, and numeric counters */
+.tabular-nums,
+[data-tabular-nums="true"],
+.font-feature-tnum,
+.font-mono,
+kbd,
+.metric-value,
+.stat-value {
   font-variant-numeric: tabular-nums;
   -moz-font-feature-settings: "tnum";
   -webkit-font-feature-settings: "tnum";
@@ -220,8 +233,8 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: hsl(var(--primary));
   border: 2px solid hsl(var(--primary-foreground));

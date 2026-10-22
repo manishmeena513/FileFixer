@@ -4,10 +4,17 @@ import React, { useEffect, useRef } from "react";
 import { X, Sparkles } from "lucide-react";
 import { useFileStore } from "@/stores/fileStore";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function SupportPrompt() {
-  const { isSupportPromptVisible, openSupportModal, dismissSupportPrompt } =
-    useFileStore();
+  const {
+    isSupportPromptVisible,
+    openSupportModal,
+    dismissSupportPrompt,
+    downloadQueue,
+  } = useFileStore();
+
+  const hasDownloads = downloadQueue.length > 0;
 
   const promptRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +36,10 @@ export function SupportPrompt() {
       role="region"
       aria-live="polite"
       aria-label="Voluntary support prompt"
-      className="fixed bottom-20 left-4 right-4 sm:left-6 sm:right-auto sm:max-w-sm z-40 animate-slide-up pointer-events-auto"
+      className={cn(
+        "fixed left-4 right-4 sm:left-6 sm:right-auto sm:max-w-sm md:bottom-6 z-40 animate-slide-up pointer-events-auto transition-all duration-300",
+        hasDownloads ? "bottom-80 sm:bottom-72 md:bottom-6" : "bottom-20 sm:bottom-20 md:bottom-6"
+      )}
     >
       <div className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card)/0.96)] p-4 sm:p-5 shadow-2xl backdrop-blur-md transition-all">
         {/* Header */}
@@ -45,7 +55,7 @@ export function SupportPrompt() {
           <button
             type="button"
             onClick={dismissSupportPrompt}
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors shrink-0"
+            className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors shrink-0 touch-manipulation cursor-pointer"
             aria-label="Dismiss support prompt"
           >
             <X className="h-4 w-4" />

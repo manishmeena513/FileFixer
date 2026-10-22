@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -18,7 +18,6 @@ import {
   ChevronDown,
   FolderKanban,
   Search,
-  Command,
   Workflow,
   Keyboard,
 } from "lucide-react";
@@ -90,9 +89,40 @@ const mobileLinks = [
 export function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const navRef = useRef<HTMLElement>(null);
   const { files, setCommandCenterOpen, setShortcutsOpen } = useFileStore();
 
   const fileCount = files.length;
+
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setOpenDropdown(null);
+    setMobileOpen(false);
+  }
+
+  // Click outside listener for navigation dropdowns
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [mobileOpen]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/0.92)] backdrop-blur-md">
@@ -110,12 +140,12 @@ export function Header() {
         <button
           type="button"
           onClick={() => setCommandCenterOpen(true)}
-          className="flex items-center gap-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-1.5 text-xs text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary)/0.6)] hover:text-[hsl(var(--foreground))] transition-all shadow-xs"
+          className="flex min-h-[44px] sm:min-h-0 sm:h-9 items-center gap-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2 sm:py-1.5 text-xs text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary)/0.6)] hover:text-[hsl(var(--foreground))] transition-all shadow-xs cursor-pointer touch-manipulation"
           aria-label="Open Command Center (Ctrl+K)"
         >
-          <Search className="h-3.5 w-3.5 text-[hsl(var(--primary))]" />
+          <Search className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-[hsl(var(--primary))]" />
           <span className="hidden sm:inline">Search tools & actions...</span>
-          <span className="sm:hidden">Search</span>
+          <span className="sm:hidden font-medium">Search</span>
           <kbd className="hidden md:inline-flex items-center gap-0.5 rounded bg-[hsl(var(--secondary))] px-1.5 py-0.5 text-[10px] font-mono text-[hsl(var(--muted-foreground))] border border-[hsl(var(--border))]">
             Ctrl+K
           </kbd>
@@ -123,30 +153,70 @@ export function Header() {
 
         {/* Desktop nav */}
         <nav
+          ref={navRef}
           className="hidden items-center gap-0.5 lg:flex ml-2"
           aria-label="Main navigation"
         >
-          {navLinks.map((link) =>
-            link.children ? (
-              <div key={link.label} className="group relative">
+          {navLinks.map((link) => {
+            const isDropdownOpen = openDropdown === link.label;
+            const dropdownId = `nav-dropdown-${link.label.toLowerCase()}`;
+            const buttonId = `nav-btn-${link.label.toLowerCase()}`;
+
+            return link.children ? (
+              <div
+                key={link.label}
+                className="relative"
+                onMouseEnter={() => setOpenDropdown(link.label)}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
                 <button
                   type="button"
+                  id={buttonId}
+                  aria-haspopup="menu"
+                  aria-expanded={isDropdownOpen}
+                  aria-controls={dropdownId}
+                  onClick={() => setOpenDropdown(isDropdownOpen ? null : link.label)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+                      e.preventDefault();
+                      setOpenDropdown(link.label);
+                    } else if (e.key === "Escape") {
+                      e.preventDefault();
+                      setOpenDropdown(null);
+                    }
+                  }}
                   className={cn(
-                    "flex items-center gap-1 rounded-[var(--radius)] px-2.5 py-2 text-xs xl:text-sm font-medium transition-colors",
-                    link.children.some((c) => pathname === c.href)
+                    "flex items-center gap-1 rounded-[var(--radius)] px-2.5 py-2 text-xs xl:text-sm font-medium transition-colors cursor-pointer",
+                    link.children.some((c) => pathname === c.href) || isDropdownOpen
                       ? "text-[hsl(var(--primary))] bg-[hsl(var(--secondary))]"
                       : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
                   )}
                 >
                   {link.label}
-                  <ChevronDown className="h-3.5 w-3.5 opacity-60 transition-transform duration-150 group-hover:rotate-180" />
+                  <ChevronDown
+                    className={cn(
+                      "h-3.5 w-3.5 opacity-60 transition-transform duration-150",
+                      isDropdownOpen && "rotate-180"
+                    )}
+                  />
                 </button>
-                <div className="absolute left-0 top-full hidden w-56 pt-1.5 group-hover:block group-focus-within:block">
-                  <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--popover))] py-1.5 shadow-xl animate-scale-in">
+                <div
+                  id={dropdownId}
+                  role="menu"
+                  aria-labelledby={buttonId}
+                  aria-orientation="vertical"
+                  className={cn(
+                    "absolute left-0 top-full w-56 pt-1.5 transition-all z-50",
+                    isDropdownOpen ? "block" : "hidden"
+                  )}
+                >
+                  <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] py-1.5 shadow-xl animate-scale-in">
                     {link.children.map((child) => (
                       <Link
                         key={child.href}
                         href={child.href}
+                        role="menuitem"
+                        onClick={() => setOpenDropdown(null)}
                         className={cn(
                           "block px-4 py-2 text-xs xl:text-sm transition-colors",
                           pathname === child.href
@@ -173,8 +243,8 @@ export function Header() {
               >
                 {link.label}
               </Link>
-            )
-          )}
+            );
+          })}
         </nav>
 
         {/* Right side tools */}
@@ -183,7 +253,7 @@ export function Header() {
           <Link
             href="/workspace"
             className={cn(
-              "inline-flex min-h-[38px] items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all",
+              "inline-flex min-h-[44px] sm:min-h-[38px] items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all cursor-pointer touch-manipulation",
               fileCount > 0
                 ? "border-[hsl(var(--primary)/0.4)] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.18)]"
                 : "border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
@@ -194,9 +264,9 @@ export function Header() {
             <span className="hidden sm:inline">Workspace</span>
             <span
               className={cn(
-                "inline-flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-bold",
+                "inline-flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] font-bold tabular-nums",
                 fileCount > 0
-                  ? "bg-[hsl(var(--primary))] text-white"
+                  ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
                   : "bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
               )}
             >
@@ -219,7 +289,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setShortcutsOpen(true)}
-            className="hidden sm:flex h-9 w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors"
+            className="hidden sm:flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors touch-manipulation cursor-pointer"
             title="Keyboard Shortcuts (?)"
             aria-label="Keyboard shortcuts"
           >
@@ -232,7 +302,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex h-11 w-11 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] lg:hidden cursor-pointer"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
           >

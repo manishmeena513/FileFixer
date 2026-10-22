@@ -8,24 +8,61 @@ import { useFileStore } from "@/stores/fileStore";
 export function SupportModal() {
   const { isSupportModalOpen, closeSupportModal } = useFileStore();
   const [imageFailed, setImageFailed] = useState(false);
+  const modalContainerRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // Manage focus & background scroll lock
+  // Manage focus, Tab trapping & background scroll lock
   useEffect(() => {
     if (isSupportModalOpen) {
       previousFocusRef.current = document.activeElement as HTMLElement | null;
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
 
+      // Initial focus on close button
+      closeButtonRef.current?.focus();
+      const timerId = setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 30);
+
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
+          e.preventDefault();
           closeSupportModal();
+          return;
+        }
+
+        // Tab Focus Trap Loop
+        if (e.key === "Tab" && modalContainerRef.current) {
+          const focusable = modalContainerRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusable.length === 0) {
+            e.preventDefault();
+            return;
+          }
+
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === first || !modalContainerRef.current.contains(document.activeElement)) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last || !modalContainerRef.current.contains(document.activeElement)) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
         }
       };
 
       window.addEventListener("keydown", handleKeyDown);
 
       return () => {
+        clearTimeout(timerId);
         document.body.style.overflow = originalOverflow;
         window.removeEventListener("keydown", handleKeyDown);
         if (previousFocusRef.current && typeof previousFocusRef.current.focus === "function") {
@@ -47,14 +84,16 @@ export function SupportModal() {
       aria-describedby="support-dialog-desc"
     >
       <div
+        ref={modalContainerRef}
         className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-7 shadow-2xl animate-slide-up sm:animate-scale-in text-center space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Visible Close Button */}
         <button
+          ref={closeButtonRef}
           type="button"
           onClick={closeSupportModal}
-          className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors"
+          className="absolute top-4 right-4 flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
           aria-label="Close support dialog"
         >
           <X className="h-5 w-5" />

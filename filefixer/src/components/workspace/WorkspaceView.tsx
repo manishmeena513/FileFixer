@@ -401,7 +401,7 @@ export function WorkspaceView() {
                   setShowNewProjectInput(false);
                 }
               }}
-              className="text-xs font-semibold px-2 py-1 rounded bg-[hsl(var(--primary))] text-white"
+              className="text-xs font-semibold px-2 py-1 rounded bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
             >
               Save
             </button>
@@ -472,7 +472,7 @@ export function WorkspaceView() {
                     <div
                       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                         isSelected
-                          ? "bg-[hsl(var(--primary))] text-white"
+                          ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
                           : "bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
                       }`}
                     >
@@ -626,7 +626,7 @@ export function WorkspaceView() {
                   <div className="pt-2 flex justify-center gap-2">
                     <Link
                       href="/pdf-studio"
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.1)] px-3 py-1.5 rounded-lg hover:bg-[hsl(var(--primary))] hover:text-white transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.1)] px-3 py-1.5 rounded-lg hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors"
                     >
                       Open in PDF Studio <ArrowRight className="h-3.5 w-3.5" />
                     </Link>
@@ -809,7 +809,7 @@ export function WorkspaceView() {
                           onClick={() => setTargetSizeMB(mb)}
                           className={`rounded-lg py-1.5 text-xs font-mono font-semibold border transition-colors ${
                             targetSizeMB === mb
-                              ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-white"
+                              ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
                               : "border-[hsl(var(--border))] bg-[hsl(var(--card))]"
                           }`}
                         >

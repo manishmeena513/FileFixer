@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Download,
   Archive,
@@ -8,7 +8,6 @@ import {
   X,
   FileCheck,
   CheckCircle2,
-  HardDrive,
 } from "lucide-react";
 import { useFileStore } from "@/stores/fileStore";
 import { formatBytes } from "@/lib/utils";
@@ -25,6 +24,70 @@ export function DownloadCenterModal() {
     removeDownload,
     setLatestDeliveredFile,
   } = useFileStore();
+
+  const modalContainerRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  // Manage focus, Tab trapping, Escape dismissal & body scroll lock
+  useEffect(() => {
+    if (isDownloadCenterOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null;
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      // Initial focus on close button
+      closeButtonRef.current?.focus();
+      const timerId = setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 30);
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setDownloadCenterOpen(false);
+          return;
+        }
+
+        // Tab Focus Trap Loop
+        if (e.key === "Tab" && modalContainerRef.current) {
+          const focusable = modalContainerRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusable.length === 0) {
+            e.preventDefault();
+            return;
+          }
+
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === first || !modalContainerRef.current.contains(document.activeElement)) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last || !modalContainerRef.current.contains(document.activeElement)) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+      };
+
+      window.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        clearTimeout(timerId);
+        document.body.style.overflow = originalOverflow;
+        window.removeEventListener("keydown", handleKeyDown);
+        if (previousFocusRef.current && typeof previousFocusRef.current.focus === "function") {
+          previousFocusRef.current.focus();
+        }
+      };
+    }
+  }, [isDownloadCenterOpen, setDownloadCenterOpen]);
 
   if (!isDownloadCenterOpen) return null;
 
@@ -54,6 +117,7 @@ export function DownloadCenterModal() {
       aria-label="Download Center"
     >
       <div
+        ref={modalContainerRef}
         className="w-full max-w-xl overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl animate-scale-in flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -71,8 +135,10 @@ export function DownloadCenterModal() {
             </div>
           </div>
           <button
+            ref={closeButtonRef}
+            type="button"
             onClick={() => setDownloadCenterOpen(false)}
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))]"
+            className="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
             aria-label="Close download center"
           >
             <X className="h-5 w-5" />
@@ -81,18 +147,18 @@ export function DownloadCenterModal() {
 
         {/* Aggregate Stats Summary */}
         {validFiles.length > 0 && (
-          <div className="grid grid-cols-3 gap-2 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/0.5)] p-4 text-center">
+          <div className="grid grid-cols-3 gap-2 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/0.5)] p-4 text-center tabular-nums">
             <div className="space-y-0.5">
               <span className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                 Total Original
               </span>
-              <p className="text-xs font-bold">{formatBytes(totalOriginalSize)}</p>
+              <p className="text-xs font-bold tabular-nums">{formatBytes(totalOriginalSize)}</p>
             </div>
             <div className="space-y-0.5 border-x border-[hsl(var(--border)/0.6)]">
               <span className="text-[10px] uppercase font-semibold text-emerald-400">
                 Final Size
               </span>
-              <p className="text-xs font-bold text-emerald-400">
+              <p className="text-xs font-bold text-emerald-400 tabular-nums">
                 {formatBytes(totalOutputSize)}
               </p>
             </div>
@@ -100,7 +166,7 @@ export function DownloadCenterModal() {
               <span className="text-[10px] uppercase font-semibold text-[hsl(var(--primary))]">
                 Bandwidth Saved
               </span>
-              <p className="text-xs font-bold text-[hsl(var(--primary))]">
+              <p className="text-xs font-bold text-[hsl(var(--primary))] tabular-nums">
                 {formatBytes(totalSaved)} ({totalSavedPct.toFixed(0)}%)
               </p>
             </div>
@@ -127,10 +193,10 @@ export function DownloadCenterModal() {
                   <p className="text-xs font-semibold truncate text-[hsl(var(--foreground))]">
                     {file.fileName}
                   </p>
-                  <div className="flex items-center gap-2 text-[11px] text-[hsl(var(--muted-foreground))] mt-0.5">
-                    <span>{formatBytes(file.outputSize)}</span>
+                  <div className="flex items-center gap-2 text-[11px] text-[hsl(var(--muted-foreground))] mt-0.5 tabular-nums">
+                    <span className="tabular-nums">{formatBytes(file.outputSize)}</span>
                     {file.originalSize > file.outputSize && (
-                      <span className="text-emerald-500 font-medium">
+                      <span className="text-emerald-500 font-medium tabular-nums">
                         from {formatBytes(file.originalSize)}
                       </span>
                     )}
@@ -143,19 +209,21 @@ export function DownloadCenterModal() {
                 <div className="flex items-center gap-1.5 shrink-0">
                   {file.blob && (
                     <button
+                      type="button"
                       onClick={() => {
                         triggerDownload(file.blob!, file.fileName);
                         setLatestDeliveredFile(file);
                       }}
-                      className="flex h-9 w-9 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-white transition-colors"
+                      className="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors touch-manipulation cursor-pointer"
                       title="Download file"
                     >
                       <Download className="h-4 w-4" />
                     </button>
                   )}
                   <button
+                    type="button"
                     onClick={() => removeDownload(file.id)}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]"
+                    className="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] touch-manipulation cursor-pointer"
                     aria-label="Remove from list"
                   >
                     <X className="h-4 w-4" />

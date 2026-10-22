@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Search,
   X,
   Sparkles,
-  Command,
   ArrowRight,
   FileText,
   FileImage,
@@ -22,8 +21,6 @@ import {
   FileDown,
   Gauge,
   Workflow,
-  Download,
-  Trash2,
 } from "lucide-react";
 import { useFileStore } from "@/stores/fileStore";
 import { formatBytes } from "@/lib/utils";
@@ -40,48 +37,101 @@ interface CommandItem {
 
 export function CommandCenter() {
   const router = useRouter();
+  const modalContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
 
   const {
     isCommandCenterOpen,
     setCommandCenterOpen,
     files,
     setActiveFileId,
-    setWorkspaceOpen,
     openSupportModal,
   } = useFileStore();
 
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // Keyboard shortcut listener (Ctrl+K / Cmd+K)
+  const [prevIsOpen, setPrevIsOpen] = useState(isCommandCenterOpen);
+  if (isCommandCenterOpen && !prevIsOpen) {
+    setPrevIsOpen(true);
+    setQuery("");
+    setSelectedIndex(0);
+  } else if (!isCommandCenterOpen && prevIsOpen) {
+    setPrevIsOpen(false);
+  }
+
+  // Keyboard shortcut listener (Ctrl+K / Cmd+K) & Tab Focus Trap
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setCommandCenterOpen(!isCommandCenterOpen);
-      } else if (e.key === "Escape" && isCommandCenterOpen) {
+        return;
+      }
+
+      if (!isCommandCenterOpen) return;
+
+      if (e.key === "Escape") {
+        e.preventDefault();
         setCommandCenterOpen(false);
+        return;
+      }
+
+      // Tab Focus Trap
+      if (e.key === "Tab" && modalContainerRef.current) {
+        const focusable = modalContainerRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]), [tabindex]:not([tabindex="-1"]), [href]'
+        );
+        if (focusable.length === 0) {
+          e.preventDefault();
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first || !modalContainerRef.current.contains(document.activeElement)) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last || !modalContainerRef.current.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isCommandCenterOpen, setCommandCenterOpen]);
 
-  // Focus input when opened
+  // Manage open/close side effects: focus, body scroll lock, restore focus
   useEffect(() => {
     if (isCommandCenterOpen) {
-      setQuery("");
-      setSelectedIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
+      previousActiveElementRef.current = document.activeElement as HTMLElement | null;
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const timerId = setTimeout(() => inputRef.current?.focus(), 50);
+
+      return () => {
+        clearTimeout(timerId);
+        document.body.style.overflow = originalOverflow;
+        if (previousActiveElementRef.current && typeof previousActiveElementRef.current.focus === "function") {
+          previousActiveElementRef.current.focus();
+        }
+      };
     }
   }, [isCommandCenterOpen]);
 
-  const navigateTo = (path: string) => {
+  const navigateTo = useCallback((path: string) => {
     setCommandCenterOpen(false);
     router.push(path);
-  };
+  }, [router, setCommandCenterOpen]);
 
   // Build searchable items
   const allItems: CommandItem[] = useMemo(() => {
@@ -325,7 +375,7 @@ export function CommandCenter() {
     }
 
     return list;
-  }, [files, setActiveFileId, setCommandCenterOpen, router]);
+  }, [files, setActiveFileId, setCommandCenterOpen, router, navigateTo, openSupportModal]);
 
   // Filter items deterministically
   const filteredItems = useMemo(() => {
@@ -340,10 +390,12 @@ export function CommandCenter() {
     });
   }, [allItems, query]);
 
-  // Keep selected index within bounds
-  useEffect(() => {
+  // Keep selected index reset when query changes
+  const [prevQuery, setPrevQuery] = useState(query);
+  if (prevQuery !== query) {
+    setPrevQuery(query);
     setSelectedIndex(0);
-  }, [filteredItems]);
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
@@ -359,6 +411,17 @@ export function CommandCenter() {
     }
   };
 
+  // Ensure selected option scrolls into view
+  useEffect(() => {
+    if (!listRef.current || filteredItems.length === 0) return;
+    const selectedElement = listRef.current.querySelector<HTMLElement>(
+      `#command-opt-${filteredItems[selectedIndex]?.id}`
+    );
+    if (selectedElement) {
+      selectedElement.scrollIntoView({ block: "nearest" });
+    }
+  }, [selectedIndex, filteredItems]);
+
   if (!isCommandCenterOpen) return null;
 
   return (
@@ -370,6 +433,7 @@ export function CommandCenter() {
       aria-label="Universal Command Center"
     >
       <div
+        ref={modalContainerRef}
         className="w-full max-w-2xl overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl animate-scale-in"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
@@ -380,6 +444,15 @@ export function CommandCenter() {
           <input
             ref={inputRef}
             type="text"
+            role="combobox"
+            aria-expanded={isCommandCenterOpen}
+            aria-autocomplete="list"
+            aria-controls="command-results-listbox"
+            aria-activedescendant={
+              filteredItems[selectedIndex]
+                ? `command-opt-${filteredItems[selectedIndex].id}`
+                : undefined
+            }
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="What do you want to do? (e.g. compress, webp, merge pdf, under 1mb, clean)..."
@@ -388,9 +461,13 @@ export function CommandCenter() {
           />
           {query && (
             <button
-              onClick={() => setQuery("")}
-              className="p-1 rounded text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] mr-2"
-              aria-label="Clear input"
+              type="button"
+              onClick={() => {
+                setQuery("");
+                inputRef.current?.focus();
+              }}
+              className="flex h-11 w-11 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors mr-1 shrink-0 cursor-pointer touch-manipulation"
+              aria-label="Clear search input"
             >
               <X className="h-4 w-4" />
             </button>
@@ -403,6 +480,9 @@ export function CommandCenter() {
         {/* Results List */}
         <div
           ref={listRef}
+          id="command-results-listbox"
+          role="listbox"
+          aria-label="Command suggestions"
           className="max-h-[60vh] overflow-y-auto p-2 divide-y divide-[hsl(var(--border)/0.5)]"
         >
           {filteredItems.length === 0 ? (
@@ -422,9 +502,12 @@ export function CommandCenter() {
               return (
                 <button
                   key={item.id}
+                  id={`command-opt-${item.id}`}
+                  tabIndex={-1}
                   onClick={item.action}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl text-left transition-colors ${
+                  onFocus={() => setSelectedIndex(idx)}
+                  className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
                     isSelected
                       ? "bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--foreground))] ring-1 ring-[hsl(var(--primary)/0.3)]"
                       : "hover:bg-[hsl(var(--secondary)/0.5)] text-[hsl(var(--muted-foreground))]"
@@ -436,7 +519,7 @@ export function CommandCenter() {
                     <div
                       className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
                         isSelected
-                          ? "bg-[hsl(var(--primary))] text-white"
+                          ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
                           : "bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))]"
                       }`}
                     >
@@ -451,7 +534,7 @@ export function CommandCenter() {
                           {item.category}
                         </span>
                       </div>
-                      <p className="text-xs text-[hsl(var(--muted-foreground))] truncate">
+                      <p className="text-xs text-[hsl(var(--muted-foreground))] truncate tabular-nums">
                         {item.subtitle}
                       </p>
                     </div>
@@ -471,8 +554,8 @@ export function CommandCenter() {
         </div>
 
         {/* Footer info bar */}
-        <div className="flex items-center justify-between border-t border-[hsl(var(--border))] bg-[hsl(var(--background)/0.6)] px-4 py-2.5 text-[11px] text-[hsl(var(--muted-foreground))]">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center sm:justify-between border-t border-[hsl(var(--border))] bg-[hsl(var(--background)/0.6)] px-4 py-2.5 text-[11px] text-[hsl(var(--muted-foreground))]">
+          <div className="hidden sm:flex items-center gap-3">
             <span>
               Use <kbd className="font-mono bg-[hsl(var(--secondary))] px-1 py-0.5 rounded">↑</kbd>{" "}
               <kbd className="font-mono bg-[hsl(var(--secondary))] px-1 py-0.5 rounded">↓</kbd> to navigate
@@ -481,7 +564,7 @@ export function CommandCenter() {
               <kbd className="font-mono bg-[hsl(var(--secondary))] px-1.5 py-0.5 rounded">↵</kbd> to execute
             </span>
           </div>
-          <span className="font-mono text-emerald-500 font-medium">
+          <span className="font-mono text-emerald-500 font-medium text-center sm:text-right truncate">
             100% In-Browser • Zero Uploads
           </span>
         </div>

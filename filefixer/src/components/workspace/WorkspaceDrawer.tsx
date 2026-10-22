@@ -381,7 +381,7 @@ export function WorkspaceDrawer() {
                                 )
                               }
                               title="Download processed file"
-                              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-white transition-colors"
+                              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors"
                             >
                               <Download className="h-4 w-4" />
                             </button>

@@ -357,7 +357,7 @@ export default function ImageStudioPage() {
                     onClick={() => setTargetFormat(f.format as SupportedImageFormat)}
                     className={`py-2 text-xs font-bold rounded-xl border transition-colors ${
                       targetFormat === f.format
-                        ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-white"
+                        ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
                         : "border-[hsl(var(--border))] bg-[hsl(var(--background))]"
                     }`}
                   >

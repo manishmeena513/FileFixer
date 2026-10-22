@@ -7,11 +7,8 @@ import {
   Loader2,
   AlertCircle,
   X,
-  Archive,
   ChevronDown,
   ChevronUp,
-  FileCheck,
-  Sparkles,
 } from "lucide-react";
 import { useFileStore } from "@/stores/fileStore";
 import { formatBytes } from "@/lib/utils";
@@ -30,13 +27,12 @@ export function DownloadDock() {
 
   if (downloadQueue.length === 0) return null;
 
-  const deliveredCount = downloadQueue.filter((d) => d.status === "downloaded").length;
   const activeCount = downloadQueue.filter((d) => d.status === "processing" || d.status === "downloading").length;
 
   return (
     <div
       aria-label="Floating Download Dock"
-      className="fixed bottom-20 md:bottom-6 right-4 z-40 max-w-sm w-full pointer-events-auto animate-dock-in"
+      className="fixed bottom-20 md:bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:w-full sm:max-w-sm z-40 pointer-events-auto animate-dock-in"
     >
       <div className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card)/0.95)] backdrop-blur-md shadow-2xl transition-all">
         {/* Dock Header */}
@@ -60,20 +56,20 @@ export function DownloadDock() {
           <div className="flex items-center gap-1">
             <button
               onClick={() => setDownloadCenterOpen(true)}
-              className="text-[11px] font-medium text-[hsl(var(--primary))] hover:underline px-2 py-1"
+              className="min-h-[44px] flex items-center text-[11px] font-medium text-[hsl(var(--primary))] hover:underline px-2 touch-manipulation cursor-pointer"
             >
               View All
             </button>
             <button
               onClick={() => setIsMinimized(!isMinimized)}
-              className="p-1 rounded text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+              className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] touch-manipulation cursor-pointer"
               aria-label={isMinimized ? "Expand dock" : "Minimize dock"}
             >
               {isMinimized ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
             <button
               onClick={clearDownloads}
-              className="p-1 rounded text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+              className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] touch-manipulation cursor-pointer"
               aria-label="Clear download dock"
             >
               <X className="h-4 w-4" />
@@ -83,7 +79,7 @@ export function DownloadDock() {
 
         {/* Stacked Delivery Items (shown if not minimized) */}
         {!isMinimized && (
-          <div className="max-h-60 overflow-y-auto divide-y divide-[hsl(var(--border)/0.4)] p-1.5 space-y-1">
+          <div className="max-h-40 sm:max-h-60 overflow-y-auto divide-y divide-[hsl(var(--border)/0.4)] p-1.5 space-y-1">
             {downloadQueue.map((item) => {
               const isDone = item.status === "downloaded" || item.status === "ready";
               const isProcessing = item.status === "processing" || item.status === "downloading" || item.status === "preparing";
@@ -111,10 +107,10 @@ export function DownloadDock() {
                       <p className="text-xs font-semibold truncate text-[hsl(var(--foreground))]">
                         {item.fileName}
                       </p>
-                      <div className="flex items-center gap-1.5 text-[11px] text-[hsl(var(--muted-foreground))]">
-                        <span>{formatBytes(item.outputSize || item.originalSize)}</span>
+                      <div className="flex items-center gap-1.5 text-[11px] text-[hsl(var(--muted-foreground))] tabular-nums">
+                        <span className="tabular-nums">{formatBytes(item.outputSize || item.originalSize)}</span>
                         {item.savingsPct !== undefined && item.savingsPct > 0 && (
-                          <span className="text-emerald-500 font-medium">
+                          <span className="text-emerald-500 font-medium tabular-nums">
                             (-{item.savingsPct.toFixed(0)}%)
                           </span>
                         )}
@@ -131,14 +127,14 @@ export function DownloadDock() {
                           setLatestDeliveredFile(item);
                         }}
                         title="Re-download file"
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-white transition-colors"
+                        className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors touch-manipulation cursor-pointer"
                       >
                         <Download className="h-3.5 w-3.5" />
                       </button>
                     )}
                     <button
                       onClick={() => removeDownload(item.id)}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]"
+                      className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] touch-manipulation cursor-pointer"
                       aria-label="Dismiss item"
                     >
                       <X className="h-3 w-3" />

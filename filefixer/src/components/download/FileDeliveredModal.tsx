@@ -1,15 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
-  Check,
   Download,
   RefreshCw,
   X,
-  Sparkles,
-  ArrowRight,
   HardDrive,
-  FileCheck,
 } from "lucide-react";
 import { useFileStore } from "@/stores/fileStore";
 import { formatBytes } from "@/lib/utils";
@@ -19,6 +15,72 @@ import { Button } from "@/components/ui/button";
 export function FileDeliveredModal() {
   const { latestDeliveredFile, setLatestDeliveredFile, promoteOutputToInput, files } =
     useFileStore();
+
+  const modalContainerRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  const isDeliveredOpen = Boolean(latestDeliveredFile);
+
+  // Manage focus, Tab trapping, Escape dismissal & body scroll lock
+  useEffect(() => {
+    if (isDeliveredOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null;
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      // Initial focus on close button
+      closeButtonRef.current?.focus();
+      const timerId = setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 30);
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setLatestDeliveredFile(null);
+          return;
+        }
+
+        // Tab Focus Trap Loop
+        if (e.key === "Tab" && modalContainerRef.current) {
+          const focusable = modalContainerRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusable.length === 0) {
+            e.preventDefault();
+            return;
+          }
+
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+
+          if (e.shiftKey) {
+            if (document.activeElement === first || !modalContainerRef.current.contains(document.activeElement)) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last || !modalContainerRef.current.contains(document.activeElement)) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+      };
+
+      window.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        clearTimeout(timerId);
+        document.body.style.overflow = originalOverflow;
+        window.removeEventListener("keydown", handleKeyDown);
+        if (previousFocusRef.current && typeof previousFocusRef.current.focus === "function") {
+          previousFocusRef.current.focus();
+        }
+      };
+    }
+  }, [isDeliveredOpen, setLatestDeliveredFile]);
 
   if (!latestDeliveredFile) return null;
 
@@ -58,13 +120,16 @@ export function FileDeliveredModal() {
       aria-label="File Delivered"
     >
       <div
+        ref={modalContainerRef}
         className="relative w-full max-w-md overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-8 shadow-2xl animate-scale-in text-center space-y-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
+          ref={closeButtonRef}
+          type="button"
           onClick={() => setLatestDeliveredFile(null)}
-          className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors"
+          className="absolute top-4 right-4 flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
           aria-label="Close delivery modal"
         >
           <X className="h-5 w-5" />
@@ -91,12 +156,12 @@ export function FileDeliveredModal() {
         </div>
 
         {/* Before / After Stats Card */}
-        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background)/0.6)] p-3 text-center">
+        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background)/0.6)] p-3 text-center tabular-nums">
           <div className="space-y-0.5">
             <span className="text-[10px] uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
               Original
             </span>
-            <p className="text-xs font-bold text-[hsl(var(--foreground))]">
+            <p className="text-xs font-bold text-[hsl(var(--foreground))] tabular-nums">
               {formatBytes(latestDeliveredFile.originalSize)}
             </p>
           </div>
@@ -105,7 +170,7 @@ export function FileDeliveredModal() {
             <span className="text-[10px] uppercase tracking-wider text-emerald-400">
               Final Size
             </span>
-            <p className="text-xs font-bold text-emerald-400">
+            <p className="text-xs font-bold text-emerald-400 tabular-nums">
               {formatBytes(latestDeliveredFile.outputSize)}
             </p>
           </div>
@@ -114,7 +179,7 @@ export function FileDeliveredModal() {
             <span className="text-[10px] uppercase tracking-wider text-[hsl(var(--primary))]">
               Saved
             </span>
-            <p className="text-xs font-bold text-[hsl(var(--primary))]">
+            <p className="text-xs font-bold text-[hsl(var(--primary))] tabular-nums">
               {savingsPct && savingsPct > 0 ? `-${savingsPct.toFixed(0)}%` : "Optimized"}
             </p>
           </div>
@@ -152,7 +217,7 @@ export function FileDeliveredModal() {
           <Button
             variant="ghost"
             onClick={() => setLatestDeliveredFile(null)}
-            className="w-full min-h-[40px] text-xs text-[hsl(var(--muted-foreground))]"
+            className="w-full min-h-[44px] text-xs text-[hsl(var(--muted-foreground))]"
           >
             Done
           </Button>

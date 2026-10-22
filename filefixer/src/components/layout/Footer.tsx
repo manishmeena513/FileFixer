@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { ShieldCheck, Cpu, HardDrive } from "lucide-react";
+import { ShieldCheck, Cpu } from "lucide-react";
 import { Logo } from "@/components/branding/Logo";
 import { FooterSupportButton } from "@/components/support/FooterSupportButton";
 
 export function Footer() {
   return (
-    <footer className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card)/0.5)] pb-20 md:pb-0">
+    <footer className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card)/0.5)] pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-0">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
           <div className="space-y-4 md:col-span-1">
