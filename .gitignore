@@ -33,3 +33,8 @@ Thumbs.db
 *.pem
 *.tsbuildinfo
 next-env.d.ts
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
