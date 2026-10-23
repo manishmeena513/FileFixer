@@ -49,9 +49,9 @@
 |---|------|-------|-------------|--------|
 | E2E | E2E Testing Track | Independent requirement-driven test suite (Tiers 1-4) | none | DONE |
 | M1 | Design System & Global Shell | Token calibration, WCAG AA contrast, Button/Input sizes (≥44px), Header, CommandCenter, MobileBottomNav, globals.css | none | DONE |
-| M2 | Homepage & Tools Catalog | Homepage hero, smart drop zone, 20 tools copy, /tools catalog search, category filters, cards | M1 | IN_PROGRESS |
-| M3 | Image Tools Suite | /image-studio, /compress-image, /resize-image, /convert-image, /crop-image, /smart-compress, /image-metadata + layout.tsx | M1 | PLANNED |
-| M4 | PDF Tools Suite | /pdf-studio, /pdf-merge, /pdf-split, /pdf-compress, /pdf-workspace, /images-to-pdf + layout.tsx | M1 | PLANNED |
+| M2 | Homepage & Tools Catalog | Homepage hero, smart drop zone, 20 tools copy, /tools catalog search, category filters, cards | M1 | DONE |
+| M3 | Image Tools Suite | /image-studio, /compress-image, /resize-image, /convert-image, /crop-image, /smart-compress, /image-metadata + layout.tsx | M1, M2 | DONE |
+| M4 | PDF Tools Suite | /pdf-studio, /pdf-merge, /pdf-split, /pdf-compress, /pdf-workspace, /images-to-pdf + layout.tsx | M1 | DONE |
 | M5 | Batch Pipelines & Delivery | /batch, /batch-rename, /workflows, /privacy-cleaner (+ layout.tsx), /history, /about, /privacy, /terms, DownloadDock, SupportModal | M1 | PLANNED |
 | M6 | Final Verification & Quality Gates | 100% E2E test suite pass, Tier 5 adversarial hardening, static build 33/33 pass, Forensic Integrity Clean | E2E, M2, M3, M4, M5 | PLANNED |
 

@@ -28,7 +28,7 @@ export async function mergePDFs(
     }
   }
 
-  const mergedBytes = await mergedPdf.save();
+  const mergedBytes = await mergedPdf.save({ useObjectStreams: true });
   const blob = new Blob([mergedBytes as unknown as BlobPart], { type: "application/pdf" });
 
   return {

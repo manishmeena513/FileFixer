@@ -17,10 +17,17 @@ import { compressPDF, PdfCompressResult } from "@/lib/pdf/compress";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { addHistoryRecord } from "@/lib/storage/history";
 import { useFileStore } from "@/stores/fileStore";
+import { ToolPageShell } from "@/components/ui/ToolPageShell";
 
 export default function PdfCompressPage() {
   const { toast } = useToast();
-  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
+  const {
+    files: storeFiles,
+    addFiles: addStoreFiles,
+    pushDownload,
+    setLatestDeliveredFile,
+    triggerSupportPrompt,
+  } = useFileStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [level, setLevel] = useState<"balanced" | "smaller" | "custom">("balanced");
   const [stripMeta, setStripMeta] = useState(true);
@@ -38,7 +45,9 @@ export default function PdfCompressPage() {
   }, []);
 
   const handleFiles = (files: File[]) => {
-    const pdf = files.find((f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf");
+    const pdf = files.find(
+      (f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf"
+    );
     if (!pdf) {
       toast({
         title: "Invalid file",
@@ -62,6 +71,20 @@ export default function PdfCompressPage() {
         removeMetadata: stripMeta,
       });
       setResult(res);
+
+      const base = selectedFile.name.replace(/\.[^/.]+$/, "");
+      const outputFilename = `${base}_compressed.pdf`;
+
+      // Enqueue to global Download Dock as ready
+      pushDownload({
+        fileName: outputFilename,
+        originalSize: res.originalSize,
+        outputSize: res.outputSize,
+        savingsPct: res.savingsPct,
+        status: "ready",
+        blob: res.blob,
+      });
+
       toast({
         title: "PDF compressed",
         description: `Reduced by ${res.savingsPct.toFixed(1)}% (${formatBytes(res.originalSize)} → ${formatBytes(res.outputSize)}).`,
@@ -91,28 +114,33 @@ export default function PdfCompressPage() {
   const handleDownload = () => {
     if (!result || !selectedFile) return;
     const base = selectedFile.name.replace(/\.[^/.]+$/, "");
-    triggerDownload(result.blob, `${base}_compressed.pdf`);
+    const outputFilename = `${base}_compressed.pdf`;
+    triggerDownload(result.blob, outputFilename);
+
+    const dlItem = {
+      fileName: outputFilename,
+      originalSize: result.originalSize,
+      outputSize: result.outputSize,
+      savingsPct: result.savingsPct,
+      status: "downloaded" as const,
+      blob: result.blob,
+    };
+    pushDownload(dlItem);
+    setLatestDeliveredFile({
+      id: `deliv-${Date.now()}`,
+      ...dlItem,
+      timestamp: Date.now(),
+    });
+    triggerSupportPrompt();
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]">
-            <FileText className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
-              Compress PDF
-            </h1>
-            <p className="text-sm text-[hsl(var(--muted-foreground))]">
-              Optimize PDF stream dictionaries and deduplicate resources locally without uploading.
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <ToolPageShell
+      icon={FileText}
+      title="Compress PDF"
+      description="Optimize PDF stream dictionaries and deduplicate resources locally without uploading."
+      formats={["PDF"]}
+    >
       <div className="space-y-6">
         {!selectedFile ? (
           <DropZone
@@ -135,12 +163,17 @@ export default function PdfCompressPage() {
                   <p className="truncate text-sm font-semibold text-[hsl(var(--foreground))]">
                     {selectedFile.name}
                   </p>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                  <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums">
                     {formatBytes(selectedFile.size)}
                   </p>
                 </div>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => setSelectedFile(null)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="min-h-[44px] px-3 py-2 text-xs font-medium touch-manipulation"
+                onClick={() => setSelectedFile(null)}
+              >
                 Change File
               </Button>
             </div>
@@ -155,7 +188,7 @@ export default function PdfCompressPage() {
                 <button
                   type="button"
                   onClick={() => setLevel("balanced")}
-                  className={`flex flex-col items-start p-4 rounded-xl border text-left transition-all ${
+                  className={`flex flex-col items-start p-4 rounded-xl border text-left transition-all min-h-[44px] touch-manipulation ${
                     level === "balanced"
                       ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--foreground))]"
                       : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
@@ -173,7 +206,7 @@ export default function PdfCompressPage() {
                 <button
                   type="button"
                   onClick={() => setLevel("smaller")}
-                  className={`flex flex-col items-start p-4 rounded-xl border text-left transition-all ${
+                  className={`flex flex-col items-start p-4 rounded-xl border text-left transition-all min-h-[44px] touch-manipulation ${
                     level === "smaller"
                       ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--foreground))]"
                       : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
@@ -190,16 +223,26 @@ export default function PdfCompressPage() {
               </div>
 
               {/* Strip metadata switch */}
-              <div className="flex items-center justify-between pt-2 border-t border-[hsl(var(--border))] text-xs">
-                <span className="text-[hsl(var(--foreground))] font-medium">Remove Embedded Author & Title Metadata</span>
-                <Switch checked={stripMeta} onCheckedChange={setStripMeta} />
+              <div className="flex items-center justify-between pt-2 border-t border-[hsl(var(--border))] min-h-[44px]">
+                <label
+                  htmlFor="strip-meta-toggle"
+                  className="text-xs text-[hsl(var(--foreground))] font-medium cursor-pointer flex-1"
+                >
+                  Remove Embedded Author & Title Metadata
+                </label>
+                <Switch
+                  id="strip-meta-toggle"
+                  checked={stripMeta}
+                  onCheckedChange={setStripMeta}
+                  className="touch-manipulation"
+                />
               </div>
 
               <Button
                 size="lg"
                 disabled={isProcessing}
                 onClick={handleCompress}
-                className="w-full"
+                className="w-full min-h-[44px] touch-manipulation font-semibold"
               >
                 {isProcessing ? (
                   <>
@@ -226,17 +269,28 @@ export default function PdfCompressPage() {
                 />
                 <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <CheckCircle2 className="h-6 w-6 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="h-6 w-6 text-emerald-700 dark:text-emerald-400 shrink-0" />
                     <div>
                       <p className="font-bold text-sm text-[hsl(var(--foreground))]">
                         Compressed PDF Ready
                       </p>
                       <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">
-                        {formatBytes(result.originalSize)} →{" "}
-                        <strong className="text-emerald-400 font-bold">
+                        <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                          {formatBytes(result.originalSize)}
+                        </span>{" "}
+                        →{" "}
+                        <strong className="text-emerald-700 dark:text-emerald-400 font-bold tabular-nums">
                           {formatBytes(result.outputSize)}
                         </strong>{" "}
-                        ({result.savingsPct.toFixed(1)}% smaller · {result.pageCount} pages)
+                        (
+                        <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                          {result.savingsPct.toFixed(1)}%
+                        </span>{" "}
+                        smaller ·{" "}
+                        <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                          {result.pageCount}
+                        </span>{" "}
+                        pages)
                       </p>
                     </div>
                   </div>
@@ -244,7 +298,7 @@ export default function PdfCompressPage() {
                   <Button
                     size="lg"
                     onClick={handleDownload}
-                    className="w-full sm:w-auto min-h-[48px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-white font-semibold"
+                    className="w-full sm:w-auto min-h-[44px] touch-manipulation bg-[hsl(var(--success))] hover:bg-emerald-600 text-[hsl(var(--success-foreground))] font-semibold"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Download Compressed PDF
@@ -255,6 +309,6 @@ export default function PdfCompressPage() {
           </div>
         )}
       </div>
-    </div>
+    </ToolPageShell>
   );
 }

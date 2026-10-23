@@ -62,7 +62,7 @@ export async function extractPages(
     newPdf.addPage(page);
   }
 
-  const pdfBytes = await newPdf.save();
+  const pdfBytes = await newPdf.save({ useObjectStreams: true });
   const blob = new Blob([pdfBytes as unknown as BlobPart], { type: "application/pdf" });
   const baseName = file.name.replace(/\.[^/.]+$/, "");
 
@@ -88,7 +88,7 @@ export async function splitAllPages(
     const singlePdf = await PDFDocument.create();
     const [page] = await singlePdf.copyPages(sourcePdf, [i]);
     singlePdf.addPage(page);
-    const bytes = await singlePdf.save();
+    const bytes = await singlePdf.save({ useObjectStreams: true });
     const blob = new Blob([bytes as unknown as BlobPart], { type: "application/pdf" });
     const pageNumStr = String(i + 1).padStart(3, "0");
     results.push({

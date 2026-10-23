@@ -17,6 +17,7 @@ import { convertImagesToPdf, ImagesToPdfOptions } from "@/lib/pdf/imagesToPdf";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { useFileStore } from "@/stores/fileStore";
 import { addHistoryRecord } from "@/lib/storage/history";
+import { ToolPageShell } from "@/components/ui/ToolPageShell";
 
 interface ImageItem {
   id: string;
@@ -26,7 +27,13 @@ interface ImageItem {
 
 export default function ImagesToPdfPage() {
   const { toast } = useToast();
-  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
+  const {
+    files: storeFiles,
+    addFiles: addStoreFiles,
+    pushDownload,
+    setLatestDeliveredFile,
+    triggerSupportPrompt,
+  } = useFileStore();
   const [items, setItems] = useState<ImageItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progressText, setProgressText] = useState("");
@@ -116,12 +123,24 @@ export default function ImagesToPdfPage() {
       );
 
       setResultBlob(res.blob);
+
+      // Register in Download Dock as ready
+      pushDownload({
+        fileName: res.outputFilename,
+        originalSize: origTotal,
+        outputSize: res.blob.size,
+        savingsPct: 0,
+        status: "ready",
+        blob: res.blob,
+      });
+
       await addHistoryRecord({
         filename: `Images to PDF (${items.length} pages)`,
         tool: "Images to PDF",
         originalSize: origTotal,
         outputSize: res.blob.size,
       });
+
       toast({
         title: "PDF Created",
         description: `Successfully compiled ${items.length} images into a single PDF.`,
@@ -142,28 +161,34 @@ export default function ImagesToPdfPage() {
 
   const handleDownload = () => {
     if (!resultBlob) return;
-    triggerDownload(resultBlob, "images_document.pdf");
+    const fileName = "images_document.pdf";
+    triggerDownload(resultBlob, fileName);
+
+    const origTotal = items.reduce((acc, it) => acc + it.file.size, 0);
+    const dlItem = {
+      fileName,
+      originalSize: origTotal,
+      outputSize: resultBlob.size,
+      savingsPct: 0,
+      status: "downloaded" as const,
+      blob: resultBlob,
+    };
+    pushDownload(dlItem);
+    setLatestDeliveredFile({
+      id: `deliv-${Date.now()}`,
+      ...dlItem,
+      timestamp: Date.now(),
+    });
+    triggerSupportPrompt();
   };
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]">
-            <Images className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
-              Images to PDF
-            </h1>
-            <p className="text-sm text-[hsl(var(--muted-foreground))]">
-              Combine photos, document scans, or receipts into a clean PDF with custom page dimensions.
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <ToolPageShell
+      icon={Images}
+      title="Images to PDF"
+      description="Combine photos, document scans, or receipts into a clean PDF with custom page dimensions."
+      formats={["JPG", "PNG", "WEBP"]}
+    >
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Left: Images list */}
         <div className="space-y-6 lg:col-span-2">
@@ -179,24 +204,34 @@ export default function ImagesToPdfPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-3">
                 <span className="text-sm font-semibold text-[hsl(var(--foreground))]">
-                  {items.length} Image{items.length > 1 ? "s" : ""} (Pages in Order)
+                  <span className="tabular-nums font-bold text-[hsl(var(--foreground))]">
+                    {items.length}
+                  </span>{" "}
+                  Image{items.length > 1 ? "s" : ""} (Pages in Order)
                 </span>
                 <div className="flex gap-2">
                   <Button
                     variant="ghost"
                     size="sm"
+                    className="min-h-[44px] px-3 py-2 text-xs font-medium touch-manipulation"
                     onClick={() => {
                       const input = document.createElement("input");
                       input.type = "file";
                       input.multiple = true;
                       input.accept = ".jpg,.jpeg,.png,.webp";
-                      input.onchange = (e: any) => handleFiles(Array.from(e.target.files || []));
+                      input.onchange = (e: any) =>
+                        handleFiles(Array.from(e.target.files || []));
                       input.click();
                     }}
                   >
                     Add More
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => setItems([])}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="min-h-[44px] px-3 py-2 text-xs font-medium touch-manipulation"
+                    onClick={() => setItems([])}
+                  >
                     Clear All
                   </Button>
                 </div>
@@ -210,7 +245,7 @@ export default function ImagesToPdfPage() {
                     className="flex items-center justify-between gap-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-2.5"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="flex h-6 w-6 items-center justify-center rounded bg-[hsl(var(--secondary))] text-xs font-mono font-bold text-[hsl(var(--primary))]">
+                      <span className="flex h-7 w-7 items-center justify-center rounded bg-[hsl(var(--secondary))] text-xs font-mono font-bold text-[hsl(var(--primary))] tabular-nums">
                         {idx + 1}
                       </span>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -223,7 +258,7 @@ export default function ImagesToPdfPage() {
                         <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
                           {it.file.name}
                         </p>
-                        <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                        <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums">
                           {formatBytes(it.file.size)}
                         </p>
                       </div>
@@ -235,29 +270,32 @@ export default function ImagesToPdfPage() {
                         size="icon"
                         disabled={idx === 0}
                         onClick={() => moveItem(idx, "up")}
-                        className="h-7 w-7"
+                        className="min-h-[44px] min-w-[44px] h-11 w-11 touch-manipulation flex items-center justify-center"
                         title="Move Up"
+                        aria-label={`Move image ${idx + 1} up`}
                       >
-                        <ArrowUp className="h-3.5 w-3.5" />
+                        <ArrowUp className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         disabled={idx === items.length - 1}
                         onClick={() => moveItem(idx, "down")}
-                        className="h-7 w-7"
+                        className="min-h-[44px] min-w-[44px] h-11 w-11 touch-manipulation flex items-center justify-center"
                         title="Move Down"
+                        aria-label={`Move image ${idx + 1} down`}
                       >
-                        <ArrowDown className="h-3.5 w-3.5" />
+                        <ArrowDown className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => removeItem(it.id)}
-                        className="h-7 w-7 text-[hsl(var(--destructive))] hover:text-red-400"
+                        className="min-h-[44px] min-w-[44px] h-11 w-11 touch-manipulation flex items-center justify-center text-[hsl(var(--destructive))] hover:text-red-400"
                         title="Remove"
+                        aria-label={`Remove image ${idx + 1}`}
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
@@ -287,7 +325,7 @@ export default function ImagesToPdfPage() {
                     key={opt.value}
                     type="button"
                     onClick={() => setPageSize(opt.value as any)}
-                    className={`rounded-lg border py-2 text-xs font-medium transition-colors ${
+                    className={`min-h-[44px] px-2 py-2 rounded-lg border text-xs font-medium transition-colors touch-manipulation flex items-center justify-center ${
                       pageSize === opt.value
                         ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
                         : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
@@ -312,7 +350,7 @@ export default function ImagesToPdfPage() {
                     key={opt.value}
                     type="button"
                     onClick={() => setOrientation(opt.value as any)}
-                    className={`rounded-lg border py-2 text-xs font-medium transition-colors ${
+                    className={`min-h-[44px] px-2 py-2 rounded-lg border text-xs font-medium transition-colors touch-manipulation flex items-center justify-center ${
                       orientation === opt.value
                         ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
                         : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
@@ -337,7 +375,7 @@ export default function ImagesToPdfPage() {
                     key={opt.value}
                     type="button"
                     onClick={() => setMargin(opt.value)}
-                    className={`rounded-lg border py-2 text-xs font-medium transition-colors ${
+                    className={`min-h-[44px] px-2 py-2 rounded-lg border text-xs font-medium transition-colors touch-manipulation flex items-center justify-center ${
                       margin === opt.value
                         ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
                         : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
@@ -350,7 +388,7 @@ export default function ImagesToPdfPage() {
             </div>
 
             <Button
-              className="w-full"
+              className="w-full min-h-[44px] touch-manipulation font-semibold"
               size="lg"
               disabled={items.length === 0 || isProcessing}
               onClick={handleConvert}
@@ -363,7 +401,8 @@ export default function ImagesToPdfPage() {
               ) : (
                 <>
                   <Images className="h-4 w-4 mr-2" />
-                  Create PDF ({items.length} {items.length === 1 ? "page" : "pages"})
+                  Create PDF (<span className="tabular-nums ml-1 mr-1">{items.length}</span>{" "}
+                  {items.length === 1 ? "page" : "pages"})
                 </>
               )}
             </Button>
@@ -372,16 +411,24 @@ export default function ImagesToPdfPage() {
           {/* Download button */}
           {resultBlob && (
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-5 space-y-3">
-              <div className="flex items-center gap-2 text-xs text-emerald-400 font-semibold">
+              <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400 font-semibold">
                 <CheckCircle2 className="h-4 w-4" /> PDF Document Compiled
               </div>
               <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                Size: {formatBytes(resultBlob.size)} · {items.length} pages
+                Size:{" "}
+                <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                  {formatBytes(resultBlob.size)}
+                </span>{" "}
+                ·{" "}
+                <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                  {items.length}
+                </span>{" "}
+                pages
               </p>
               <Button
                 size="lg"
                 onClick={handleDownload}
-                className="w-full bg-[hsl(var(--success))] hover:bg-emerald-600 text-white"
+                className="w-full min-h-[44px] touch-manipulation bg-[hsl(var(--success))] hover:bg-emerald-600 text-[hsl(var(--success-foreground))] font-semibold"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download images_document.pdf
@@ -390,6 +437,6 @@ export default function ImagesToPdfPage() {
           )}
         </div>
       </div>
-    </div>
+    </ToolPageShell>
   );
 }

@@ -19,10 +19,17 @@ import { loadWorkspacePages, saveWorkspacePdf, WorkspacePage } from "@/lib/pdf/w
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { addHistoryRecord } from "@/lib/storage/history";
 import { useFileStore } from "@/stores/fileStore";
+import { ToolPageShell } from "@/components/ui/ToolPageShell";
 
 export default function PdfWorkspacePage() {
   const { toast } = useToast();
-  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
+  const {
+    files: storeFiles,
+    addFiles: addStoreFiles,
+    pushDownload,
+    setLatestDeliveredFile,
+    triggerSupportPrompt,
+  } = useFileStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [pages, setPages] = useState<WorkspacePage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,7 +70,9 @@ export default function PdfWorkspacePage() {
   }, []);
 
   const handleFiles = async (files: File[]) => {
-    const pdf = files.find((f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf");
+    const pdf = files.find(
+      (f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf"
+    );
     if (!pdf) {
       toast({
         title: "Invalid file",
@@ -134,6 +143,17 @@ export default function PdfWorkspacePage() {
     try {
       const res = await saveWorkspacePdf(selectedFile, pages);
       setSavedResult({ blob: res.blob, name: res.outputFilename });
+
+      // Enqueue to Download Dock as ready
+      pushDownload({
+        fileName: res.outputFilename,
+        originalSize: selectedFile.size,
+        outputSize: res.blob.size,
+        savingsPct: 0,
+        status: "ready",
+        blob: res.blob,
+      });
+
       toast({
         title: "Workspace saved",
         description: `Successfully arranged ${pages.length} page(s).`,
@@ -159,25 +179,34 @@ export default function PdfWorkspacePage() {
     }
   };
 
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]">
-            <Layers className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
-              PDF Visual Workspace
-            </h1>
-            <p className="text-sm text-[hsl(var(--muted-foreground))]">
-              Interactive page organizer: drag, rotate, reorder, duplicate, and delete pages visually.
-            </p>
-          </div>
-        </div>
-      </div>
+  const handleDownload = () => {
+    if (!savedResult || !selectedFile) return;
+    triggerDownload(savedResult.blob, savedResult.name);
 
+    const dlItem = {
+      fileName: savedResult.name,
+      originalSize: selectedFile.size,
+      outputSize: savedResult.blob.size,
+      savingsPct: 0,
+      status: "downloaded" as const,
+      blob: savedResult.blob,
+    };
+    pushDownload(dlItem);
+    setLatestDeliveredFile({
+      id: `deliv-${Date.now()}`,
+      ...dlItem,
+      timestamp: Date.now(),
+    });
+    triggerSupportPrompt();
+  };
+
+  return (
+    <ToolPageShell
+      icon={Layers}
+      title="PDF Visual Workspace"
+      description="Interactive page organizer: rotate, reorder, duplicate, and delete pages visually."
+      formats={["PDF"]}
+    >
       {!selectedFile ? (
         <DropZone
           onFiles={handleFiles}
@@ -200,20 +229,31 @@ export default function PdfWorkspacePage() {
                   {selectedFile.name}
                 </p>
                 <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                  {pages.length} Page{pages.length === 1 ? "" : "s"} in workspace · {formatBytes(selectedFile.size)}
+                  <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                    {pages.length}
+                  </span>{" "}
+                  Page{pages.length === 1 ? "" : "s"} in workspace ·{" "}
+                  <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                    {formatBytes(selectedFile.size)}
+                  </span>
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setSelectedFile(null)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="min-h-[44px] px-3 py-2 text-xs font-medium touch-manipulation"
+                onClick={() => setSelectedFile(null)}
+              >
                 Change File
               </Button>
               <Button
                 size="sm"
                 disabled={isSaving || pages.length === 0}
                 onClick={handleSave}
-                className="bg-[hsl(var(--success))] hover:bg-emerald-600 text-white"
+                className="min-h-[44px] px-4 py-2 touch-manipulation bg-[hsl(var(--success))] hover:bg-emerald-600 text-[hsl(var(--success-foreground))] font-semibold"
               >
                 {isSaving ? (
                   <>
@@ -223,7 +263,7 @@ export default function PdfWorkspacePage() {
                 ) : (
                   <>
                     <Download className="h-4 w-4 mr-1.5" />
-                    Save & Download PDF
+                    Save Changes
                   </>
                 )}
               </Button>
@@ -240,10 +280,10 @@ export default function PdfWorkspacePage() {
                 >
                   {/* Page header tag */}
                   <div className="flex items-center justify-between bg-[hsl(var(--secondary))] px-2.5 py-1.5 text-[11px] font-mono">
-                    <span className="font-bold text-[hsl(var(--primary))]">
+                    <span className="font-bold text-[hsl(var(--primary))] tabular-nums">
                       #{idx + 1}
                     </span>
-                    <span className="text-[hsl(var(--muted-foreground))]">
+                    <span className="text-[hsl(var(--muted-foreground))] tabular-nums">
                       orig p.{p.originalPageIndex + 1}
                     </span>
                   </div>
@@ -258,7 +298,7 @@ export default function PdfWorkspacePage() {
                       className="flex flex-col items-center"
                     >
                       <FileText className="h-10 w-10 text-[hsl(var(--muted-foreground))]" />
-                      <span className="text-[10px] font-mono text-[hsl(var(--muted-foreground))] mt-1">
+                      <span className="text-[10px] font-mono text-[hsl(var(--muted-foreground))] mt-1 tabular-nums">
                         {p.rotation > 0 ? `${p.rotation}°` : "Page"}
                       </span>
                     </div>
@@ -271,34 +311,38 @@ export default function PdfWorkspacePage() {
                       disabled={idx === 0}
                       onClick={() => movePage(idx, "left")}
                       title="Move Left"
-                      className="flex items-center justify-center p-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] disabled:opacity-30 disabled:pointer-events-none"
+                      aria-label={`Move page ${idx + 1} left`}
+                      className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] disabled:opacity-30 disabled:pointer-events-none touch-manipulation"
                     >
-                      <ArrowLeft className="h-3.5 w-3.5" />
+                      <ArrowLeft className="h-4 w-4" />
                     </button>
                     <button
                       type="button"
                       disabled={idx === pages.length - 1}
                       onClick={() => movePage(idx, "right")}
                       title="Move Right"
-                      className="flex items-center justify-center p-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] disabled:opacity-30 disabled:pointer-events-none"
+                      aria-label={`Move page ${idx + 1} right`}
+                      className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] disabled:opacity-30 disabled:pointer-events-none touch-manipulation"
                     >
-                      <ArrowRight className="h-3.5 w-3.5" />
+                      <ArrowRight className="h-4 w-4" />
                     </button>
                     <button
                       type="button"
                       onClick={() => rotatePage(idx)}
                       title="Rotate 90° Clockwise"
-                      className="flex items-center justify-center p-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]"
+                      aria-label={`Rotate page ${idx + 1} clockwise`}
+                      className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))] touch-manipulation"
                     >
-                      <RotateCw className="h-3.5 w-3.5" />
+                      <RotateCw className="h-4 w-4" />
                     </button>
                     <button
                       type="button"
                       onClick={() => deletePage(idx)}
                       title="Delete Page"
-                      className="flex items-center justify-center p-2 text-[hsl(var(--muted-foreground))] hover:text-red-400"
+                      aria-label={`Delete page ${idx + 1}`}
+                      className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--destructive))] touch-manipulation"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
 
@@ -306,7 +350,7 @@ export default function PdfWorkspacePage() {
                   <button
                     type="button"
                     onClick={() => duplicatePage(idx)}
-                    className="w-full border-t border-[hsl(var(--border))] py-1 text-[10px] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
+                    className="min-h-[44px] w-full border-t border-[hsl(var(--border))] py-2 text-xs font-medium text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] flex items-center justify-center touch-manipulation transition-colors"
                   >
                     + Duplicate
                   </button>
@@ -319,21 +363,29 @@ export default function PdfWorkspacePage() {
           {savedResult && (
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-6 w-6 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="h-6 w-6 text-emerald-700 dark:text-emerald-400 flex-shrink-0" />
                 <div>
                   <p className="font-bold text-sm text-[hsl(var(--foreground))]">
                     Reordered PDF Document Ready
                   </p>
                   <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">
-                    {savedResult.name} · {formatBytes(savedResult.blob.size)} ({pages.length} pages)
+                    {savedResult.name} ·{" "}
+                    <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                      {formatBytes(savedResult.blob.size)}
+                    </span>{" "}
+                    (
+                    <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                      {pages.length}
+                    </span>{" "}
+                    pages)
                   </p>
                 </div>
               </div>
 
               <Button
                 size="lg"
-                onClick={() => triggerDownload(savedResult.blob, savedResult.name)}
-                className="w-full sm:w-auto bg-[hsl(var(--success))] hover:bg-emerald-600 text-white"
+                onClick={handleDownload}
+                className="w-full sm:w-auto min-h-[44px] touch-manipulation bg-[hsl(var(--success))] hover:bg-emerald-600 text-[hsl(var(--success-foreground))] font-semibold"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download Modified PDF
@@ -342,6 +394,6 @@ export default function PdfWorkspacePage() {
           )}
         </div>
       )}
-    </div>
+    </ToolPageShell>
   );
 }

@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/toaster";
 import {
@@ -26,10 +25,17 @@ import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { downloadAsZip } from "@/lib/zip";
 import { useFileStore } from "@/stores/fileStore";
 import { addHistoryRecord } from "@/lib/storage/history";
+import { ToolPageShell } from "@/components/ui/ToolPageShell";
 
 export default function PdfSplitPage() {
   const { toast } = useToast();
-  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
+  const {
+    files: storeFiles,
+    addFiles: addStoreFiles,
+    pushDownload,
+    setLatestDeliveredFile,
+    triggerSupportPrompt,
+  } = useFileStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [isLoadingDoc, setIsLoadingDoc] = useState(false);
@@ -80,7 +86,9 @@ export default function PdfSplitPage() {
   }, [selectedFile, toast]);
 
   const handleFiles = (files: File[]) => {
-    const pdf = files.find((f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf");
+    const pdf = files.find(
+      (f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf"
+    );
     if (!pdf) {
       toast({
         title: "Invalid file",
@@ -125,7 +133,9 @@ export default function PdfSplitPage() {
       if (mode === "range") {
         pageIndices = parsePageSelection(rangeInput, totalPages);
       } else if (mode === "interactive") {
-        pageIndices = Array.from(selectedPageNumbers).map((n) => n - 1).sort((a, b) => a - b);
+        pageIndices = Array.from(selectedPageNumbers)
+          .map((n) => n - 1)
+          .sort((a, b) => a - b);
       }
 
       if (pageIndices.length === 0) {
@@ -140,12 +150,24 @@ export default function PdfSplitPage() {
 
       const res = await extractPages(selectedFile, pageIndices);
       setExtractedResult({ blob: res.blob, name: res.outputFilename });
+
+      // Enqueue to Download Dock as ready
+      pushDownload({
+        fileName: res.outputFilename,
+        originalSize: selectedFile.size,
+        outputSize: res.blob.size,
+        savingsPct: 0,
+        status: "ready",
+        blob: res.blob,
+      });
+
       await addHistoryRecord({
         filename: selectedFile.name,
         tool: `Split PDF (${pageIndices.length} pages)`,
         originalSize: selectedFile.size,
         outputSize: res.blob.size,
       });
+
       toast({
         title: "Extraction complete",
         description: `Extracted ${pageIndices.length} page(s) successfully.`,
@@ -163,6 +185,27 @@ export default function PdfSplitPage() {
     }
   };
 
+  const handleDownloadExtracted = () => {
+    if (!extractedResult || !selectedFile) return;
+    triggerDownload(extractedResult.blob, extractedResult.name);
+
+    const dlItem = {
+      fileName: extractedResult.name,
+      originalSize: selectedFile.size,
+      outputSize: extractedResult.blob.size,
+      savingsPct: 0,
+      status: "downloaded" as const,
+      blob: extractedResult.blob,
+    };
+    pushDownload(dlItem);
+    setLatestDeliveredFile({
+      id: `deliv-${Date.now()}`,
+      ...dlItem,
+      timestamp: Date.now(),
+    });
+    triggerSupportPrompt();
+  };
+
   const handleSplitAllToZip = async () => {
     if (!selectedFile || totalPages === 0) return;
     setIsProcessing(true);
@@ -170,13 +213,31 @@ export default function PdfSplitPage() {
     try {
       const parts = await splitAllPages(selectedFile);
       const totalOut = parts.reduce((acc, p) => acc + p.blob.size, 0);
-      await downloadAsZip(parts, `${selectedFile.name.replace(/\.[^/.]+$/, "")}_all_pages.zip`);
+      const zipName = `${selectedFile.name.replace(/\.[^/.]+$/, "")}_all_pages.zip`;
+      await downloadAsZip(parts, zipName);
+
       await addHistoryRecord({
         filename: selectedFile.name,
         tool: `Split PDF All (${parts.length} pages)`,
         originalSize: selectedFile.size,
         outputSize: totalOut,
       });
+
+      const dlItem = {
+        fileName: zipName,
+        originalSize: selectedFile.size,
+        outputSize: totalOut,
+        savingsPct: 0,
+        status: "downloaded" as const,
+      };
+      pushDownload(dlItem);
+      setLatestDeliveredFile({
+        id: `deliv-${Date.now()}`,
+        ...dlItem,
+        timestamp: Date.now(),
+      });
+      triggerSupportPrompt();
+
       toast({
         title: "Split all complete",
         description: `Downloaded ZIP with ${parts.length} separate single-page PDFs.`,
@@ -195,24 +256,12 @@ export default function PdfSplitPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]">
-            <Scissors className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
-              Split & Extract PDF
-            </h1>
-            <p className="text-sm text-[hsl(var(--muted-foreground))]">
-              Extract page ranges, pick individual pages, or split every page into separate files.
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <ToolPageShell
+      icon={Scissors}
+      title="Split & Extract PDF"
+      description="Extract page ranges, pick individual pages, or split every page into separate files."
+      formats={["PDF"]}
+    >
       {!selectedFile ? (
         <DropZone
           onFiles={handleFiles}
@@ -235,11 +284,23 @@ export default function PdfSplitPage() {
                   {selectedFile.name}
                 </p>
                 <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                  {formatBytes(selectedFile.size)} · {totalPages > 0 ? `${totalPages} Pages` : "Loading pages..."}
+                  <span className="tabular-nums">{formatBytes(selectedFile.size)}</span> ·{" "}
+                  {totalPages > 0 ? (
+                    <>
+                      <span className="tabular-nums">{totalPages}</span> Pages
+                    </>
+                  ) : (
+                    "Loading pages..."
+                  )}
                 </p>
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setSelectedFile(null)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="min-h-[44px] px-3 py-2 text-xs font-medium touch-manipulation"
+              onClick={() => setSelectedFile(null)}
+            >
               Change File
             </Button>
           </div>
@@ -247,16 +308,25 @@ export default function PdfSplitPage() {
           {/* Mode Selector */}
           <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-6">
             <Tabs value={mode} onValueChange={(v: any) => setMode(v)}>
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="range" className="text-xs">
+              <TabsList className="grid w-full grid-cols-3 min-h-[48px] p-1">
+                <TabsTrigger
+                  value="range"
+                  className="min-h-[44px] text-xs font-medium touch-manipulation"
+                >
                   <ListFilter className="h-3.5 w-3.5 mr-1.5" />
                   By Page Range
                 </TabsTrigger>
-                <TabsTrigger value="interactive" className="text-xs">
+                <TabsTrigger
+                  value="interactive"
+                  className="min-h-[44px] text-xs font-medium touch-manipulation"
+                >
                   <Layers className="h-3.5 w-3.5 mr-1.5" />
                   Select Pages
                 </TabsTrigger>
-                <TabsTrigger value="all" className="text-xs">
+                <TabsTrigger
+                  value="all"
+                  className="min-h-[44px] text-xs font-medium touch-manipulation"
+                >
                   <Archive className="h-3.5 w-3.5 mr-1.5" />
                   Split All to ZIP
                 </TabsTrigger>
@@ -273,11 +343,12 @@ export default function PdfSplitPage() {
                     value={rangeInput}
                     onChange={(e) => setRangeInput(e.target.value)}
                     placeholder="e.g. 1-3, 5, 8-10"
-                    className="mt-1.5 w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-sm font-mono text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]"
+                    className="mt-1.5 w-full min-h-[44px] rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-sm font-mono text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]"
                   />
-                  <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
-                    Example: <code className="text-[hsl(var(--primary))]">1-5</code> or{" "}
-                    <code className="text-[hsl(var(--primary))]">2, 4, 7-9</code> (Total: {totalPages} pages)
+                  <p className="mt-1.5 text-xs text-[hsl(var(--muted-foreground))]">
+                    Example: <code className="text-[hsl(var(--primary))] font-mono">1-5</code> or{" "}
+                    <code className="text-[hsl(var(--primary))] font-mono">2, 4, 7-9</code> (Total:{" "}
+                    <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">{totalPages}</span> pages)
                   </p>
                 </div>
 
@@ -285,7 +356,7 @@ export default function PdfSplitPage() {
                   size="lg"
                   disabled={isProcessing || totalPages === 0}
                   onClick={handleExtractRangeOrSelected}
-                  className="w-full"
+                  className="w-full min-h-[44px] touch-manipulation font-semibold"
                 >
                   {isProcessing ? (
                     <>
@@ -305,21 +376,28 @@ export default function PdfSplitPage() {
               <TabsContent value="interactive" className="space-y-4 pt-4">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[hsl(var(--muted-foreground))]">
-                    {selectedPageNumbers.size} of {totalPages} pages selected
+                    <span className="tabular-nums font-semibold text-[hsl(var(--foreground))]">
+                      {selectedPageNumbers.size}
+                    </span>{" "}
+                    of{" "}
+                    <span className="tabular-nums font-semibold text-[hsl(var(--foreground))]">
+                      {totalPages}
+                    </span>{" "}
+                    pages selected
                   </span>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={selectAllPages}
-                      className="text-[hsl(var(--primary))] hover:underline"
+                      className="min-h-[44px] px-3 py-2 text-xs font-medium inline-flex items-center text-[hsl(var(--primary))] hover:underline touch-manipulation"
                     >
                       Select All
                     </button>
-                    <span>·</span>
+                    <span className="text-[hsl(var(--border))]">·</span>
                     <button
                       type="button"
                       onClick={deselectAllPages}
-                      className="text-[hsl(var(--muted-foreground))] hover:underline"
+                      className="min-h-[44px] px-3 py-2 text-xs font-medium inline-flex items-center text-[hsl(var(--muted-foreground))] hover:underline touch-manipulation"
                     >
                       Deselect All
                     </button>
@@ -335,14 +413,16 @@ export default function PdfSplitPage() {
                         key={num}
                         type="button"
                         onClick={() => togglePageSelection(num)}
-                        className={`flex flex-col items-center justify-center rounded-lg border p-3 text-xs font-mono transition-colors ${
+                        className={`flex flex-col items-center justify-center rounded-lg border p-3 text-xs font-mono transition-colors min-h-[44px] min-w-[44px] touch-manipulation ${
                           isSelected
                             ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] font-bold shadow-sm"
                             : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
                         }`}
+                        aria-pressed={isSelected}
+                        aria-label={`Page ${num}`}
                       >
                         <FileText className="h-5 w-5 mb-1" />
-                        <span>p. {num}</span>
+                        <span className="tabular-nums">p. {num}</span>
                       </button>
                     );
                   })}
@@ -352,7 +432,7 @@ export default function PdfSplitPage() {
                   size="lg"
                   disabled={isProcessing || selectedPageNumbers.size === 0}
                   onClick={handleExtractRangeOrSelected}
-                  className="w-full"
+                  className="w-full min-h-[44px] touch-manipulation font-semibold"
                 >
                   {isProcessing ? (
                     <>
@@ -362,7 +442,7 @@ export default function PdfSplitPage() {
                   ) : (
                     <>
                       <Scissors className="h-4 w-4 mr-2" />
-                      Extract {selectedPageNumbers.size} Page(s) to PDF
+                      Extract <span className="tabular-nums ml-1 mr-1">{selectedPageNumbers.size}</span> Page(s) to PDF
                     </>
                   )}
                 </Button>
@@ -371,13 +451,17 @@ export default function PdfSplitPage() {
               {/* Mode C: Split All to individual PDFs */}
               <TabsContent value="all" className="space-y-4 pt-4">
                 <div className="rounded-lg bg-[hsl(var(--secondary))] p-4 text-xs text-[hsl(var(--secondary-foreground))] leading-relaxed">
-                  Breaks each of the <strong>{totalPages}</strong> pages in this PDF into its own separate single-page document and bundles them into a ZIP file.
+                  Breaks each of the{" "}
+                  <strong>
+                    <span className="tabular-nums">{totalPages}</span>
+                  </strong>{" "}
+                  pages in this PDF into its own separate single-page document and bundles them into a ZIP file.
                 </div>
                 <Button
                   size="lg"
                   disabled={isProcessing || totalPages === 0}
                   onClick={handleSplitAllToZip}
-                  className="w-full bg-[hsl(var(--primary))]"
+                  className="w-full min-h-[44px] touch-manipulation bg-[hsl(var(--primary))] font-semibold"
                 >
                   {isProcessing ? (
                     <>
@@ -387,7 +471,7 @@ export default function PdfSplitPage() {
                   ) : (
                     <>
                       <Archive className="h-4 w-4 mr-2" />
-                      Split All to ZIP ({totalPages} files)
+                      Split All to ZIP (<span className="tabular-nums">{totalPages}</span> files)
                     </>
                   )}
                 </Button>
@@ -399,21 +483,24 @@ export default function PdfSplitPage() {
           {extractedResult && (
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <CheckCircle2 className="h-6 w-6 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="h-6 w-6 text-emerald-700 dark:text-emerald-400 flex-shrink-0" />
                 <div>
                   <p className="font-bold text-sm text-[hsl(var(--foreground))]">
                     Extracted PDF Document Ready
                   </p>
                   <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">
-                    {extractedResult.name} · {formatBytes(extractedResult.blob.size)}
+                    {extractedResult.name} ·{" "}
+                    <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+                      {formatBytes(extractedResult.blob.size)}
+                    </span>
                   </p>
                 </div>
               </div>
 
               <Button
                 size="lg"
-                onClick={() => triggerDownload(extractedResult.blob, extractedResult.name)}
-                className="w-full sm:w-auto bg-[hsl(var(--success))] hover:bg-emerald-600 text-white"
+                onClick={handleDownloadExtracted}
+                className="w-full sm:w-auto min-h-[44px] touch-manipulation bg-[hsl(var(--success))] hover:bg-emerald-600 text-[hsl(var(--success-foreground))] font-semibold"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download Extracted PDF
@@ -422,6 +509,6 @@ export default function PdfSplitPage() {
           )}
         </div>
       )}
-    </div>
+    </ToolPageShell>
   );
 }

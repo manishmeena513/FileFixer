@@ -103,7 +103,7 @@ export async function convertImagesToPdf(
     }
   }
 
-  const pdfBytes = await pdfDoc.save();
+  const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
   const blob = new Blob([pdfBytes as unknown as BlobPart], { type: "application/pdf" });
 
   return {

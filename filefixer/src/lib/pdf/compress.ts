@@ -42,6 +42,31 @@ export async function compressPDF(
     newPdf.addPage(page);
   }
 
+  // Preserve document metadata unless stripping is requested
+  if (!options.removeMetadata && options.level !== "smaller") {
+    const title = pdfDoc.getTitle();
+    if (title !== undefined) newPdf.setTitle(title);
+    const author = pdfDoc.getAuthor();
+    if (author !== undefined) newPdf.setAuthor(author);
+    const subject = pdfDoc.getSubject();
+    if (subject !== undefined) newPdf.setSubject(subject);
+    const keywords = pdfDoc.getKeywords();
+    if (keywords !== undefined && keywords.length > 0) {
+      const kwList = Array.isArray(keywords)
+        ? keywords
+        : typeof keywords === "string"
+        ? keywords.split(" ").filter(Boolean)
+        : [String(keywords)];
+      if (kwList.length > 0) {
+        newPdf.setKeywords(kwList);
+      }
+    }
+    const producer = pdfDoc.getProducer();
+    if (producer !== undefined) newPdf.setProducer(producer);
+    const creator = pdfDoc.getCreator();
+    if (creator !== undefined) newPdf.setCreator(creator);
+  }
+
   // Save with optimal object streams
   const compressedBytes = await newPdf.save({
     useObjectStreams: true,

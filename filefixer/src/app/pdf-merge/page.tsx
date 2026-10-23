@@ -18,6 +18,7 @@ import { mergePDFs } from "@/lib/pdf/merge";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { useFileStore } from "@/stores/fileStore";
 import { addHistoryRecord } from "@/lib/storage/history";
+import { ToolPageShell } from "@/components/ui/ToolPageShell";
 
 interface MergeItem {
   id: string;
@@ -26,7 +27,13 @@ interface MergeItem {
 
 export default function PdfMergePage() {
   const { toast } = useToast();
-  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
+  const {
+    files: storeFiles,
+    addFiles: addStoreFiles,
+    pushDownload,
+    setLatestDeliveredFile,
+    triggerSupportPrompt,
+  } = useFileStore();
   const [items, setItems] = useState<MergeItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [mergedBlob, setMergedBlob] = useState<Blob | null>(null);
@@ -50,7 +57,9 @@ export default function PdfMergePage() {
   }, []);
 
   const handleFiles = (files: File[]) => {
-    const valid = files.filter((f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf");
+    const valid = files.filter(
+      (f) => f.name.toLowerCase().endsWith(".pdf") || f.type === "application/pdf"
+    );
     if (valid.length === 0) {
       toast({
         title: "Invalid file",
@@ -100,12 +109,24 @@ export default function PdfMergePage() {
       const res = await mergePDFs(filesToMerge);
       setMergedBlob(res.blob);
       setMergedStats({ count: res.pageCount, size: res.blob.size });
+
+      // Register in global Download Dock as ready
+      pushDownload({
+        fileName: res.outputFilename,
+        originalSize: origTotal,
+        outputSize: res.blob.size,
+        savingsPct: 0,
+        status: "ready",
+        blob: res.blob,
+      });
+
       await addHistoryRecord({
         filename: `Merged (${items.length} PDFs)`,
         tool: "Merge PDFs",
         originalSize: origTotal,
         outputSize: res.blob.size,
       });
+
       toast({
         title: "Merge completed",
         description: `Combined into a single PDF with ${res.pageCount} pages.`,
@@ -125,28 +146,35 @@ export default function PdfMergePage() {
 
   const handleDownload = () => {
     if (!mergedBlob) return;
-    triggerDownload(mergedBlob, "merged_document.pdf");
+    const fileName = "merged_document.pdf";
+    triggerDownload(mergedBlob, fileName);
+
+    const origTotal = items.reduce((acc, it) => acc + it.file.size, 0);
+    const dlItem = {
+      fileName,
+      originalSize: origTotal,
+      outputSize: mergedBlob.size,
+      savingsPct: 0,
+      status: "downloaded" as const,
+      blob: mergedBlob,
+    };
+
+    pushDownload(dlItem);
+    setLatestDeliveredFile({
+      id: `deliv-${Date.now()}`,
+      ...dlItem,
+      timestamp: Date.now(),
+    });
+    triggerSupportPrompt();
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]">
-            <FilePlus className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
-              Merge PDFs
-            </h1>
-            <p className="text-sm text-[hsl(var(--muted-foreground))]">
-              Combine multiple PDF documents into a single file. Reorder pages and files completely locally.
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <ToolPageShell
+      icon={FilePlus}
+      title="Merge PDFs"
+      description="Combine multiple PDF documents into a single file. Reorder pages and files completely locally."
+      formats={["PDF"]}
+    >
       <div className="space-y-6">
         <DropZone
           onFiles={handleFiles}
@@ -160,9 +188,14 @@ export default function PdfMergePage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-3">
               <span className="text-sm font-semibold text-[hsl(var(--foreground))]">
-                Merge Order ({items.length} files)
+                Merge Order (<span className="tabular-nums">{items.length}</span> files)
               </span>
-              <Button variant="ghost" size="sm" onClick={() => setItems([])}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="min-h-[44px] px-3 py-2 text-xs font-medium touch-manipulation"
+                onClick={() => setItems([])}
+              >
                 Clear All
               </Button>
             </div>
@@ -175,7 +208,7 @@ export default function PdfMergePage() {
                   className="flex items-center justify-between gap-4 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="flex h-7 w-7 items-center justify-center rounded bg-[hsl(var(--secondary))] text-xs font-mono font-bold text-[hsl(var(--primary))]">
+                    <span className="flex h-7 w-7 items-center justify-center rounded bg-[hsl(var(--secondary))] text-xs font-mono font-bold text-[hsl(var(--primary))] tabular-nums">
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     <FileText className="h-5 w-5 flex-shrink-0 text-[hsl(var(--muted-foreground))]" />
@@ -183,7 +216,7 @@ export default function PdfMergePage() {
                       <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
                         {it.file.name}
                       </p>
-                      <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                      <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums">
                         {formatBytes(it.file.size)}
                       </p>
                     </div>
@@ -195,8 +228,9 @@ export default function PdfMergePage() {
                       size="icon"
                       disabled={idx === 0}
                       onClick={() => moveItem(idx, "up")}
-                      className="h-8 w-8"
+                      className="min-h-[44px] min-w-[44px] h-11 w-11 touch-manipulation flex items-center justify-center"
                       title="Move Up"
+                      aria-label={`Move ${it.file.name} up`}
                     >
                       <ArrowUp className="h-4 w-4" />
                     </Button>
@@ -205,8 +239,9 @@ export default function PdfMergePage() {
                       size="icon"
                       disabled={idx === items.length - 1}
                       onClick={() => moveItem(idx, "down")}
-                      className="h-8 w-8"
+                      className="min-h-[44px] min-w-[44px] h-11 w-11 touch-manipulation flex items-center justify-center"
                       title="Move Down"
+                      aria-label={`Move ${it.file.name} down`}
                     >
                       <ArrowDown className="h-4 w-4" />
                     </Button>
@@ -214,8 +249,9 @@ export default function PdfMergePage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => removeItem(it.id)}
-                      className="h-8 w-8 text-[hsl(var(--destructive))] hover:text-red-400"
+                      className="min-h-[44px] min-w-[44px] h-11 w-11 touch-manipulation flex items-center justify-center text-[hsl(var(--destructive))] hover:text-red-400"
                       title="Remove"
+                      aria-label={`Remove ${it.file.name}`}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -233,7 +269,7 @@ export default function PdfMergePage() {
                 size="lg"
                 disabled={items.length < 2 || isProcessing}
                 onClick={handleMerge}
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto min-h-[44px] touch-manipulation"
               >
                 {isProcessing ? (
                   <>
@@ -243,7 +279,7 @@ export default function PdfMergePage() {
                 ) : (
                   <>
                     <FilePlus className="h-4 w-4 mr-2" />
-                    Merge {items.length} PDFs
+                    Merge <span className="tabular-nums ml-1 mr-1">{items.length}</span> PDFs
                   </>
                 )}
               </Button>
@@ -255,13 +291,13 @@ export default function PdfMergePage() {
         {mergedBlob && mergedStats && (
           <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-6 w-6 text-emerald-400 flex-shrink-0" />
+              <CheckCircle2 className="h-6 w-6 text-emerald-700 dark:text-emerald-400 flex-shrink-0" />
               <div>
                 <p className="font-bold text-sm text-[hsl(var(--foreground))]">
                   Merged PDF Document Ready
                 </p>
                 <p className="text-xs text-[hsl(var(--muted-foreground))] mt-0.5">
-                  Total {mergedStats.count} pages · {formatBytes(mergedStats.size)}
+                  Total <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">{mergedStats.count}</span> pages · <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">{formatBytes(mergedStats.size)}</span>
                 </p>
               </div>
             </div>
@@ -269,7 +305,7 @@ export default function PdfMergePage() {
             <Button
               size="lg"
               onClick={handleDownload}
-              className="w-full sm:w-auto bg-[hsl(var(--success))] hover:bg-emerald-600 text-white"
+              className="w-full sm:w-auto min-h-[44px] touch-manipulation bg-[hsl(var(--success))] hover:bg-emerald-600 text-[hsl(var(--success-foreground))] font-semibold"
             >
               <Download className="h-4 w-4 mr-2" />
               Download merged_document.pdf
@@ -277,6 +313,6 @@ export default function PdfMergePage() {
           </div>
         )}
       </div>
-    </div>
+    </ToolPageShell>
   );
 }
