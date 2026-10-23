@@ -1,31 +1,31 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Cleaner — Sanitize Metadata & GPS Tags | FileFixer",
+  title: "Privacy Cleaner — Strip EXIF, GPS & Author Tags | FileFixer",
   description:
-    "Scrub hidden camera EXIF tags, GPS location coordinates, and sensitive author dictionaries from images and documents locally in your browser.",
+    "Inspect and eliminate sensitive GPS coordinates, camera serial numbers, and author tags from images and PDFs in your browser.",
   alternates: {
     canonical: "/privacy-cleaner",
   },
   openGraph: {
-    title: "Privacy Cleaner — Sanitize Metadata & GPS Tags | FileFixer",
+    title: "Privacy Cleaner — Strip EXIF, GPS & Author Tags | FileFixer",
     description:
-      "Scrub hidden camera EXIF tags and GPS coordinates. 100% private client-side processing.",
+      "Inspect and eliminate sensitive GPS coordinates, camera serial numbers, and author tags from images and PDFs in your browser.",
     url: "/privacy-cleaner",
     images: [
       {
         url: "/branding/filefixer-og.png",
         width: 1200,
         height: 630,
-        alt: "Privacy Cleaner | FileFixer",
+        alt: "Privacy Cleaner — FileFixer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Privacy Cleaner — Sanitize Metadata & GPS Tags | FileFixer",
+    title: "Privacy Cleaner — Strip EXIF, GPS & Author Tags | FileFixer",
     description:
-      "Scrub hidden camera EXIF tags and GPS coordinates. 100% private client-side processing.",
+      "Inspect and eliminate sensitive GPS coordinates, camera serial numbers, and author tags from images and PDFs in your browser.",
     images: ["/branding/filefixer-og.png"],
   },
 };
