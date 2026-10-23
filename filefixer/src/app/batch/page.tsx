@@ -34,11 +34,18 @@ import { downloadAsZip } from "@/lib/zip";
 import { addHistoryRecord } from "@/lib/storage/history";
 import { useFileStore } from "@/stores/fileStore";
 import { calcSavings } from "@/lib/utils";
+import { ToolPageShell } from "@/components/ui/ToolPageShell";
 
 export default function BatchHubPage() {
   const { toast } = useToast();
   const addMoreInputRef = useRef<HTMLInputElement>(null);
-  const { files: storeFiles, addFiles: addStoreFiles, pushDownload } = useFileStore();
+  const {
+    files: storeFiles,
+    addFiles: addStoreFiles,
+    pushDownload,
+    setLatestDeliveredFile,
+    triggerSupportPrompt,
+  } = useFileStore();
 
   const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -195,6 +202,15 @@ export default function BatchHubPage() {
     }));
 
     await downloadAsZip(entries, "filefixer_batch_assets.zip");
+    setLatestDeliveredFile({
+      id: `deliv-${Date.now()}`,
+      fileName: "filefixer_batch_assets.zip",
+      originalSize: totalOriginal,
+      outputSize: totalOutput,
+      status: "downloaded",
+      timestamp: Date.now(),
+    });
+    triggerSupportPrompt();
     toast({
       title: "ZIP downloaded",
       description: `Downloaded ${entries.length} processed file(s).`,
@@ -212,6 +228,7 @@ export default function BatchHubPage() {
         triggerDownload(r.blob, r.outputName);
       }, idx * 150);
     });
+    triggerSupportPrompt();
     toast({
       title: "Downloading files",
       description: `Started downloading ${ready.length} file(s).`,
@@ -238,24 +255,14 @@ export default function BatchHubPage() {
       : 0;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10 sm:px-6 lg:px-8 animate-fade-in">
-      {/* Header */}
-      <div className="mb-6 sm:mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]">
-            <Layers className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
-              Batch Studio
-            </h1>
-            <p className="text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
-              Multi-stage local pipeline: Resize → Convert → Compress → Rename in one pass.
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <ToolPageShell
+      icon={Layers}
+      title="Batch Studio"
+      description="Multi-stage local pipeline: Resize → Convert → Compress → Rename in one pass."
+      backHref="/tools"
+      backLabel="All Tools"
+      formats={["JPG", "PNG", "WEBP"]}
+    >
       <input
         ref={addMoreInputRef}
         type="file"
@@ -288,7 +295,7 @@ export default function BatchHubPage() {
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                     Files
                   </span>
-                  <p className="text-lg sm:text-xl font-bold text-[hsl(var(--foreground))] mt-0.5">
+                  <p className="text-lg sm:text-xl font-bold text-[hsl(var(--foreground))] mt-0.5 tabular-nums font-mono">
                     {files.length}
                   </p>
                 </div>
@@ -296,8 +303,8 @@ export default function BatchHubPage() {
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                     Done / Failed
                   </span>
-                  <p className="text-lg sm:text-xl font-bold mt-0.5">
-                    <span className="text-emerald-400">{completedCount}</span>
+                  <p className="text-lg sm:text-xl font-bold mt-0.5 tabular-nums font-mono">
+                    <span className="text-emerald-700 dark:text-emerald-400">{completedCount}</span>
                     <span className="text-[hsl(var(--muted-foreground))] mx-1">
                       /
                     </span>
@@ -316,7 +323,7 @@ export default function BatchHubPage() {
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                     Before
                   </span>
-                  <p className="text-base sm:text-lg font-bold text-[hsl(var(--foreground))] mt-0.5 truncate">
+                  <p className="text-base sm:text-lg font-bold text-[hsl(var(--foreground))] mt-0.5 truncate tabular-nums font-mono">
                     {formatBytes(totalOriginal)}
                   </p>
                 </div>
@@ -324,15 +331,15 @@ export default function BatchHubPage() {
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                     After
                   </span>
-                  <p className="text-base sm:text-lg font-bold text-emerald-400 mt-0.5 truncate">
+                  <p className="text-base sm:text-lg font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 truncate tabular-nums font-mono">
                     {completedCount > 0 ? formatBytes(totalOutput) : "—"}
                   </p>
                 </div>
                 <div className="col-span-2 sm:col-span-1 rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-3 text-center">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                     Space Saved
                   </span>
-                  <p className="text-base sm:text-lg font-bold text-emerald-400 mt-0.5">
+                  <p className="text-base sm:text-lg font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 tabular-nums font-mono">
                     {completedCount > 0
                       ? `${formatBytes(spaceSaved)} (${savingsPct.toFixed(0)}%)`
                       : "—"}
@@ -349,7 +356,7 @@ export default function BatchHubPage() {
                         ? `Processing file ${currentIdx + 1} of ${files.length}...`
                         : `Batch complete (${completedCount} succeeded${failedCount > 0 ? `, ${failedCount} failed` : ""})`}
                     </span>
-                    <span className="font-mono font-bold text-[hsl(var(--primary))]">
+                    <span className="font-mono font-bold text-[hsl(var(--primary))] tabular-nums">
                       {progressPct}%
                     </span>
                   </div>
@@ -365,7 +372,7 @@ export default function BatchHubPage() {
                     size="sm"
                     onClick={() => addMoreInputRef.current?.click()}
                     disabled={isProcessing}
-                    className="min-h-[40px]"
+                    className="min-h-[44px] touch-manipulation"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Add More
@@ -375,7 +382,7 @@ export default function BatchHubPage() {
                       variant="secondary"
                       size="sm"
                       onClick={handleRetryFailed}
-                      className="min-h-[40px] text-amber-400 border border-amber-500/30"
+                      className="min-h-[44px] touch-manipulation text-amber-600 dark:text-amber-400 border border-amber-500/30"
                     >
                       <RotateCcw className="h-3.5 w-3.5" />
                       Retry Failed ({failedCount})
@@ -386,7 +393,7 @@ export default function BatchHubPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => setResults([])}
-                      className="min-h-[40px]"
+                      className="min-h-[44px] touch-manipulation"
                     >
                       Clear Results
                     </Button>
@@ -401,7 +408,7 @@ export default function BatchHubPage() {
                     setFiles([]);
                     setResults([]);
                   }}
-                  className="min-h-[40px] text-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive)/0.1)]"
+                  className="min-h-[44px] touch-manipulation text-[hsl(var(--destructive))] hover:bg-[hsl(var(--destructive)/0.1)]"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Clear All
@@ -431,7 +438,7 @@ export default function BatchHubPage() {
                           >
                             {f.name}
                           </p>
-                          <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
+                          <p className="text-[11px] text-[hsl(var(--muted-foreground))] tabular-nums font-mono">
                             {formatBytes(f.size)}
                           </p>
                         </div>
@@ -446,11 +453,11 @@ export default function BatchHubPage() {
                                 {res.outputName}
                               </p>
                               <div className="flex items-center gap-1.5 text-[11px]">
-                                <span className="text-emerald-400 font-semibold">
+                                <span className="text-emerald-700 dark:text-emerald-400 font-semibold tabular-nums font-mono">
                                   {formatBytes(res.outputSize)}
                                 </span>
                                 {res.outputSize < f.size && (
-                                  <span className="rounded bg-emerald-500/15 px-1.5 py-0.2 text-[10px] font-bold text-emerald-400">
+                                  <span className="rounded bg-emerald-500/15 px-1.5 py-0.2 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 tabular-nums font-mono">
                                     -{calcSavings(f.size, res.outputSize)}
                                   </span>
                                 )}
@@ -477,23 +484,24 @@ export default function BatchHubPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() =>
-                                triggerDownload(res.blob, res.outputName)
-                              }
-                              className="h-8 px-2.5 text-xs"
+                              onClick={() => {
+                                triggerDownload(res.blob, res.outputName);
+                                triggerSupportPrompt();
+                              }}
+                              className="min-h-[44px] touch-manipulation px-3 text-xs"
                             >
-                              <Download className="h-3.5 w-3.5" />
+                              <Download className="h-3.5 w-3.5 mr-1" />
                               Save
                             </Button>
                           )}
                           {res && res.status === "error" && (
-                            <AlertCircle className="h-4 w-4 text-[hsl(var(--destructive))]" />
+                            <AlertCircle className="h-5 w-5 text-[hsl(var(--destructive))]" />
                           )}
                           {!isProcessing && (
                             <button
                               type="button"
                               onClick={() => removeSingleFile(idx)}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))]"
+                              className="flex h-11 w-11 min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))]"
                               aria-label={`Remove ${f.name}`}
                             >
                               <X className="h-4 w-4" />
@@ -521,7 +529,7 @@ export default function BatchHubPage() {
                           <p className="truncate text-sm font-semibold text-[hsl(var(--foreground))]">
                             {f.name}
                           </p>
-                          <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                          <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums font-mono">
                             Original: {formatBytes(f.size)}
                           </p>
                         </div>
@@ -529,7 +537,7 @@ export default function BatchHubPage() {
                           <button
                             type="button"
                             onClick={() => removeSingleFile(idx)}
-                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))]"
+                            className="flex h-11 w-11 min-h-[44px] min-w-[44px] touch-manipulation shrink-0 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))]"
                             aria-label={`Remove ${f.name}`}
                           >
                             <X className="h-4 w-4" />
@@ -543,7 +551,7 @@ export default function BatchHubPage() {
                             <p className="truncate font-mono text-xs font-semibold text-[hsl(var(--primary))]">
                               {res.outputName}
                             </p>
-                            <p className="text-xs font-semibold text-emerald-400">
+                            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 tabular-nums font-mono">
                               {formatBytes(res.outputSize)}
                               {res.outputSize < f.size &&
                                 ` (-${calcSavings(f.size, res.outputSize)})`}
@@ -551,12 +559,13 @@ export default function BatchHubPage() {
                           </div>
                           <Button
                             size="sm"
-                            onClick={() =>
-                              triggerDownload(res.blob, res.outputName)
-                            }
-                            className="min-h-[40px] shrink-0"
+                            onClick={() => {
+                              triggerDownload(res.blob, res.outputName);
+                              triggerSupportPrompt();
+                            }}
+                            className="min-h-[44px] touch-manipulation shrink-0"
                           >
-                            <Download className="h-3.5 w-3.5" />
+                            <Download className="h-3.5 w-3.5 mr-1" />
                             Save
                           </Button>
                         </div>
@@ -591,7 +600,7 @@ export default function BatchHubPage() {
 
             {/* 1. Resize stage */}
             <div className="space-y-3 pb-3.5 border-b border-[hsl(var(--border))]">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between min-h-[44px]">
                 <span className="text-xs font-semibold text-[hsl(var(--foreground))]">
                   1. Resize Assets
                 </span>
@@ -612,7 +621,7 @@ export default function BatchHubPage() {
                       onChange={(e) =>
                         setTargetWidth(parseInt(e.target.value, 10) || 1080)
                       }
-                      className="mt-1 w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2.5 py-2 text-xs font-mono min-h-[40px]"
+                      className="mt-1 w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2.5 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                     />
                   </div>
                   <div>
@@ -625,7 +634,7 @@ export default function BatchHubPage() {
                       onChange={(e) =>
                         setTargetHeight(parseInt(e.target.value, 10) || 1080)
                       }
-                      className="mt-1 w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2.5 py-2 text-xs font-mono min-h-[40px]"
+                      className="mt-1 w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2.5 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                     />
                   </div>
                 </div>
@@ -634,7 +643,7 @@ export default function BatchHubPage() {
 
             {/* 2. Convert stage */}
             <div className="space-y-3 pb-3.5 border-b border-[hsl(var(--border))]">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between min-h-[44px]">
                 <span className="text-xs font-semibold text-[hsl(var(--foreground))]">
                   2. Convert Format
                 </span>
@@ -651,7 +660,7 @@ export default function BatchHubPage() {
                         key={fmt}
                         type="button"
                         onClick={() => setTargetFormat(fmt)}
-                        className={`rounded-lg border py-2 text-xs uppercase font-mono transition-colors min-h-[40px] ${
+                        className={`rounded-lg border py-2 text-xs uppercase font-mono transition-colors min-h-[44px] touch-manipulation ${
                           targetFormat === fmt
                             ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] font-bold"
                             : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
@@ -667,7 +676,7 @@ export default function BatchHubPage() {
 
             {/* 3. Compress stage */}
             <div className="space-y-3 pb-3.5 border-b border-[hsl(var(--border))]">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between min-h-[44px]">
                 <span className="text-xs font-semibold text-[hsl(var(--foreground))]">
                   3. Compress Quality
                 </span>
@@ -678,11 +687,11 @@ export default function BatchHubPage() {
               </div>
               {compressEnabled && (
                 <div className="space-y-2 pt-1">
-                  <div className="flex justify-between text-xs font-mono">
+                  <div className="flex justify-between text-xs font-mono min-h-[32px] items-center">
                     <span className="text-[hsl(var(--muted-foreground))]">
                       Target Quality
                     </span>
-                    <span className="text-[hsl(var(--primary))] font-bold">
+                    <span className="text-[hsl(var(--primary))] font-bold tabular-nums">
                       {qualityPct}%
                     </span>
                   </div>
@@ -699,7 +708,7 @@ export default function BatchHubPage() {
 
             {/* 4. Rename stage */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between min-h-[44px]">
                 <span className="text-xs font-semibold text-[hsl(var(--foreground))]">
                   4. Sequential Rename
                 </span>
@@ -715,7 +724,7 @@ export default function BatchHubPage() {
                     value={renamePattern}
                     onChange={(e) => setRenamePattern(e.target.value)}
                     placeholder="e.g. asset_###"
-                    className="w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[40px]"
+                    className="w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                   />
                   <p className="mt-1 text-[11px] text-[hsl(var(--muted-foreground))]">
                     Use ### for zero-padded numbering (001, 002...)
@@ -728,7 +737,7 @@ export default function BatchHubPage() {
               size="lg"
               disabled={files.length === 0 || isProcessing}
               onClick={handleProcessAll}
-              className="w-full min-h-[48px] font-semibold"
+              className="w-full min-h-[48px] touch-manipulation font-semibold"
             >
               {isProcessing ? (
                 <>
@@ -747,13 +756,13 @@ export default function BatchHubPage() {
           {/* Download Results Card */}
           {completedCount > 0 && (
             <div className="animate-slide-up rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 space-y-3.5">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+              <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm">
                 <CheckCircle2 className="h-5 w-5 shrink-0" />
                 <span>Batch Ready ({completedCount} files)</span>
               </div>
               <p className="text-xs text-[hsl(var(--muted-foreground))]">
                 Total space saved:{" "}
-                <strong className="text-emerald-400">
+                <strong className="text-emerald-700 dark:text-emerald-400 tabular-nums font-mono">
                   {formatBytes(spaceSaved)} ({savingsPct.toFixed(1)}%)
                 </strong>
               </p>
@@ -761,7 +770,7 @@ export default function BatchHubPage() {
                 <Button
                   size="lg"
                   onClick={handleDownloadZip}
-                  className="w-full min-h-[46px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-white font-semibold"
+                  className="w-full min-h-[48px] touch-manipulation bg-[hsl(var(--success))] hover:bg-emerald-600 text-white font-semibold"
                 >
                   <Archive className="h-4 w-4" />
                   Download ZIP ({completedCount})
@@ -770,7 +779,7 @@ export default function BatchHubPage() {
                   variant="outline"
                   size="md"
                   onClick={handleDownloadAllIndividual}
-                  className="w-full min-h-[42px]"
+                  className="w-full min-h-[44px] touch-manipulation"
                 >
                   <Download className="h-4 w-4" />
                   Download All Individually
@@ -780,7 +789,7 @@ export default function BatchHubPage() {
           )}
         </div>
       </div>
-    </div>
+    </ToolPageShell>
   );
 }
 

@@ -174,7 +174,7 @@ export default function BrandingPage() {
             </p>
           </div>
           <a href="/branding/filefixer-logo-dark.svg" download="filefixer-logo.svg">
-            <Button size="sm" variant="outline" className="gap-1.5">
+            <Button size="sm" variant="outline" className="gap-1.5 min-h-[44px]">
               <Download className="h-3.5 w-3.5" /> Download Full SVG
             </Button>
           </a>
@@ -394,7 +394,7 @@ export default function BrandingPage() {
                   download={asset.filename}
                   className="w-full"
                 >
-                  <Button size="sm" variant="outline" className="w-full gap-1.5 text-xs">
+                  <Button size="sm" variant="outline" className="w-full gap-1.5 text-xs min-h-[44px]">
                     <Download className="h-3.5 w-3.5" /> Download Asset
                   </Button>
                 </a>
@@ -412,12 +412,12 @@ export default function BrandingPage() {
         </div>
         <div className="flex gap-3">
           <Link href="/tools">
-            <Button size="sm" className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
+            <Button size="sm" className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] min-h-[44px]">
               Explore All Tools <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
             </Button>
           </Link>
           <Link href="/">
-            <Button size="sm" variant="outline">
+            <Button size="sm" variant="outline" className="min-h-[44px]">
               Back to Home
             </Button>
           </Link>

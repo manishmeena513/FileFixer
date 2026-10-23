@@ -65,6 +65,13 @@ export async function compressPDF(
     if (producer !== undefined) newPdf.setProducer(producer);
     const creator = pdfDoc.getCreator();
     if (creator !== undefined) newPdf.setCreator(creator);
+  } else {
+    newPdf.setTitle("");
+    newPdf.setAuthor("");
+    newPdf.setSubject("");
+    newPdf.setKeywords([]);
+    newPdf.setProducer("");
+    newPdf.setCreator("");
   }
 
   // Save with optimal object streams

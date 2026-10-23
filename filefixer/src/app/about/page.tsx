@@ -53,7 +53,7 @@ export default function AboutPage() {
       {/* Principles */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
             <ShieldCheck className="h-5 w-5" />
           </div>
           <h3 className="font-bold text-base text-[hsl(var(--foreground))]">Zero Server Uploads</h3>
@@ -73,7 +73,7 @@ export default function AboutPage() {
         </div>
 
         <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10 text-purple-400">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400">
             <HardDrive className="h-5 w-5" />
           </div>
           <h3 className="font-bold text-base text-[hsl(var(--foreground))]">Complete Control</h3>
@@ -93,12 +93,12 @@ export default function AboutPage() {
         </p>
         <div className="pt-2 flex flex-wrap gap-3">
           <Link href="/privacy">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="min-h-[44px]">
               Read Our Privacy Policy <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
             </Button>
           </Link>
           <Link href="/branding">
-            <Button variant="outline" size="sm" className="border-sky-500/30 text-sky-400 hover:bg-sky-500/10">
+            <Button variant="outline" size="sm" className="border-sky-500/30 text-sky-600 dark:text-sky-400 hover:bg-sky-500/10 min-h-[44px]">
               <Palette className="h-3.5 w-3.5 mr-1.5" /> Brand Identity &amp; Assets
             </Button>
           </Link>

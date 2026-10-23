@@ -103,6 +103,9 @@ export function revokeObjectURL(url: string): void {
 }
 
 export function triggerDownload(blob: Blob, filename: string): void {
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return;
+  }
   const url = createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;

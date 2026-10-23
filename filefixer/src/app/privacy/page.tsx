@@ -14,6 +14,7 @@ import {
   ArrowRight,
   Trash2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import type { Metadata } from "next";
 
@@ -87,7 +88,7 @@ export default function PrivacyPage() {
     <div className="mx-auto max-w-5xl px-4 py-12 sm:py-16 sm:px-6 lg:px-8 space-y-16">
       {/* Hero Header */}
       <div className="space-y-4 text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-400">
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
           <ShieldCheck className="h-4 w-4" />
           <span>FileFixer Privacy Center</span>
         </div>
@@ -103,14 +104,14 @@ export default function PrivacyPage() {
       <section className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-10 space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[hsl(var(--border))] pb-6">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
               Zero-Upload Architecture
             </span>
             <h2 className="text-xl sm:text-2xl font-bold mt-1">
               How Local Browser Processing Works
             </h2>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-3.5 py-2 text-xs font-semibold text-emerald-400 self-start sm:self-auto">
+          <div className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 self-start sm:self-auto">
             <WifiOff className="h-4 w-4" />
             Works 100% Offline After Load
           </div>
@@ -126,7 +127,7 @@ export default function PrivacyPage() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
+                    <span className="text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
                       STEP {item.step}
                     </span>
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]">
@@ -159,7 +160,7 @@ export default function PrivacyPage() {
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-6 sm:p-8 space-y-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
               <Check className="h-5 w-5" />
             </div>
             <h2 className="text-lg font-bold text-[hsl(var(--foreground))]">
@@ -168,25 +169,25 @@ export default function PrivacyPage() {
           </div>
           <ul className="space-y-3 text-sm text-[hsl(var(--muted-foreground))]">
             <li className="flex items-start gap-2.5">
-              <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+              <Check className="h-4 w-4 text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5" />
               <span>
                 <strong className="text-[hsl(var(--foreground))]">All source files:</strong> Photos, scans, contracts, tax PDFs, and personal documents.
               </span>
             </li>
             <li className="flex items-start gap-2.5">
-              <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+              <Check className="h-4 w-4 text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5" />
               <span>
                 <strong className="text-[hsl(var(--foreground))]">All processed outputs:</strong> Compressed images, merged PDFs, extracted pages, and ZIP bundles.
               </span>
             </li>
             <li className="flex items-start gap-2.5">
-              <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+              <Check className="h-4 w-4 text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5" />
               <span>
                 <strong className="text-[hsl(var(--foreground))]">File metadata & EXIF:</strong> GPS coordinates, camera serials, and PDF properties inspected or stripped locally.
               </span>
             </li>
             <li className="flex items-start gap-2.5">
-              <Check className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+              <Check className="h-4 w-4 text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5" />
               <span>
                 <strong className="text-[hsl(var(--foreground))]">Local job history:</strong> Stored in your browser&apos;s IndexedDB so you can review past compression savings—and clearable in one click.
               </span>
@@ -275,6 +276,20 @@ export default function PrivacyPage() {
           </div>
         </div>
       </section>
+
+      {/* Action Links */}
+      <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+        <Link href="/tools">
+          <Button className="min-h-[44px] px-6 font-semibold touch-manipulation">
+            Explore All Tools <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+        </Link>
+        <Link href="/history">
+          <Button variant="outline" className="min-h-[44px] px-6 font-medium touch-manipulation">
+            Manage Local History
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

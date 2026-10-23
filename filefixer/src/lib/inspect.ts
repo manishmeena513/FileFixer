@@ -23,6 +23,10 @@ export interface FileMetadata {
   fNumber?: number;
   exposureTime?: string;
   hasGps?: boolean;
+  gpsLatitude?: number;
+  gpsLongitude?: number;
+  focalLength?: number;
+  software?: string;
 
   // PDF specific
   pdfPages?: number;
@@ -32,6 +36,8 @@ export interface FileMetadata {
   pdfCreator?: string;
   pdfProducer?: string;
   pdfCreationDate?: string;
+  pdfModificationDate?: string;
+  pdfKeywords?: string[];
 }
 
 export async function inspectFile(file: File): Promise<FileMetadata> {
@@ -72,7 +78,11 @@ export async function inspectFile(file: File): Promise<FileMetadata> {
         base.iso = parsedExif.ISO;
         base.fNumber = parsedExif.FNumber;
         base.exposureTime = parsedExif.ExposureTime ? `1/${Math.round(1 / parsedExif.ExposureTime)}s` : undefined;
+        base.focalLength = parsedExif.FocalLength;
+        base.software = parsedExif.Software;
         base.hasGps = Boolean(parsedExif.latitude || parsedExif.longitude);
+        base.gpsLatitude = parsedExif.latitude;
+        base.gpsLongitude = parsedExif.longitude;
       } else {
         base.exifAvailable = false;
       }
@@ -90,6 +100,11 @@ export async function inspectFile(file: File): Promise<FileMetadata> {
       base.pdfCreator = pdfDoc.getCreator();
       base.pdfProducer = pdfDoc.getProducer();
       base.pdfCreationDate = pdfDoc.getCreationDate()?.toLocaleString();
+      base.pdfModificationDate = pdfDoc.getModificationDate()?.toLocaleString();
+      const kw = pdfDoc.getKeywords();
+      if (kw) {
+        base.pdfKeywords = Array.isArray(kw) ? kw : typeof kw === "string" ? kw.split(" ").filter(Boolean) : [String(kw)];
+      }
     } catch {
       // PDF load failed
     }
