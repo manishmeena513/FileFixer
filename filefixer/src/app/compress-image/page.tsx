@@ -22,6 +22,8 @@ import { compressImage, CompressionOptions } from "@/lib/image/compress";
 import { triggerDownload } from "@/lib/file-utils";
 import { downloadAsZip } from "@/lib/zip";
 import { addHistoryRecord } from "@/lib/storage/history";
+import { ToolPageShell } from "@/components/ui/ToolPageShell";
+
 
 export default function CompressImagePage() {
   const { files, addFiles, removeFile, clearFiles, updateStatus, setOutput } =
@@ -140,24 +142,12 @@ export default function CompressImagePage() {
   const anyCompleted = files.some((f) => f.status === "done");
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]">
-            <Minimize2 className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
-              Compress Image
-            </h1>
-            <p className="text-sm text-[hsl(var(--muted-foreground))]">
-              Reduce JPG, PNG, and WebP file size locally without sacrificing visual quality.
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <ToolPageShell
+      icon={Minimize2}
+      title="Compress Image"
+      description="Reduce JPG, PNG, and WebP file size locally without sacrificing visual quality."
+      formats={["JPG", "PNG", "WEBP"]}
+    >
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Left column: Upload & Files */}
         <div className="space-y-6 lg:col-span-2">
@@ -384,6 +374,6 @@ export default function CompressImagePage() {
           )}
         </div>
       </div>
-    </div>
+    </ToolPageShell>
   );
 }

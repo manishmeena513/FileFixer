@@ -109,7 +109,7 @@ const quickTools = [
     href: "/smart-compress",
     icon: Sparkles,
     badge: "Signature",
-    color: "from-cyan-500/20 to-teal-500/20 text-cyan-400 border-cyan-500/30",
+    color: "from-cyan-500/20 to-teal-500/20 text-cyan-600 dark:text-cyan-400 border-cyan-500/30",
   },
   {
     title: "Batch Multi-Pipeline",
@@ -117,7 +117,7 @@ const quickTools = [
     href: "/batch",
     icon: Layers,
     badge: "Bulk Hub",
-    color: "from-purple-500/20 to-pink-500/20 text-purple-400 border-purple-500/30",
+    color: "from-purple-500/20 to-pink-500/20 text-purple-600 dark:text-purple-400 border-purple-500/30",
   },
   {
     title: "Compress Image",
@@ -125,7 +125,7 @@ const quickTools = [
     href: "/compress-image",
     icon: Minimize2,
     badge: "Fast",
-    color: "from-blue-500/20 to-indigo-500/20 text-blue-400 border-blue-500/30",
+    color: "from-blue-500/20 to-indigo-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30",
   },
   {
     title: "PDF Visual Workspace",
@@ -133,7 +133,7 @@ const quickTools = [
     href: "/pdf-workspace",
     icon: Layers,
     badge: "Workspace",
-    color: "from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30",
+    color: "from-amber-500/20 to-orange-500/20 text-amber-600 dark:text-amber-400 border-amber-500/30",
   },
   {
     title: "Merge PDFs",
@@ -141,7 +141,7 @@ const quickTools = [
     href: "/pdf-merge",
     icon: FilePlus,
     badge: "Popular",
-    color: "from-emerald-500/20 to-teal-500/20 text-emerald-400 border-emerald-500/30",
+    color: "from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
   },
   {
     title: "Split & Extract PDF",
@@ -149,7 +149,7 @@ const quickTools = [
     href: "/pdf-split",
     icon: Scissors,
     badge: "Clean",
-    color: "from-red-500/20 to-rose-500/20 text-red-400 border-red-500/30",
+    color: "from-red-500/20 to-rose-500/20 text-red-600 dark:text-red-400 border-red-500/30",
   },
   {
     title: "Universal File Inspector",
@@ -157,7 +157,7 @@ const quickTools = [
     href: "/inspect",
     icon: FileCheck,
     badge: "Inspect",
-    color: "from-emerald-500/20 to-cyan-500/20 text-emerald-400 border-emerald-500/30",
+    color: "from-emerald-500/20 to-cyan-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
   },
   {
     title: "Resize Image",
@@ -165,7 +165,7 @@ const quickTools = [
     href: "/resize-image",
     icon: Maximize2,
     badge: "Presets",
-    color: "from-blue-500/20 to-indigo-500/20 text-blue-400 border-blue-500/30",
+    color: "from-blue-500/20 to-indigo-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30",
   },
   {
     title: "Convert Image",
@@ -173,7 +173,7 @@ const quickTools = [
     href: "/convert-image",
     icon: RefreshCw,
     badge: "Convert",
-    color: "from-indigo-500/20 to-purple-500/20 text-indigo-400 border-indigo-500/30",
+    color: "from-indigo-500/20 to-purple-500/20 text-indigo-600 dark:text-indigo-400 border-indigo-500/30",
   },
 ];
 
@@ -391,7 +391,7 @@ export default function HomePage() {
                         <h2 className="text-base font-bold">
                           Smart File Drop Ready
                         </h2>
-                        <Badge variant="default" className="text-[11px]">
+                        <Badge variant="default" className="text-[11px] font-mono tabular-nums">
                           {files.length} {files.length === 1 ? "file" : "files"} •{" "}
                           {formatBytes(totalSize)}
                         </Badge>
@@ -506,16 +506,16 @@ export default function HomePage() {
           {/* Core Trust Badges */}
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-[hsl(var(--muted-foreground))]">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-1.5 font-medium text-[hsl(var(--foreground))]">
-              <Shield className="h-3.5 w-3.5 text-emerald-400" /> 100% Client-side
+              <Shield className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" /> 100% Client-side
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-1.5 font-medium text-[hsl(var(--foreground))]">
               <Zap className="h-3.5 w-3.5 text-[hsl(var(--primary))]" /> Instant Processing
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-1.5 font-medium text-[hsl(var(--foreground))]">
-              <HardDrive className="h-3.5 w-3.5 text-purple-400" /> No Account Needed
+              <HardDrive className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" /> No Account Needed
             </span>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-1.5 font-medium text-[hsl(var(--foreground))]">
-              <FileCheck className="h-3.5 w-3.5 text-sky-400" /> Batch Processing Ready
+              <FileCheck className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" /> Batch Processing Ready
             </span>
           </div>
         </div>
@@ -672,7 +672,7 @@ export default function HomePage() {
 
             <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.4)] p-4 space-y-2">
               <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-emerald-400" />
+                <FileText className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 <h3 className="text-sm font-bold text-[hsl(var(--foreground))]">PDF Documents</h3>
               </div>
               <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
@@ -689,8 +689,8 @@ export default function HomePage() {
 
             <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.4)] p-4 space-y-2">
               <div className="flex items-center gap-2">
-                <Layers className="h-4 w-4 text-purple-400" />
-                <h3 className="text-sm font-bold text-[hsl(var(--foreground))]">Batch & Pipelines</h3>
+                <Layers className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                <h3 className="text-sm font-bold text-[hsl(var(--foreground))]">Batch &amp; Pipelines</h3>
               </div>
               <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
                 Multi-image batch pipelines, sequence renaming, and instant in-browser ZIP package bundling with zero server uploads.
@@ -711,7 +711,7 @@ export default function HomePage() {
       <section className="border-y border-[hsl(var(--border))] bg-[hsl(var(--card)/0.4)] py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400 mb-3">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-3">
               <Lock className="h-3.5 w-3.5" /> Privacy Architecture
             </div>
             <h2 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
@@ -740,10 +740,10 @@ export default function HomePage() {
             </div>
 
             <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/12 text-sky-400 mb-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/12 text-sky-600 dark:text-sky-400 mb-4">
                 <Shield className="h-6 w-6" />
               </div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-sky-400">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-sky-600 dark:text-sky-400">
                 Step 02
               </span>
               <h3 className="mt-1 text-base font-bold text-[hsl(var(--foreground))]">
@@ -755,10 +755,10 @@ export default function HomePage() {
             </div>
 
             <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/12 text-purple-400 mb-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/12 text-purple-600 dark:text-purple-400 mb-4">
                 <Cpu className="h-6 w-6" />
               </div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-purple-400">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-purple-600 dark:text-purple-400">
                 Step 03
               </span>
               <h3 className="mt-1 text-base font-bold text-[hsl(var(--foreground))]">
@@ -770,10 +770,10 @@ export default function HomePage() {
             </div>
 
             <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-emerald-500/30 bg-[hsl(var(--background))]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/12 text-emerald-400 mb-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/12 text-emerald-600 dark:text-emerald-400 mb-4">
                 <Download className="h-6 w-6" />
               </div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-400">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
                 Step 04
               </span>
               <h3 className="mt-1 text-base font-bold text-[hsl(var(--foreground))]">
@@ -788,9 +788,9 @@ export default function HomePage() {
           <div className="mt-8 text-center">
             <Link
               href="/privacy"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
             >
-              Visit the Privacy Center & Verify in DevTools{" "}
+              Visit the Privacy Center &amp; Verify in DevTools{" "}
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>

@@ -17,9 +17,9 @@ Current iteration: 3 / 32
   - [x] Iteration 3 Gate: Reviewer 1 APPROVE, Reviewer 2 APPROVE, Challenger 1 APPROVE, Challenger 2 APPROVE, Auditor CLEAN -> Gate Result: PASS
 - [/] Execute Milestone 2: Homepage & Central Tools Directory Overhaul
   - [/] Phase 2A: Explorers:
-    - [/] explorer_m2_1 (3a5f14d2...) - Homepage Hero & Smart Drop Zone Plan
-    - [/] explorer_m2_2 (e5014dfd...) - Central Tools Directory (/tools) Plan
-    - [/] explorer_m2_3 (ab193e0c...) - Tools Catalog Data Integrity Plan
+    - [/] explorer_m2_1 (b5003fe9...) - Homepage Hero & Smart Drop Zone Plan
+    - [/] explorer_m2_2 (bf21f43d...) - Central Tools Directory (/tools) Plan
+    - [/] explorer_m2_3 (c7d4c2e6...) - Tools Catalog Data Integrity Plan
   - [ ] Phase 2B: Worker Implementation
   - [ ] Gate M2: Reviewers, Challengers, Auditor
 - [ ] Execute Milestones M3 - M5 per Dual Track Orchestration

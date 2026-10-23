@@ -106,11 +106,11 @@ export function FileCard({ file, onRemove, showOutput = true }: FileCardProps) {
           <Badge variant="outline" className="text-[10px] px-1.5 py-0">
             {ext}
           </Badge>
-          <span className="text-xs text-[hsl(var(--muted-foreground))]">
+          <span className="text-xs text-[hsl(var(--muted-foreground))] font-mono tabular-nums">
             {formatBytes(file.size)}
           </span>
           {file.width && file.height && (
-            <span className="text-xs text-[hsl(var(--muted-foreground))]">
+            <span className="text-xs text-[hsl(var(--muted-foreground))] font-mono tabular-nums">
               • {file.width}×{file.height}
             </span>
           )}
@@ -119,11 +119,11 @@ export function FileCard({ file, onRemove, showOutput = true }: FileCardProps) {
               <span className="text-xs text-[hsl(var(--muted-foreground))]">
                 →
               </span>
-              <span className="text-xs font-semibold text-[hsl(var(--success))]">
+              <span className="text-xs font-semibold text-[hsl(var(--success))] font-mono tabular-nums">
                 {formatBytes(file.outputSize)}
               </span>
               {hasSavings && (
-                <span className="rounded-full bg-[hsl(var(--success)/0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[hsl(var(--success))]">
+                <span className="rounded-full bg-[hsl(var(--success)/0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[hsl(var(--success))] font-mono tabular-nums">
                   -{calcSavings(file.size, file.outputSize)}
                 </span>
               )}
