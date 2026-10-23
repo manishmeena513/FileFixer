@@ -67,9 +67,9 @@ export function fileToDataURL(file: File): Promise<string> {
   });
 }
 
-export function fileToArrayBuffer(file: File): Promise<ArrayBuffer> {
+export async function fileToArrayBuffer(file: File): Promise<ArrayBuffer> {
   if (typeof file.arrayBuffer === "function") {
-    return file.arrayBuffer();
+    return await file.arrayBuffer();
   }
   return new Promise((resolve, reject) => {
     if (typeof FileReader === "undefined") {
