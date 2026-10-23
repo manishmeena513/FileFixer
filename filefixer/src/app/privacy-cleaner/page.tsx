@@ -16,7 +16,6 @@ import {
   Loader2,
   FileText,
 } from "lucide-react";
-import { PDFDocument } from "pdf-lib";
 import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,8 +23,9 @@ import { ToolPageShell } from "@/components/ui/ToolPageShell";
 import { useFileStore } from "@/stores/fileStore";
 import { useToast } from "@/components/ui/toaster";
 import { stripImageMetadata } from "@/lib/image/metadata";
+import { compressPDF } from "@/lib/pdf/compress";
 import { inspectFile, FileMetadata } from "@/lib/inspect";
-import { formatBytes, triggerDownload, fileToArrayBuffer } from "@/lib/file-utils";
+import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { addHistoryRecord } from "@/lib/storage/history";
 
 export default function PrivacyCleanerPage() {
@@ -88,34 +88,12 @@ export default function PrivacyCleanerPage() {
         const res = await stripImageMetadata(activeFile);
         resultBlob = res.blob;
       } else if (isPdf) {
-        // Use pdf-lib to strip Title, Author, Subject, Keywords, Producer, Creator
-        const arrayBuffer = await fileToArrayBuffer(activeFile);
-        const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-
-        pdfDoc.setTitle("");
-        pdfDoc.setAuthor("");
-        pdfDoc.setSubject("");
-        pdfDoc.setKeywords([]);
-        pdfDoc.setProducer("");
-        pdfDoc.setCreator("");
-
-        // Create clean doc to purge orphaned metadata object streams
-        const cleanPdf = await PDFDocument.create();
-        const pageIndices = pdfDoc.getPageIndices();
-        const pages = await cleanPdf.copyPages(pdfDoc, pageIndices);
-        for (const page of pages) {
-          cleanPdf.addPage(page);
-        }
-
-        cleanPdf.setTitle("");
-        cleanPdf.setAuthor("");
-        cleanPdf.setSubject("");
-        cleanPdf.setKeywords([]);
-        cleanPdf.setProducer("");
-        cleanPdf.setCreator("");
-
-        const pdfBytes = await cleanPdf.save();
-        resultBlob = new Blob([pdfBytes as unknown as BlobPart], { type: "application/pdf" });
+        // Use compressPDF with removeMetadata: true to strip Title, Author, Subject, Keywords, Producer, Creator
+        const res = await compressPDF(activeFile, {
+          level: "smaller",
+          removeMetadata: true,
+        });
+        resultBlob = res.blob;
       }
 
       setCleanBlob(resultBlob);
