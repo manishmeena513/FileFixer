@@ -1,23 +1,60 @@
 import exifr from "exifr";
-import { SupportedImageFormat, getExtensionFromMime } from "../file-utils";
 
 export interface DetailedExif {
+  // Camera & Hardware
   make?: string;
   model?: string;
   software?: string;
-  dateTime?: string;
+  lensModel?: string;
+  lensMake?: string;
   artist?: string;
   copyright?: string;
+
+  // Exposure & Sensor
+  dateTime?: string;
   exposureTime?: string;
   fNumber?: number;
   iso?: number;
   focalLength?: number;
-  lensModel?: string;
+  focalLengthIn35mm?: number;
+  flash?: string;
+  whiteBalance?: string;
+
+  // Image Geometry
+  imageWidth?: number;
+  imageHeight?: number;
+  megapixels?: string;
+
+  // GPS Location
   hasGps: boolean;
   latitude?: number;
   longitude?: number;
   altitude?: number;
   gpsTimestamp?: string;
+  dmsLatitude?: string;
+  dmsLongitude?: string;
+
+  // Tag count
+  rawTagCount: number;
+}
+
+export function formatShutterSpeed(seconds: number | undefined): string | undefined {
+  if (seconds === undefined || isNaN(seconds) || seconds <= 0) return undefined;
+  if (seconds >= 1) {
+    return `${seconds.toFixed(1).replace(/\.0$/, "")}s`;
+  }
+  const denominator = Math.round(1 / seconds);
+  return `1/${denominator}s`;
+}
+
+export function toDMS(deg: number, isLat: boolean): string {
+  const absolute = Math.abs(deg);
+  const degrees = Math.floor(absolute);
+  const minutesNotTruncated = (absolute - degrees) * 60;
+  const minutes = Math.floor(minutesNotTruncated);
+  const seconds = Math.floor((minutesNotTruncated - minutes) * 60);
+  const direction = deg >= 0 ? (isLat ? "N" : "S") : (isLat ? "E" : "W");
+  return `${degrees}° ${minutes}' ${seconds}" ${direction}`;
 }
 
 export async function readImageMetadata(file: File): Promise<DetailedExif | null> {
@@ -25,23 +62,57 @@ export async function readImageMetadata(file: File): Promise<DetailedExif | null
     const data = await exifr.parse(file, true);
     if (!data) return null;
 
+    const hasGps =
+      typeof data.latitude === "number" &&
+      typeof data.longitude === "number" &&
+      !isNaN(data.latitude) &&
+      !isNaN(data.longitude);
+
+    const dmsLat = hasGps ? toDMS(data.latitude, true) : undefined;
+    const dmsLon = hasGps ? toDMS(data.longitude, false) : undefined;
+
+    const imgW = data.ImageWidth || data.ExifImageWidth;
+    const imgH = data.ImageHeight || data.ExifImageHeight;
+    let megapixels: string | undefined = undefined;
+    if (imgW && imgH) {
+      megapixels = `${((imgW * imgH) / 1000000).toFixed(2)} MP`;
+    }
+
+    const rawTagCount = Object.keys(data).length;
+
     return {
       make: data.Make,
       model: data.Model,
       software: data.Software,
-      dateTime: data.DateTimeOriginal ? new Date(data.DateTimeOriginal).toLocaleString() : undefined,
+      lensModel: data.LensModel,
+      lensMake: data.LensMake,
       artist: data.Artist,
       copyright: data.Copyright,
-      exposureTime: data.ExposureTime ? `1/${Math.round(1 / data.ExposureTime)}s` : undefined,
+      dateTime: data.DateTimeOriginal
+        ? new Date(data.DateTimeOriginal).toLocaleString()
+        : data.DateTime
+        ? new Date(data.DateTime).toLocaleString()
+        : undefined,
+      exposureTime: formatShutterSpeed(data.ExposureTime),
       fNumber: data.FNumber,
       iso: data.ISO,
       focalLength: data.FocalLength,
-      lensModel: data.LensModel,
-      hasGps: Boolean(data.latitude || data.longitude),
+      focalLengthIn35mm: data.FocalLengthIn35mmFormat,
+      flash: data.Flash,
+      whiteBalance: data.WhiteBalance,
+      imageWidth: imgW,
+      imageHeight: imgH,
+      megapixels,
+      hasGps,
       latitude: data.latitude,
       longitude: data.longitude,
       altitude: data.altitude,
-      gpsTimestamp: data.GPSDateStamp,
+      gpsTimestamp:
+        data.GPSDateStamp ||
+        (data.GPSTimeStamp ? String(data.GPSTimeStamp) : undefined),
+      dmsLatitude: dmsLat,
+      dmsLongitude: dmsLon,
+      rawTagCount,
     };
   } catch {
     return null;

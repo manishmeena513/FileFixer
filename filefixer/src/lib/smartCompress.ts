@@ -1,6 +1,6 @@
 import imageCompression from "browser-image-compression";
 import { PDFDocument } from "pdf-lib";
-import { isPDFFile, isImageFile, fileToArrayBuffer } from "./file-utils";
+import { isPDFFile, fileToArrayBuffer } from "./file-utils";
 
 export interface CompressionAttempt {
   attemptNumber: number;
@@ -18,6 +18,52 @@ export interface SmartCompressResult {
   attempts: CompressionAttempt[];
   bestBlob: Blob;
   bestSize: number;
+}
+
+async function canvasResizeAndCompress(
+  file: File,
+  quality: number,
+  maxDim: number
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === "undefined") {
+      return reject(new Error("Canvas compression only available in browser"));
+    }
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, width);
+      canvas.height = Math.max(1, height);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return reject(new Error("Cannot get canvas context"));
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("Canvas toBlob failed"));
+        },
+        file.type === "image/png" ? "image/png" : "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Failed to load image"));
+    };
+    img.src = url;
+  });
 }
 
 export async function smartCompress(
@@ -55,13 +101,15 @@ export async function smartCompress(
     return smartCompressPDF(file, targetSizeMB, onAttempt);
   }
 
-  // Image passes
+  // 7 Progressive Image Passes with progressive quality & dimension reduction
   const passes = [
     { label: "High Quality Pass (Quality 82%, Max 2560px)", quality: 0.82, maxDim: 2560 },
     { label: "Balanced Pass (Quality 68%, Max 2048px)", quality: 0.68, maxDim: 2048 },
     { label: "Strong Compression (Quality 52%, Max 1600px)", quality: 0.52, maxDim: 1600 },
     { label: "Target Optimization (Quality 40%, Max 1280px)", quality: 0.40, maxDim: 1280 },
-    { label: "Extreme Optimization (Quality 28%, Max 1024px)", quality: 0.28, maxDim: 1024 },
+    { label: "Compact Optimization (Quality 28%, Max 1024px)", quality: 0.28, maxDim: 1024 },
+    { label: "Ultra-Compact Pass (Quality 22%, Max 800px)", quality: 0.22, maxDim: 800 },
+    { label: "Maximum Reduction (Quality 16%, Max 640px)", quality: 0.16, maxDim: 640 },
   ];
 
   let bestBlob: Blob = file;
@@ -70,6 +118,7 @@ export async function smartCompress(
 
   for (let i = 0; i < passes.length; i++) {
     const pass = passes[i];
+    let compressedBlob: Blob | null = null;
     try {
       const config = {
         maxSizeMB: targetSizeMB,
@@ -78,31 +127,39 @@ export async function smartCompress(
         useWebWorker: true,
       };
 
-      const compressed = await imageCompression(file, config);
-      const isUnderTarget = compressed.size <= targetSizeBytes;
-
-      const attemptResult: CompressionAttempt = {
-        attemptNumber: i + 1,
-        label: pass.label,
-        sizeBytes: compressed.size,
-        success: isUnderTarget,
-        blob: compressed,
-      };
-
-      attempts.push(attemptResult);
-      if (onAttempt) onAttempt(attemptResult);
-
-      if (compressed.size < bestSize) {
-        bestSize = compressed.size;
-        bestBlob = compressed;
-      }
-
-      if (isUnderTarget) {
-        achieved = true;
-        break;
-      }
+      compressedBlob = await imageCompression(file, config);
     } catch (err) {
-      console.warn(`Smart pass ${i + 1} failed:`, err);
+      console.warn(`Smart pass ${i + 1} web-worker compression failed, trying canvas fallback:`, err);
+      try {
+        compressedBlob = await canvasResizeAndCompress(file, pass.quality, pass.maxDim);
+      } catch (canvasErr) {
+        console.warn(`Smart pass ${i + 1} canvas fallback failed:`, canvasErr);
+      }
+    }
+
+    if (!compressedBlob) continue;
+
+    const isUnderTarget = compressedBlob.size <= targetSizeBytes;
+
+    const attemptResult: CompressionAttempt = {
+      attemptNumber: i + 1,
+      label: pass.label,
+      sizeBytes: compressedBlob.size,
+      success: isUnderTarget,
+      blob: compressedBlob,
+    };
+
+    attempts.push(attemptResult);
+    if (onAttempt) onAttempt(attemptResult);
+
+    if (compressedBlob.size < bestSize) {
+      bestSize = compressedBlob.size;
+      bestBlob = compressedBlob;
+    }
+
+    if (isUnderTarget) {
+      achieved = true;
+      break;
     }
   }
 

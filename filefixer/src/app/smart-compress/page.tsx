@@ -24,10 +24,17 @@ import {
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { addHistoryRecord } from "@/lib/storage/history";
 import { useFileStore } from "@/stores/fileStore";
+import { ToolPageShell } from "@/components/ui/ToolPageShell";
 
 export default function SmartCompressPage() {
   const { toast } = useToast();
-  const { files: storeFiles, addFiles: addStoreFiles } = useFileStore();
+  const {
+    files: storeFiles,
+    addFiles: addStoreFiles,
+    pushDownload,
+    setLatestDeliveredFile,
+    triggerSupportPrompt,
+  } = useFileStore();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [targetMB, setTargetMB] = useState<number>(1.0);
@@ -65,7 +72,8 @@ export default function SmartCompressPage() {
       !finalResult ||
       !selectedFile ||
       !selectedFile.type.startsWith("image/")
-    ) return;
+    )
+      return;
     const url = URL.createObjectURL(finalResult.bestBlob);
     setOutPreviewUrl(url);
     return () => {
@@ -102,6 +110,25 @@ export default function SmartCompressPage() {
         setLiveAttempts((prev) => [...prev, attempt]);
       });
       setFinalResult(res);
+
+      const base = selectedFile.name.replace(/\.[^/.]+$/, "");
+      const ext = selectedFile.name.split(".").pop() || "jpg";
+      const targetLabel =
+        targetMB >= 1 ? `${targetMB}MB` : `${Math.round(targetMB * 1024)}KB`;
+      const outFileName = `${base}_under_${targetLabel}.${ext}`;
+
+      // Stage in download dock as ready
+      pushDownload({
+        fileName: outFileName,
+        originalSize: res.originalSize,
+        outputSize: res.bestSize,
+        savingsPct:
+          res.originalSize > res.bestSize
+            ? ((res.originalSize - res.bestSize) / res.originalSize) * 100
+            : 0,
+        status: "ready",
+        blob: res.bestBlob,
+      });
 
       if (res.achieved) {
         toast({
@@ -141,10 +168,33 @@ export default function SmartCompressPage() {
     const ext = selectedFile.name.split(".").pop() || "jpg";
     const targetLabel =
       targetMB >= 1 ? `${targetMB}MB` : `${Math.round(targetMB * 1024)}KB`;
-    triggerDownload(
-      finalResult.bestBlob,
-      `${base}_under_${targetLabel}.${ext}`
-    );
+    const outFileName = `${base}_under_${targetLabel}.${ext}`;
+
+    triggerDownload(finalResult.bestBlob, outFileName);
+
+    const savings =
+      finalResult.originalSize > finalResult.bestSize
+        ? ((finalResult.originalSize - finalResult.bestSize) /
+            finalResult.originalSize) *
+          100
+        : 0;
+
+    const dlItem = {
+      fileName: outFileName,
+      originalSize: finalResult.originalSize,
+      outputSize: finalResult.bestSize,
+      savingsPct: savings,
+      status: "downloaded" as const,
+      blob: finalResult.bestBlob,
+    };
+
+    pushDownload(dlItem);
+    setLatestDeliveredFile({
+      id: `deliv-${Date.now()}`,
+      ...dlItem,
+      timestamp: Date.now(),
+    });
+    triggerSupportPrompt();
   };
 
   const isImage = selectedFile?.type.startsWith("image/");
@@ -154,24 +204,12 @@ export default function SmartCompressPage() {
       : `${Math.round(targetMB * 1024)} KB`;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:py-10 sm:px-6 lg:px-8 animate-fade-in">
-      {/* Header */}
-      <div className="mb-6 sm:mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-[hsl(var(--foreground))]">
-              Exact Size Compression (&quot;Under X MB&quot;)
-            </h1>
-            <p className="text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
-              Progressively tests compression passes until your exact KB or MB upload limit is met.
-            </p>
-          </div>
-        </div>
-      </div>
-
+    <ToolPageShell
+      icon={Sparkles}
+      title="Exact Size Compression (&quot;Under X MB&quot;)"
+      description="Progressively tests client-side compression passes until your exact KB or MB upload limit is met."
+      formats={["JPG", "PNG", "WEBP", "PDF"]}
+    >
       <div className="grid grid-cols-1 gap-6 lg:gap-8 lg:grid-cols-3">
         {/* Left: Upload, Attempts Log & Visual Preview */}
         <div className="space-y-6 lg:col-span-2">
@@ -200,9 +238,9 @@ export default function SmartCompressPage() {
                     <p className="truncate text-sm font-semibold text-[hsl(var(--foreground))]">
                       {selectedFile.name}
                     </p>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                    <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums">
                       Original Size:{" "}
-                      <strong className="text-[hsl(var(--foreground))]">
+                      <strong className="text-[hsl(var(--foreground))] font-semibold">
                         {formatBytes(selectedFile.size)}
                       </strong>
                     </p>
@@ -216,7 +254,7 @@ export default function SmartCompressPage() {
                     setLiveAttempts([]);
                     setFinalResult(null);
                   }}
-                  className="min-h-[40px]"
+                  className="min-h-[44px] touch-manipulation"
                 >
                   Change File
                 </Button>
@@ -231,7 +269,7 @@ export default function SmartCompressPage() {
                   />
                   {origPreviewUrl && outPreviewUrl && (
                     <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3">
-                      <p className="mb-2 text-xs font-medium text-[hsl(var(--muted-foreground))] text-center">
+                      <p className="mb-2 text-xs font-medium text-[hsl(var(--muted-foreground))] text-center tabular-nums">
                         Drag slider to compare Original vs {targetFormatted} Target Result
                       </p>
                       <CompareSlider
@@ -252,7 +290,7 @@ export default function SmartCompressPage() {
                       <Target className="h-4 w-4 text-[hsl(var(--primary))]" />
                       Progressive Optimization Passes
                     </h3>
-                    <Badge variant="outline" className="font-mono text-xs">
+                    <Badge variant="outline" className="font-mono text-xs tabular-nums">
                       Goal: &lt; {targetFormatted} (
                       {formatBytes(targetMB * 1024 * 1024)})
                     </Badge>
@@ -264,7 +302,7 @@ export default function SmartCompressPage() {
                       <span className="font-medium text-[hsl(var(--muted-foreground))]">
                         Original Baseline
                       </span>
-                      <span className="font-mono font-bold text-[hsl(var(--foreground))]">
+                      <span className="font-mono font-bold text-[hsl(var(--foreground))] tabular-nums">
                         {formatBytes(selectedFile.size)}
                       </span>
                     </div>
@@ -275,24 +313,24 @@ export default function SmartCompressPage() {
                         key={attempt.attemptNumber}
                         className={`animate-slide-up flex items-center justify-between p-3 rounded-xl border text-xs transition-all ${
                           attempt.success
-                            ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
+                            ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
                             : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))]"
                         }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           {attempt.success ? (
-                            <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                            <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                           ) : (
-                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--muted))] text-[10px] font-mono font-bold text-[hsl(var(--muted-foreground))]">
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--muted))] text-[10px] font-mono font-bold text-[hsl(var(--muted-foreground))] tabular-nums">
                               {attempt.attemptNumber}
                             </span>
                           )}
-                          <span className="font-medium truncate">
+                          <span className="font-medium truncate tabular-nums">
                             Try {attempt.attemptNumber}: {attempt.label}
                           </span>
                         </div>
                         <div className="flex items-center gap-2.5 shrink-0">
-                          <span className="font-mono font-bold">
+                          <span className="font-mono font-bold tabular-nums">
                             {formatBytes(attempt.sizeBytes)}
                           </span>
                           {attempt.success && (
@@ -336,7 +374,7 @@ export default function SmartCompressPage() {
                       setTargetMB(p.val);
                       setCustomInput(String(p.val));
                     }}
-                    className={`flex flex-col items-start justify-center p-3 rounded-xl border text-left transition-all min-h-[54px] ${
+                    className={`flex flex-col items-start justify-center p-3 rounded-xl border text-left transition-all min-h-[54px] touch-manipulation tabular-nums ${
                       active
                         ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.14)] text-[hsl(var(--primary))]"
                         : "border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.7)] text-[hsl(var(--foreground))] hover:border-[hsl(var(--primary)/0.4)]"
@@ -369,7 +407,7 @@ export default function SmartCompressPage() {
                     setTargetMB(parsed);
                   }
                 }}
-                className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3.5 py-2.5 text-sm font-mono text-[hsl(var(--foreground))] min-h-[44px] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]"
+                className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3.5 py-2.5 text-sm font-mono text-[hsl(var(--foreground))] min-h-[44px] tabular-nums focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]"
               />
               <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
                 Tip: Enter 0.1 for 100 KB, 0.5 for 500 KB, or 2 for 2 MB.
@@ -380,7 +418,7 @@ export default function SmartCompressPage() {
               size="lg"
               disabled={!selectedFile || isProcessing}
               onClick={handleStartSmartCompress}
-              className="w-full min-h-[48px] font-semibold"
+              className="w-full min-h-[48px] font-semibold touch-manipulation"
             >
               {isProcessing ? (
                 <>
@@ -390,7 +428,9 @@ export default function SmartCompressPage() {
               ) : (
                 <>
                   <Sparkles className="h-4 w-4" />
-                  Compress Under {targetFormatted}
+                  <span className="tabular-nums">
+                    Compress Under {targetFormatted}
+                  </span>
                 </>
               )}
             </Button>
@@ -407,7 +447,9 @@ export default function SmartCompressPage() {
             >
               <div
                 className={`flex items-center gap-2 font-bold text-sm ${
-                  finalResult.achieved ? "text-emerald-400" : "text-amber-400"
+                  finalResult.achieved
+                    ? "text-emerald-700 dark:text-emerald-400"
+                    : "text-amber-700 dark:text-amber-400"
                 }`}
               >
                 {finalResult.achieved ? (
@@ -423,19 +465,19 @@ export default function SmartCompressPage() {
               </div>
 
               {!finalResult.achieved && (
-                <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
+                <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed tabular-nums">
                   Further compression would cause severe visual degradation. We stopped at the smallest safe size ({formatBytes(finalResult.bestSize)}).
                 </p>
               )}
 
               <div className="text-xs space-y-1 text-[hsl(var(--muted-foreground))]">
-                <p>
+                <p className="tabular-nums">
                   Original:{" "}
                   <strong className="text-[hsl(var(--foreground))]">
                     {formatBytes(finalResult.originalSize)}
                   </strong>
                 </p>
-                <p className="text-emerald-400 font-semibold">
+                <p className="text-emerald-700 dark:text-emerald-400 font-semibold tabular-nums">
                   Final Result:{" "}
                   <strong>{formatBytes(finalResult.bestSize)}</strong>
                 </p>
@@ -444,7 +486,7 @@ export default function SmartCompressPage() {
               <Button
                 size="lg"
                 onClick={handleDownload}
-                className="w-full min-h-[48px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-white font-semibold"
+                className="w-full min-h-[48px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-[hsl(var(--success-foreground))] font-semibold touch-manipulation tabular-nums"
               >
                 <Download className="h-4 w-4" />
                 Download ({formatBytes(finalResult.bestSize)})
@@ -453,7 +495,6 @@ export default function SmartCompressPage() {
           )}
         </div>
       </div>
-    </div>
+    </ToolPageShell>
   );
 }
-

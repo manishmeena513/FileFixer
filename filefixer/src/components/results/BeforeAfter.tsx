@@ -171,6 +171,12 @@ export function CompareSlider({
     } else if (e.key === "ArrowRight") {
       e.preventDefault();
       setPosition((prev) => Math.min(98, prev + 5));
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      setPosition(2);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      setPosition(98);
     }
   }, []);
 
@@ -199,20 +205,19 @@ export function CompareSlider({
       <img
         src={srcOutput}
         alt={afterLabel}
-        className="h-full w-full object-contain pointer-events-none"
+        className="h-full w-full object-contain pointer-events-none select-none"
       />
 
-      {/* Original (clipped to left portion) */}
+      {/* Original (clipped to left portion using precise clip-path) */}
       <div
-        className="absolute inset-0 overflow-hidden pointer-events-none"
-        style={{ width: `${safePosition}%` }}
+        className="absolute inset-0 overflow-hidden pointer-events-none select-none"
+        style={{ clipPath: `inset(0 ${(100 - safePosition).toFixed(2)}% 0 0)` }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={srcOriginal}
           alt={beforeLabel}
-          className="h-full object-contain"
-          style={{ width: `${100 / (safePosition / 100)}%`, maxWidth: "none" }}
+          className="h-full w-full object-contain pointer-events-none select-none"
         />
       </div>
 
