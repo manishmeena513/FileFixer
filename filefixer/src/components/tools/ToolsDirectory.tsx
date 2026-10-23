@@ -169,7 +169,7 @@ export function ToolsDirectory() {
           </div>
 
           {/* Dynamic Tool Count */}
-          <div className="text-xs font-medium text-[hsl(var(--muted-foreground))] font-mono">
+          <div className="text-xs font-medium text-[hsl(var(--muted-foreground))] font-mono tabular-nums">
             {countText}
           </div>
         </div>
@@ -248,7 +248,7 @@ export function ToolsDirectory() {
               <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
                 {searchQuery ? `Search Results for "${searchQuery}"` : `${selectedCategory.toUpperCase()} Tools`}
               </h2>
-              <span className="text-xs text-[hsl(var(--muted-foreground))] font-mono">
+              <span className="text-xs text-[hsl(var(--muted-foreground))] font-mono tabular-nums">
                 {countText}
               </span>
             </div>

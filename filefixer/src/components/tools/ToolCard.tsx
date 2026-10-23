@@ -55,6 +55,20 @@ export function ToolCard({ tool, className }: ToolCardProps) {
         <p className="mt-2 text-xs text-[hsl(var(--muted-foreground))] leading-relaxed line-clamp-3">
           {tool.description}
         </p>
+
+        {/* Supported Format Pills */}
+        {tool.supportedFormats && tool.supportedFormats.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1">
+            {tool.supportedFormats.slice(0, 4).map((fmt) => (
+              <span
+                key={fmt}
+                className="rounded border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.6)] px-1.5 py-0.5 text-[9px] font-mono text-[hsl(var(--muted-foreground))]"
+              >
+                {fmt}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Card Footer: Feature indicator + Primary CTA */}

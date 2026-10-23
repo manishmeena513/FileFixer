@@ -18,19 +18,33 @@ Investigate homepage architecture (page.tsx, components, fileStore routing, hero
 
 ## Current Parent
 - Conversation ID: eb7c7517-1271-47fc-acd9-e4891655cf74
-- Updated: 2026-10-23T14:12:00Z
+- Updated: 2026-10-23T14:20:00Z
 
 ## Investigation State
-- **Explored paths**: [TBD]
-- **Key findings**: [TBD]
-- **Unexplored areas**: ORIGINAL_REQUEST.md, PROJECT.md, filefixer/src/app/page.tsx, filefixer/src/stores/, filefixer/src/components/
+- **Explored paths**:
+  - `filefixer/src/app/page.tsx`: Monolithic 851-line page with legacy "13 tools" copy (lines 540, 627) and 8 mixed sections.
+  - `filefixer/src/lib/tools.ts`: Master catalog contains exactly 20 tools (`TOOLS.length === 20`) across 4 categories.
+  - `filefixer/src/stores/fileStore.ts`: Global `useFileStore` manages `files: ManagedFile[]` in browser RAM; shared across all 17 workstation routes.
+  - `filefixer/src/components/upload/DropZone.tsx` & `FileCard.tsx`: Drag-and-drop mechanics and thumbnail generation.
+  - `filefixer/tests/tier1-feature-coverage.test.ts`: TC-T1-R2-1 requires verbatim `"Fix your files. Keep them private."` in `src/app/page.tsx`.
+  - `filefixer/tests/`: Baseline test suite executed, 133/133 tests passing.
+- **Key findings**:
+  - Decomposing `page.tsx` into 9 focused components in `filefixer/src/components/home/` eliminates the monolith while maintaining static test invariants.
+  - Contextual file auto-detection routes dropped files directly into the optimal workstation without network roundtrip.
+  - Popular Workflows grid fulfills Feature 8 with 6 concrete multi-tool real-world recipes.
+  - Hardcoded "13 tools" replaced dynamically with `${TOOLS.length}` (20 tools).
+- **Unexplored areas**: None for Homepage investigation scope.
 
 ## Key Decisions Made
-- Initializing structured investigation into Homepage, FileStore, DropZone, Tools registry, and Workflows.
+- Decompose `page.tsx` into modular components under `src/components/home/`.
+- Retain exact headline copy `"Fix your files. Keep them private."` directly in `src/app/page.tsx` and `HeroSection.tsx`.
+- Formulate 6 concrete multi-tool pipelines for `PopularWorkflows.tsx`.
+- Replace legacy "13 tools" strings with dynamic `${TOOLS.length}`.
+- All numeric metrics must strictly enforce `.tabular-nums font-mono`.
 
 ## Artifact Index
 - DISPATCH.md — Recorded incoming dispatch
 - BRIEFING.md — Situational awareness
 - progress.md — Liveness heartbeat
-- homepage_plan.md — Detailed homepage overhaul plan [TBD]
-- handoff.md — 5-component handoff report [TBD]
+- homepage_plan.md — Detailed homepage overhaul plan (complete)
+- handoff.md — 5-component handoff report (complete)

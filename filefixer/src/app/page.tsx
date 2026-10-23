@@ -537,7 +537,7 @@ export default function HomePage() {
               href="/tools"
               className="inline-flex items-center gap-1 text-xs font-semibold text-[hsl(var(--primary))] hover:underline"
             >
-              Browse all 13 tools <ArrowRight className="h-3.5 w-3.5" />
+              Browse all 20 tools <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
@@ -624,7 +624,7 @@ export default function HomePage() {
         <div className="mt-10 sm:mt-12 rounded-2xl border border-[hsl(var(--border))] bg-gradient-to-r from-[hsl(var(--card))] via-[hsl(var(--secondary)/0.5)] to-[hsl(var(--card))] p-6 sm:p-8 text-center sm:flex sm:items-center sm:justify-between sm:text-left shadow-sm">
           <div className="space-y-1">
             <h3 className="text-lg font-bold text-[hsl(var(--foreground))]">
-              Explore all 13 local tools
+              Explore all 20 local tools
             </h3>
             <p className="text-sm text-[hsl(var(--muted-foreground))]">
               Search and filter every image, PDF, and batch utility in one directory.
