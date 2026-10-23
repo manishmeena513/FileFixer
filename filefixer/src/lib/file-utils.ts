@@ -49,6 +49,16 @@ export function getExtensionFromMime(mime: SupportedImageFormat): string {
 }
 
 export function fileToDataURL(file: File): Promise<string> {
+  if (typeof FileReader === "undefined") {
+    if (typeof file.arrayBuffer === "function") {
+      return file.arrayBuffer().then((buf) => {
+        const base64 = Buffer.from(buf).toString("base64");
+        const mime = file.type || "application/octet-stream";
+        return `data:${mime};base64,${base64}`;
+      });
+    }
+    return Promise.reject(new Error("FileReader not supported in this environment"));
+  }
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
@@ -58,7 +68,13 @@ export function fileToDataURL(file: File): Promise<string> {
 }
 
 export function fileToArrayBuffer(file: File): Promise<ArrayBuffer> {
+  if (typeof file.arrayBuffer === "function") {
+    return file.arrayBuffer();
+  }
   return new Promise((resolve, reject) => {
+    if (typeof FileReader === "undefined") {
+      return reject(new Error("FileReader not supported in this environment"));
+    }
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as ArrayBuffer);
     reader.onerror = reject;
