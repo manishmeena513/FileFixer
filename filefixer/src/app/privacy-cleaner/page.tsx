@@ -8,17 +8,12 @@ import {
   AlertTriangle,
   CheckCircle2,
   Download,
-  Trash2,
-  HardDrive,
-  Eye,
   Lock,
-  ArrowRight,
   Loader2,
-  FileText,
+  RotateCcw,
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ToolPageShell } from "@/components/ui/ToolPageShell";
 import { useFileStore } from "@/stores/fileStore";
 import { useToast } from "@/components/ui/toaster";
@@ -27,6 +22,14 @@ import { compressPDF } from "@/lib/pdf/compress";
 import { inspectFile, FileMetadata } from "@/lib/inspect";
 import { formatBytes, triggerDownload } from "@/lib/file-utils";
 import { addHistoryRecord } from "@/lib/storage/history";
+
+function generateDelivId() {
+  return `deliv-${Date.now()}`;
+}
+
+function getTimestamp() {
+  return Date.now();
+}
 
 export default function PrivacyCleanerPage() {
   const { toast } = useToast();
@@ -46,12 +49,6 @@ export default function PrivacyCleanerPage() {
   const [cleanBlob, setCleanBlob] = useState<Blob | null>(null);
   const [cleanName, setCleanName] = useState<string>("");
 
-  useEffect(() => {
-    if (!activeFile && storeFiles.length > 0) {
-      handleSelectFile(storeFiles[0].file);
-    }
-  }, [storeFiles, activeFile]);
-
   const handleSelectFile = async (file: File) => {
     setActiveFile(file);
     setIsScanning(true);
@@ -67,14 +64,25 @@ export default function PrivacyCleanerPage() {
     }
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!activeFile && storeFiles.length > 0) {
+        handleSelectFile(storeFiles[0].file);
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [storeFiles, activeFile]);
+
   const handleCleanPrivacy = async () => {
     if (!activeFile) return;
     setIsCleaning(true);
 
     try {
       let resultBlob: Blob = activeFile;
-      const ext = activeFile.name.split(".").pop() || "jpg";
-      const cleanedFileName = `${activeFile.name.replace(/\.[^/.]+$/, "")}_privacy_clean.${ext}`;
+      const lastDot = activeFile.name.lastIndexOf(".");
+      const base = lastDot > 0 ? activeFile.name.slice(0, lastDot) : activeFile.name;
+      const ext = lastDot > 0 ? activeFile.name.slice(lastDot + 1) : "";
+      const cleanedFileName = ext ? `${base}_privacy_clean.${ext}` : `${base}_privacy_clean`;
 
       const isPdf =
         activeFile.type === "application/pdf" ||
@@ -94,6 +102,13 @@ export default function PrivacyCleanerPage() {
           removeMetadata: true,
         });
         resultBlob = res.blob;
+      } else {
+        toast({
+          title: "Unsupported file format",
+          description: "Privacy cleaning is currently supported for image files (JPEG, PNG, WebP) and PDF documents.",
+          variant: "error",
+        });
+        return;
       }
 
       setCleanBlob(resultBlob);
@@ -144,13 +159,13 @@ export default function PrivacyCleanerPage() {
     });
 
     setLatestDeliveredFile({
-      id: `deliv-${Date.now()}`,
+      id: generateDelivId(),
       fileName: cleanName,
       originalSize: activeFile.size,
       outputSize: cleanBlob.size,
       status: "downloaded",
       blob: cleanBlob,
-      timestamp: Date.now(),
+      timestamp: getTimestamp(),
     });
 
     triggerSupportPrompt();
@@ -216,14 +231,28 @@ export default function PrivacyCleanerPage() {
                 </p>
               </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                className="text-xs min-h-[44px] touch-manipulation"
-              >
-                <Upload className="h-3.5 w-3.5 mr-1" /> Choose Other File
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setActiveFile(null);
+                    setMetadata(null);
+                    setCleanBlob(null);
+                  }}
+                  className="text-xs min-h-[44px] touch-manipulation"
+                >
+                  <RotateCcw className="h-3.5 w-3.5 mr-1" /> New File
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="text-xs min-h-[44px] touch-manipulation"
+                >
+                  <Upload className="h-3.5 w-3.5 mr-1" /> Choose Other File
+                </Button>
+              </div>
               <input
                 ref={fileInputRef}
                 type="file"

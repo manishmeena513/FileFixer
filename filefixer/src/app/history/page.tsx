@@ -5,13 +5,10 @@ import Link from "next/link";
 import {
   Clock,
   Trash2,
-  TrendingDown,
   HardDrive,
   ShieldCheck,
   RefreshCw,
-  FileCheck,
   RotateCcw,
-  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -64,20 +61,22 @@ export default function HistoryPage() {
   const [records, setRecords] = useState<HistoryRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchRecords = async () => {
-    setIsLoading(true);
-    try {
-      const list = await getAllHistory();
-      setRecords(list);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchRecords();
+    let mounted = true;
+    getAllHistory()
+      .then((list) => {
+        if (mounted) {
+          setRecords(list);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        if (mounted) setIsLoading(false);
+      });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const handleClearAll = async () => {

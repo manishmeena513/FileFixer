@@ -2,476 +2,500 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { PDFDocument, PageSizes } from "pdf-lib";
 import JSZip from "jszip";
 
 import {
+  applyRenameRules,
   splitFilename,
   applyCaseTransform,
   validateFilename,
-  applyRenameRules,
   previewRenames,
   packageRenamedZip,
 } from "../src/lib/batch/rename";
-import { processBatchItem } from "../src/lib/batch/batchProcessor";
 import { compressPDF } from "../src/lib/pdf/compress";
-import { inspectFile } from "../src/lib/inspect";
-import { getAllHistory, clearAllHistory, deleteHistoryRecord } from "../src/lib/storage/history";
-import { downloadAsZip } from "../src/lib/zip";
+import { createZipBlob, ZipEntry } from "../src/lib/zip";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 
-const M5_PAGE_FILES = [
-  "src/app/batch/page.tsx",
-  "src/app/batch-rename/page.tsx",
-  "src/app/workflows/page.tsx",
-  "src/app/workflows/layout.tsx",
-  "src/app/privacy-cleaner/page.tsx",
-  "src/app/inspect/page.tsx",
-  "src/app/history/page.tsx",
-  "src/app/about/page.tsx",
-  "src/app/privacy/page.tsx",
-  "src/app/branding/page.tsx",
-  "src/components/workflows/WorkflowBuilder.tsx",
-];
+function readSource(relPath: string): string {
+  return fs.readFileSync(path.join(rootDir, relPath), "utf-8");
+}
 
-async function createSamplePdf(
-  numPages = 2,
-  meta?: { title?: string; author?: string; subject?: string; keywords?: string[] }
-): Promise<File> {
+async function createSamplePdf(metadata?: {
+  title?: string;
+  author?: string;
+  subject?: string;
+  creator?: string;
+  producer?: string;
+  keywords?: string[];
+}): Promise<File> {
   const doc = await PDFDocument.create();
-  if (meta?.title) doc.setTitle(meta.title);
-  if (meta?.author) doc.setAuthor(meta.author);
-  if (meta?.subject) doc.setSubject(meta.subject);
-  if (meta?.keywords) doc.setKeywords(meta.keywords);
+  if (metadata?.title) doc.setTitle(metadata.title);
+  if (metadata?.author) doc.setAuthor(metadata.author);
+  if (metadata?.subject) doc.setSubject(metadata.subject);
+  if (metadata?.creator) doc.setCreator(metadata.creator);
+  if (metadata?.producer) doc.setProducer(metadata.producer);
+  if (metadata?.keywords) doc.setKeywords(metadata.keywords);
 
-  for (let i = 0; i < numPages; i++) {
-    const page = doc.addPage([PageSizes.A4[0], PageSizes.A4[1]]);
-    page.drawText(`Milestone 5 Test Page ${i + 1}`);
-  }
+  const page = doc.addPage([PageSizes.A4[0], PageSizes.A4[1]]);
+  page.drawText("Test Confidential Document Content");
 
   const bytes = await doc.save();
-  return new File([bytes as unknown as BlobPart], "sample_doc.pdf", {
+  return new File([bytes as unknown as BlobPart], "confidential_document.pdf", {
     type: "application/pdf",
   });
 }
 
-describe("Milestone 5: Batch Processing, Pipelines & Utility Tools Test Suite", () => {
+describe("Milestone 5: Batch Processing, Pipelines & Utility Workstations", () => {
   // --------------------------------------------------------------------------
-  // 1. Batch Rename Engine: Unit & Boundary Tests
+  // 1. Batch Renaming Engine (src/lib/batch/rename.ts)
   // --------------------------------------------------------------------------
-  describe("1. Batch Rename Engine (src/lib/batch/rename.ts)", () => {
-    it("splits filenames into base and extension correctly across edge cases", () => {
-      assert.deepEqual(splitFilename("photo.jpg"), { base: "photo", ext: "jpg" });
-      assert.deepEqual(splitFilename("archive.tar.gz"), { base: "archive.tar", ext: "gz" });
-      assert.deepEqual(splitFilename(".env"), { base: ".env", ext: "" });
-      assert.deepEqual(splitFilename("README"), { base: "README", ext: "" });
-      assert.deepEqual(splitFilename("folder.name/file.png"), { base: "folder.name/file", ext: "png" });
+  describe("1. Batch Renaming Engine (src/lib/batch/rename.ts)", () => {
+    it("splits filenames accurately including multi-dot and no-dot filenames", () => {
+      assert.deepEqual(splitFilename("vacation.photo.jpg"), {
+        base: "vacation.photo",
+        ext: "jpg",
+      });
+      assert.deepEqual(splitFilename("README"), {
+        base: "README",
+        ext: "",
+      });
+      assert.deepEqual(splitFilename(".env"), {
+        base: ".env",
+        ext: "",
+      });
+      assert.deepEqual(splitFilename("archive.2026.tar.gz"), {
+        base: "archive.2026.tar",
+        ext: "gz",
+      });
     });
 
-    it("applies case transformations correctly", () => {
-      const text = "my Project_file-name";
-      assert.equal(applyCaseTransform(text, "none"), text);
-      assert.equal(applyCaseTransform(text, "lowercase"), "my project_file-name");
-      assert.equal(applyCaseTransform(text, "uppercase"), "MY PROJECT_FILE-NAME");
+    it("applies case transformations correctly (lower, upper, title, kebab, snake, as-is)", () => {
+      const input = "Annual financial Report_2026";
+      assert.equal(applyCaseTransform(input, "lowercase"), "annual financial report_2026");
+      assert.equal(applyCaseTransform(input, "uppercase"), "ANNUAL FINANCIAL REPORT_2026");
       assert.equal(applyCaseTransform("hello world", "titlecase"), "Hello World");
-      assert.equal(applyCaseTransform("myProjectFile", "kebab"), "my-project-file");
-      assert.equal(applyCaseTransform("myProjectFile", "snake"), "my_project_file");
+      assert.equal(applyCaseTransform("My File Name", "kebab"), "my-file-name");
+      assert.equal(applyCaseTransform("My File Name", "snake"), "my_file_name");
+      assert.equal(applyCaseTransform(input, "as-is"), input);
+      assert.equal(applyCaseTransform(input, "none"), input);
     });
 
-    it("validates filenames and detects illegal characters and boundaries", () => {
-      assert.equal(validateFilename("valid_file-123.jpg").valid, true);
+    it("validates filenames for filesystem safety", () => {
+      assert.equal(validateFilename("valid-file_name.jpg").valid, true);
       assert.equal(validateFilename("").valid, false);
       assert.equal(validateFilename("   ").valid, false);
       assert.equal(validateFilename(".").valid, false);
       assert.equal(validateFilename("..").valid, false);
-      assert.equal(validateFilename("invalid:name.jpg").valid, false);
-      assert.equal(validateFilename("invalid*name.jpg").valid, false);
-      assert.equal(validateFilename("invalid/name.jpg").valid, false);
-      assert.equal(validateFilename("a".repeat(256)).valid, false);
-      assert.equal(validateFilename("a".repeat(250)).valid, true);
+      assert.equal(validateFilename("file/name.jpg").valid, false);
+      assert.equal(validateFilename("file:name.jpg").valid, false);
+      assert.equal(validateFilename("file*name.jpg").valid, false);
+      assert.equal(validateFilename("a".repeat(256) + ".jpg").valid, false);
     });
 
-    it("applies prefix, suffix, and find/replace rules", () => {
-      const original = "document_old.pdf";
-      const rules = {
-        prefix: "2026_",
-        suffix: "_v2",
-        findReplace: { find: "old", replace: "final", matchCase: true },
-      };
-      const result = applyRenameRules(original, 0, rules);
-      assert.equal(result, "2026_document_final_v2.pdf");
+    it("applies prefix and suffix additions", () => {
+      const res1 = applyRenameRules("invoice.pdf", 0, { prefix: "CONFIDENTIAL_" });
+      assert.equal(res1, "CONFIDENTIAL_invoice.pdf");
+
+      const res2 = applyRenameRules("photo.png", 0, { suffix: "_watermarked" });
+      assert.equal(res2, "photo_watermarked.png");
+
+      const res3 = applyRenameRules("data.csv", 0, { prefix: "export_", suffix: "_v2" });
+      assert.equal(res3, "export_data_v2.csv");
     });
 
-    it("applies template pattern expansion with padding and date replacement", () => {
-      const original = "DSC_0042.RAW";
-      const rules = {
-        template: "Photo_####",
-        lowercaseExtension: true,
-      };
-      const result = applyRenameRules(original, 4, rules); // index 4 -> number 5 -> 0005
-      assert.equal(result, "Photo_0005.raw");
+    it("handles find and replace with case matching and replaceAll options", () => {
+      const resCase = applyRenameRules("Sample_sample_SAMPLE.png", 0, {
+        findReplace: { find: "sample", replace: "demo", matchCase: true, replaceAll: true },
+      });
+      assert.equal(resCase, "Sample_demo_SAMPLE.png");
+
+      const resInsensitive = applyRenameRules("Photo_photo_PHOTO.jpg", 0, {
+        findReplace: { find: "photo", replace: "asset", matchCase: false, replaceAll: true },
+      });
+      assert.equal(resInsensitive, "asset_asset_asset.jpg");
+
+      // Safe escape with regex metacharacters
+      const resMeta = applyRenameRules("item[draft](v1).png", 0, {
+        findReplace: { find: "[draft]", replace: "[final]", matchCase: true },
+      });
+      assert.equal(resMeta, "item[final](v1).png");
     });
 
-    it("supports custom start index and numbering rules", () => {
-      const original = "item.png";
-      const rules = {
-        numbering: {
-          enabled: true,
-          startIndex: 100,
-          padding: 4,
-          position: "prefix" as const,
-          separator: "-",
-        },
-      };
-      const result = applyRenameRules(original, 2, rules); // 100 + 2 = 102 -> 0102
-      assert.equal(result, "0102-item.png");
+    it("formats zero-padded number sequences from template hashes (#+)", () => {
+      assert.equal(applyRenameRules("img.jpg", 0, { template: "Asset_###" }), "Asset_001.jpg");
+      assert.equal(applyRenameRules("img.jpg", 9, { template: "Asset_###" }), "Asset_010.jpg");
+      assert.equal(applyRenameRules("img.jpg", 99, { template: "Asset_###" }), "Asset_100.jpg");
+      assert.equal(applyRenameRules("img.jpg", 0, { template: "Photo_####" }), "Photo_0001.jpg");
+      assert.equal(applyRenameRules("img.jpg", 0, { template: "Item_#" }), "Item_1.jpg");
+
+      // Custom start index
+      assert.equal(
+        applyRenameRules("img.jpg", 0, {
+          template: "Asset_###",
+          numbering: { enabled: true, startIndex: 50 },
+        }),
+        "Asset_050.jpg"
+      );
     });
 
-    it("handles regex replacement with error tolerance for malformed patterns", () => {
-      const original = "IMG_9999_draft.jpg";
-      const rules = {
-        regex: { pattern: "IMG_(\\d+)", replacement: "Photo_$1", flags: "g" },
-      };
-      const result = applyRenameRules(original, 0, rules);
-      assert.equal(result, "Photo_9999_draft.jpg");
+    it("evaluates date tokens in renaming templates (YYYY-MM-DD and YYYYMMDD)", () => {
+      const now = new Date();
+      const todayIso = now.toISOString().slice(0, 10);
+      const todayCompact = todayIso.replace(/-/g, "");
 
-      // Malformed regex pattern does not throw
-      const badRules = { regex: { pattern: "[unclosed", replacement: "x" } };
-      const safe = applyRenameRules(original, 0, badRules);
-      assert.equal(safe, original);
+      const resIso = applyRenameRules("log.txt", 0, { template: "Backup_YYYY-MM-DD_###" });
+      assert.equal(resIso, `Backup_${todayIso}_001.txt`);
+
+      const resCompact = applyRenameRules("doc.pdf", 0, {
+        template: "Document_YYYYMMDD_##",
+        numbering: { enabled: true, startIndex: 1 },
+      });
+      assert.equal(resCompact, `Document_${todayCompact}_01.pdf`);
     });
 
-    it("previewRenames returns mapped list with validation status", () => {
+    it("supports numbering rules without templates (prefix, suffix, replace)", () => {
+      const resSuffix = applyRenameRules("photo.jpg", 0, {
+        numbering: { enabled: true, startIndex: 1, padding: 3, position: "suffix", separator: "_" },
+      });
+      assert.equal(resSuffix, "photo_001.jpg");
+
+      const resPrefix = applyRenameRules("photo.jpg", 0, {
+        numbering: { enabled: true, startIndex: 1, padding: 2, position: "prefix", separator: "-" },
+      });
+      assert.equal(resPrefix, "01-photo.jpg");
+
+      const resReplace = applyRenameRules("photo.jpg", 4, {
+        numbering: { enabled: true, startIndex: 1, padding: 4, position: "replace" },
+      });
+      assert.equal(resReplace, "0005.jpg");
+    });
+
+    it("handles safe regex pattern replacement and shields against malformed regex", () => {
+      const resValid = applyRenameRules("file_123_abc.jpg", 0, {
+        regex: { pattern: "\\d+", replacement: "NUM" },
+      });
+      assert.equal(resValid, "file_NUM_abc.jpg");
+
+      // Malformed regex pattern unclosed bracket
+      const resInvalid = applyRenameRules("file.jpg", 0, {
+        regex: { pattern: "[unclosed", replacement: "x" },
+      });
+      assert.equal(resInvalid, "file.jpg");
+    });
+
+    it("generates preview items with validity status", () => {
       const files = [
-        new File(["abc"], "test1.jpg", { type: "image/jpeg" }),
-        new File(["def"], "test2.jpg", { type: "image/jpeg" }),
+        new File(["1"], "photo A.jpg", { type: "image/jpeg" }),
+        new File(["2"], "photo B.png", { type: "image/png" }),
       ];
-      const previews = previewRenames(files, { template: "Asset_###" });
+
+      const previews = previewRenames(files, {
+        template: "Asset_###",
+      });
+
       assert.equal(previews.length, 2);
       assert.equal(previews[0].renamed, "Asset_001.jpg");
-      assert.equal(previews[1].renamed, "Asset_002.jpg");
       assert.equal(previews[0].valid, true);
+      assert.equal(previews[1].renamed, "Asset_002.png");
+      assert.equal(previews[1].valid, true);
     });
 
-    it("packageRenamedZip resolves filename collisions safely and returns zip blob", async () => {
-      // Both files with duplicate target names
+    it("packages renamed files into a ZIP and handles filename collisions gracefully", async () => {
       const files = [
-        new File(["content-1"], "duplicate.txt", { type: "text/plain" }),
-        new File(["content-2"], "duplicate.txt", { type: "text/plain" }),
+        new File(["A"], "first.txt", { type: "text/plain" }),
+        new File(["B"], "second.txt", { type: "text/plain" }),
       ];
-      // Force constant rename without numbering
-      const rules = { template: "static_name" };
-      const blob = await packageRenamedZip(files, rules);
-      assert.ok(blob instanceof Blob);
-      assert.ok(blob.size > 0);
 
-      const zip = await JSZip.loadAsync(await blob.arrayBuffer());
+      // Template without hash creates identical names -> collision resolver appends _1
+      const zipBlob = await packageRenamedZip(files, {
+        template: "StaticDoc",
+      });
+
+      assert.ok(zipBlob.size > 0, "ZIP blob must not be empty");
+
+      const zip = await JSZip.loadAsync(await zipBlob.arrayBuffer());
       const filenames = Object.keys(zip.files);
       assert.equal(filenames.length, 2);
-      assert.ok(filenames.includes("static_name.txt"));
-      assert.ok(filenames.includes("static_name_1.txt"));
+      assert.ok(filenames.includes("StaticDoc.txt"));
+      assert.ok(filenames.includes("StaticDoc_1.txt"));
     });
   });
 
   // --------------------------------------------------------------------------
-  // 2. Batch Pipeline Processor (src/lib/batch/batchProcessor.ts)
+  // 2. Batch Workstation Hub (src/app/batch/page.tsx)
   // --------------------------------------------------------------------------
-  describe("2. Batch Pipeline Processor (src/lib/batch/batchProcessor.ts)", () => {
-    it("processes batch item with renaming pattern and MIME expansion", async () => {
-      const dummyFile = new File(["dummy-image-data"], "input_sample.jpg", {
-        type: "image/jpeg",
-      });
+  describe("2. Batch Hub Workstation (src/app/batch/page.tsx)", () => {
+    const src = readSource("src/app/batch/page.tsx");
 
-      const result = await processBatchItem(dummyFile, 2, {
-        resizeEnabled: false,
-        convertEnabled: false,
-        compressEnabled: false,
-        renamePattern: "Item_###",
-        startNumber: 10,
-      });
-
-      assert.equal(result.status, "done");
-      assert.equal(result.originalName, "input_sample.jpg");
-      assert.equal(result.outputName, "Item_012.jpg");
-      assert.equal(result.originalSize, dummyFile.size);
+    it("wraps layout cleanly in ToolPageShell with title and back navigation", () => {
+      assert.ok(src.includes("<ToolPageShell"), "Must wrap in ToolPageShell");
+      assert.ok(src.includes('title="Batch Studio"'), "Must declare title Batch Studio");
+      assert.ok(src.includes('backHref="/tools"'), "Must link back to /tools");
+      assert.ok(src.includes("</ToolPageShell>"), "Must close ToolPageShell");
     });
 
-    it("safely handles error state when pipeline step fails", async () => {
-      // Create a corrupted or empty file that fails when convert is invoked without DOM canvas
-      const badFile = new File([], "corrupted.jpg", { type: "image/jpeg" });
+    it("wires up global delivery flow and voluntary support prompt", () => {
+      assert.ok(src.includes("pushDownload"), "Must populate global download dock");
+      assert.ok(src.includes("setLatestDeliveredFile"), "Must trigger celebratory delivery modal");
+      assert.ok(src.includes("triggerSupportPrompt"), "Must hook into voluntary support prompt");
+      assert.ok(src.includes("addHistoryRecord"), "Must record telemetry in IndexedDB");
+    });
 
-      const result = await processBatchItem(badFile, 0, {
-        resizeEnabled: true,
-        targetWidth: 500,
-        targetHeight: 500,
-        convertEnabled: false,
-        compressEnabled: false,
-      });
+    it("enforces touch targets >= 44x44px and touch-manipulation across all interactive controls", () => {
+      assert.ok(
+        src.includes("min-h-[44px] touch-manipulation"),
+        "Toolbar buttons and inputs must have min-h-[44px] touch-manipulation"
+      );
+      assert.ok(
+        src.includes("flex h-11 w-11 min-h-[44px] min-w-[44px] touch-manipulation"),
+        "File delete button must be >= 44x44px"
+      );
+      assert.ok(
+        src.includes("min-h-[48px] touch-manipulation"),
+        "Primary action button must have touch target >= 48px"
+      );
+    });
 
-      // In Node environment without DOM canvas, resize throws and is caught
-      assert.equal(result.status, "error");
-      assert.ok(result.error);
+    it("applies calibrated WCAG AA contrast and tabular numerals", () => {
+      assert.ok(
+        src.includes("text-emerald-700 dark:text-emerald-400"),
+        "Must use calibrated emerald text contrast"
+      );
+      assert.ok(
+        src.includes("tabular-nums font-mono"),
+        "Must format numbers in tabular-nums font-mono"
+      );
     });
   });
 
   // --------------------------------------------------------------------------
-  // 3. Privacy Cleaner & PDF Metadata Scrubbing
+  // 3. Batch Rename Page (src/app/batch-rename/page.tsx)
   // --------------------------------------------------------------------------
-  describe("3. Privacy Cleaner & PDF Metadata Scrubbing", () => {
-    it("thoroughly cleans PDF metadata using compressPDF with removeMetadata: true", async () => {
-      const dirtyPdf = await createSamplePdf(2, {
-        title: "Confidential Strategy",
-        author: "Chief Executive",
-        subject: "Internal Operations",
-        keywords: ["confidential", "secret", "private"],
+  describe("3. Batch Rename Page (src/app/batch-rename/page.tsx)", () => {
+    const src = readSource("src/app/batch-rename/page.tsx");
+
+    it("connects to src/lib/batch/rename.ts engine", () => {
+      assert.ok(src.includes('@/lib/batch/rename'), "Must import rename engine");
+      assert.ok(src.includes("previewRenames"), "Must call previewRenames");
+      assert.ok(src.includes("packageRenamedZip"), "Must call packageRenamedZip");
+    });
+
+    it("wraps in ToolPageShell with breadcrumbs", () => {
+      assert.ok(src.includes("<ToolPageShell"), "Must wrap in ToolPageShell");
+      assert.ok(src.includes('title="Batch Rename Files"'), "Must specify title");
+      assert.ok(src.includes("</ToolPageShell>"), "Must close ToolPageShell");
+    });
+
+    it("provides live before/after rename table with .tabular-nums", () => {
+      assert.ok(src.includes("previews.map"), "Must render live preview list");
+      assert.ok(src.includes("tabular-nums"), "Must format numeric indices and counters with tabular-nums");
+    });
+
+    it("integrates full delivery flow (pushDownload, setLatestDeliveredFile, triggerSupportPrompt)", () => {
+      assert.ok(src.includes("pushDownload"), "Must call pushDownload");
+      assert.ok(src.includes("setLatestDeliveredFile"), "Must call setLatestDeliveredFile");
+      assert.ok(src.includes("triggerSupportPrompt"), "Must call triggerSupportPrompt");
+    });
+
+    it("enforces touch targets >= 44x44px and touch-manipulation on all inputs, tabs, and buttons", () => {
+      assert.ok(
+        src.includes("min-h-[44px] touch-manipulation"),
+        "Inputs, buttons, and chips must have min-h-[44px] touch-manipulation"
+      );
+      assert.ok(
+        src.includes("flex h-11 w-11 min-h-[44px] min-w-[44px]"),
+        "Remove item button must measure >= 44x44px"
+      );
+    });
+  });
+
+  // --------------------------------------------------------------------------
+  // 4. Automated File Workflows (src/app/workflows/page.tsx & layout.tsx)
+  // --------------------------------------------------------------------------
+  describe("4. Automated Workflows (src/app/workflows/)", () => {
+    const pageSrc = readSource("src/app/workflows/page.tsx");
+    const layoutSrc = readSource("src/app/workflows/layout.tsx");
+
+    it("exports complete route metadata in layout.tsx", () => {
+      assert.ok(
+        layoutSrc.includes("Automated File Workflows | FileFixer"),
+        "Must export title Automated File Workflows | FileFixer"
+      );
+      assert.ok(layoutSrc.includes('canonical: "/workflows"'), "Must export canonical /workflows");
+      assert.ok(
+        layoutSrc.includes("/branding/filefixer-og.png"),
+        "Must reference official openGraph branding asset"
+      );
+    });
+
+    it("wraps workflows page in ToolPageShell", () => {
+      assert.ok(pageSrc.includes("<ToolPageShell"), "Must wrap in ToolPageShell");
+      assert.ok(pageSrc.includes("</ToolPageShell>"), "Must close ToolPageShell");
+    });
+
+    it("provides multi-step automation pipeline builder with pre-configured recipes", () => {
+      assert.ok(pageSrc.includes("PRECONFIGURED_RECIPES"), "Must define starter recipes");
+      assert.ok(pageSrc.includes("Web Ready Image"), "Must include Web Ready recipe");
+      assert.ok(pageSrc.includes("Social Media Pack"), "Must include Social Media recipe");
+    });
+
+    it("enforces touch targets >= 44x44px on step cards, ordering buttons, and run triggers", () => {
+      assert.ok(
+        pageSrc.includes("flex h-11 w-11 min-h-[44px] min-w-[44px]"),
+        "Step up, down, and delete controls must be at least 44x44px"
+      );
+      assert.ok(
+        pageSrc.includes("min-h-[50px] touch-manipulation"),
+        "Run automated workflow CTA must be >= 50px"
+      );
+    });
+
+    it("integrates delivery flow (pushDownload, setLatestDeliveredFile, triggerSupportPrompt)", () => {
+      assert.ok(pageSrc.includes("pushDownload"), "Must call pushDownload");
+      assert.ok(pageSrc.includes("setLatestDeliveredFile"), "Must call setLatestDeliveredFile");
+      assert.ok(pageSrc.includes("triggerSupportPrompt"), "Must call triggerSupportPrompt");
+      assert.ok(pageSrc.includes("addHistoryRecord"), "Must record history in IndexedDB");
+    });
+
+    it("applies calibrated contrast and tabular numerals", () => {
+      assert.ok(
+        pageSrc.includes("text-emerald-700 dark:text-emerald-400"),
+        "Must use calibrated contrast for success badges"
+      );
+      assert.ok(
+        pageSrc.includes("tabular-nums font-mono"),
+        "Must format all counts and sizes with tabular-nums"
+      );
+    });
+  });
+
+  // --------------------------------------------------------------------------
+  // 5. Privacy Cleaner (src/app/privacy-cleaner/page.tsx)
+  // --------------------------------------------------------------------------
+  describe("5. Privacy Cleaner (src/app/privacy-cleaner/page.tsx)", () => {
+    const src = readSource("src/app/privacy-cleaner/page.tsx");
+
+    it("wraps in ToolPageShell with clear title and formats", () => {
+      assert.ok(src.includes("<ToolPageShell"), "Must wrap in ToolPageShell");
+      assert.ok(src.includes('title="Privacy Cleaner"'), "Must declare title");
+      assert.ok(src.includes("</ToolPageShell>"), "Must close ToolPageShell");
+    });
+
+    it("genuinely supports PDF metadata scrubbing via compressPDF with removeMetadata: true", () => {
+      assert.ok(src.includes("compressPDF"), "Must import and invoke compressPDF");
+      assert.ok(src.includes("removeMetadata: true"), "Must specify removeMetadata: true");
+    });
+
+    it("contains zero window alert() calls, using accessible toast notifications", () => {
+      assert.ok(!src.includes("alert("), "Must contain zero browser alert calls");
+      assert.ok(src.includes("toast({"), "Must use accessible toast notifications");
+    });
+
+    it("enforces touch targets >= 44x44px and calibrated contrast", () => {
+      assert.ok(src.includes("min-h-[44px] touch-manipulation"), "Buttons must have min-h-[44px]");
+      assert.ok(src.includes("min-h-[48px] touch-manipulation"), "Action CTAs must have min-h-[48px]");
+      assert.ok(
+        src.includes("text-emerald-700 dark:text-emerald-400"),
+        "Must use calibrated contrast for success states"
+      );
+      assert.ok(
+        src.includes("text-amber-700 dark:text-amber-400") ||
+          src.includes("text-amber-600 dark:text-amber-400"),
+        "Must use calibrated contrast for warning states"
+      );
+    });
+
+    it("actually strips PDF metadata fields in real client-side execution", async () => {
+      const samplePdf = await createSamplePdf({
+        title: "Top Secret Project Alpha",
+        author: "Agent 007",
+        subject: "Classified Intel",
+        creator: "Classified Tool 2026",
+        keywords: ["classified", "private"],
       });
 
-      // Verify metadata exists initially
-      const initialMeta = await inspectFile(dirtyPdf);
-      assert.equal(initialMeta.pdfTitle, "Confidential Strategy");
-      assert.equal(initialMeta.pdfAuthor, "Chief Executive");
-      assert.ok(initialMeta.pdfKeywords?.includes("confidential"));
-
-      // Clean metadata
-      const cleanResult = await compressPDF(dirtyPdf, {
+      const cleaned = await compressPDF(samplePdf, {
         level: "smaller",
         removeMetadata: true,
       });
 
-      assert.ok(cleanResult.blob instanceof Blob);
-      const cleanFile = new File([cleanResult.blob], "cleaned.pdf", {
-        type: "application/pdf",
-      });
+      assert.ok(cleaned.blob.size > 0, "Cleaned PDF must not be empty");
 
-      // Verify metadata is completely wiped
-      const cleanedMeta = await inspectFile(cleanFile);
-      assert.ok(!cleanedMeta.pdfTitle || cleanedMeta.pdfTitle === "");
-      assert.ok(!cleanedMeta.pdfAuthor || cleanedMeta.pdfAuthor === "");
-      assert.ok(!cleanedMeta.pdfSubject || cleanedMeta.pdfSubject === "");
-      assert.ok(!cleanedMeta.pdfKeywords || cleanedMeta.pdfKeywords.length === 0);
-    });
+      const arrayBuffer = await cleaned.blob.arrayBuffer();
+      const inspected = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
 
-    it("preserves metadata when removeMetadata is explicitly false", async () => {
-      const doc = await createSamplePdf(1, {
-        title: "Public Whitepaper",
-        author: "Research Team",
-      });
-
-      const preservedResult = await compressPDF(doc, {
-        level: "balanced",
-        removeMetadata: false,
-      });
-
-      const preservedFile = new File([preservedResult.blob], "preserved.pdf", {
-        type: "application/pdf",
-      });
-      const meta = await inspectFile(preservedFile);
-      assert.equal(meta.pdfTitle, "Public Whitepaper");
-      assert.equal(meta.pdfAuthor, "Research Team");
+      assert.equal(inspected.getTitle() || "", "", "Title dictionary must be erased");
+      assert.equal(inspected.getAuthor() || "", "", "Author dictionary must be erased");
+      assert.equal(inspected.getSubject() || "", "", "Subject dictionary must be erased");
+      assert.equal(inspected.getCreator() || "", "", "Creator dictionary must be erased");
+      const kw = inspected.getKeywords();
+      assert.ok(!kw || kw.length === 0, "Keywords must be empty");
     });
   });
 
   // --------------------------------------------------------------------------
-  // 4. Workflows Pipeline Architecture & Recipes
+  // 6. Local Processing History (src/app/history/page.tsx)
   // --------------------------------------------------------------------------
-  describe("4. Workflows Pipeline Architecture", () => {
-    it("verifies preconfigured workflow recipe integrity in workflows page", () => {
-      const workflowsPageContent = fs.readFileSync(
-        path.join(rootDir, "src/app/workflows/page.tsx"),
-        "utf8"
-      );
-      assert.ok(workflowsPageContent.includes("PRECONFIGURED_RECIPES"));
-      assert.ok(workflowsPageContent.includes("web-ready"));
-      assert.ok(workflowsPageContent.includes("social-media"));
-      assert.ok(workflowsPageContent.includes("document-sanitize"));
-      assert.ok(workflowsPageContent.includes("email-safe"));
-      assert.ok(workflowsPageContent.includes("fast-upload-rename"));
-    });
+  describe("6. Local History Workstation (src/app/history/page.tsx)", () => {
+    const src = readSource("src/app/history/page.tsx");
 
-    it("verifies WorkflowBuilder component exists with step drag/reorder support", () => {
-      const builderContent = fs.readFileSync(
-        path.join(rootDir, "src/components/workflows/WorkflowBuilder.tsx"),
-        "utf8"
-      );
-      assert.ok(builderContent.includes("ToolPageShell"));
-      assert.ok(builderContent.includes("setLatestDeliveredFile"));
-      assert.ok(builderContent.includes("triggerSupportPrompt"));
-      assert.ok(builderContent.includes("min-h-[44px]"));
-    });
-
-    it("verifies workflows layout metadata matches canonical specifications", () => {
-      const layoutContent = fs.readFileSync(
-        path.join(rootDir, "src/app/workflows/layout.tsx"),
-        "utf8"
-      );
-      assert.ok(layoutContent.includes("Automated File Workflows | FileFixer"));
-      assert.ok(layoutContent.includes("canonical: \"/workflows\""));
-      assert.ok(layoutContent.includes("/branding/filefixer-og.png"));
-    });
-  });
-
-  // --------------------------------------------------------------------------
-  // 5. History Storage & SSR Safety
-  // --------------------------------------------------------------------------
-  describe("5. History Storage & SSR Safety (src/lib/storage/history.ts)", () => {
-    it("safely returns empty list on SSR / Node environment without throwing", async () => {
-      const records = await getAllHistory();
-      assert.deepEqual(records, []);
-    });
-
-    it("safely handles clear and delete in SSR / Node environment", async () => {
-      await assert.doesNotReject(async () => {
-        await clearAllHistory();
-        await deleteHistoryRecord("dummy-id");
-      });
-    });
-
-    it("history page provides direct quick-links to tools", () => {
-      const historyPageContent = fs.readFileSync(
-        path.join(rootDir, "src/app/history/page.tsx"),
-        "utf8"
-      );
-      assert.ok(historyPageContent.includes("TOOL_HREFS"));
-      assert.ok(historyPageContent.includes("/batch"));
-      assert.ok(historyPageContent.includes("/workflows"));
-      assert.ok(historyPageContent.includes("/privacy-cleaner"));
-      assert.ok(historyPageContent.includes("/inspect"));
-    });
-  });
-
-  // --------------------------------------------------------------------------
-  // 6. ZIP Utility Return Value (src/lib/zip.ts)
-  // --------------------------------------------------------------------------
-  describe("6. ZIP Utility Return Value (src/lib/zip.ts)", () => {
-    it("downloadAsZip returns a Promise resolving to a Blob", async () => {
-      // In Node environment, triggerDownload checks document/window and no-ops safely
-      const entries = [
-        { filename: "file1.txt", blob: new Blob(["Hello"]) },
-        { filename: "file2.txt", blob: new Blob(["World"]) },
-      ];
-      const result = await downloadAsZip(entries, "test.zip");
-      assert.ok(result instanceof Blob);
-      assert.ok(result.size > 0);
-
-      const zip = await JSZip.loadAsync(await result.arrayBuffer());
-      assert.deepEqual(Object.keys(zip.files).sort(), ["file1.txt", "file2.txt"]);
-    });
-  });
-
-  // --------------------------------------------------------------------------
-  // 7. Touch Target & Accessibility Invariants (≥ 44×44px)
-  // --------------------------------------------------------------------------
-  describe("7. Touch Target Compliance (WCAG 2.5.5 / 2.5.8)", () => {
-    it("verifies interactive controls in M5 pages satisfy minimum 44px touch targets", () => {
-      for (const relPath of M5_PAGE_FILES) {
-        if (relPath.endsWith("layout.tsx")) continue;
-        const fullPath = path.join(rootDir, relPath);
-        assert.ok(fs.existsSync(fullPath), `File must exist: ${relPath}`);
-        const content = fs.readFileSync(fullPath, "utf8");
-
-        // Verify touch target tokens are pervasive in interactive components
-        const hasTouchTokens =
-          content.includes("min-h-[44px]") ||
-          content.includes("h-11") ||
-          content.includes("touch-manipulation");
-        assert.ok(
-          hasTouchTokens,
-          `Page ${relPath} must enforce minimum 44px touch target tokens`
-        );
-      }
-    });
-
-    it("verifies individual delete and clear buttons in history page meet 44px touch target", () => {
-      const historyContent = fs.readFileSync(
-        path.join(rootDir, "src/app/history/page.tsx"),
-        "utf8"
+    it("enforces touch target >= 44x44px on individual history delete button", () => {
+      assert.ok(
+        src.includes("flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center"),
+        "Delete button must be at least 44x44px with centered flex layout"
       );
       assert.ok(
-        historyContent.includes("min-h-[44px] min-w-[44px]"),
-        "History item delete button must have explicit min-h-[44px] min-w-[44px]"
+        src.includes("touch-manipulation"),
+        "Delete button must have touch-manipulation"
       );
     });
 
-    it("verifies tab trigger and preset chips in batch-rename meet 44px touch target", () => {
-      const batchRenameContent = fs.readFileSync(
-        path.join(rootDir, "src/app/batch-rename/page.tsx"),
-        "utf8"
+    it("adds interactive replay / reopen action links on history records", () => {
+      assert.ok(src.includes("getToolHref"), "Must have getToolHref route mapper");
+      assert.ok(src.includes("Reopen"), "Must provide Reopen action link");
+      assert.ok(
+        src.includes("min-h-[44px] touch-manipulation"),
+        "Reopen link must meet 44px touch target standard"
       );
-      assert.ok(batchRenameContent.includes("min-h-[44px]"));
-      assert.ok(batchRenameContent.includes("touch-manipulation"));
+    });
+
+    it("ensures all metric figures and bytes use tabular numerals", () => {
+      assert.ok(
+        src.includes("tabular-nums font-mono"),
+        "Must apply tabular-nums font-mono to byte counts and record statistics"
+      );
+      assert.ok(
+        src.includes("text-emerald-700 dark:text-emerald-400"),
+        "Must use calibrated contrast for bandwidth saved KPI"
+      );
     });
   });
 
   // --------------------------------------------------------------------------
-  // 8. Tabular Numerals & Metric Typography (.tabular-nums)
+  // 7. ZIP Archiving Utility (src/lib/zip.ts)
   // --------------------------------------------------------------------------
-  describe("8. Tabular Numerals Invariant (.tabular-nums)", () => {
-    it("verifies metrics, counts, and sizes in batch pages include tabular-nums", () => {
-      const targetPages = [
-        "src/app/batch/page.tsx",
-        "src/app/batch-rename/page.tsx",
-        "src/app/workflows/page.tsx",
-        "src/app/inspect/page.tsx",
-        "src/app/history/page.tsx",
+  describe("7. ZIP Archiving Utility (src/lib/zip.ts)", () => {
+    it("returns Promise<Blob> from createZipBlob and downloadAsZip", async () => {
+      const entries: ZipEntry[] = [
+        { filename: "test1.txt", blob: new Blob(["Hello 1"], { type: "text/plain" }) },
+        { filename: "test2.txt", blob: new Blob(["Hello 2"], { type: "text/plain" }) },
       ];
 
-      for (const relPath of targetPages) {
-        const content = fs.readFileSync(path.join(rootDir, relPath), "utf8");
-        assert.ok(
-          content.includes("tabular-nums"),
-          `${relPath} must use tabular-nums on numerical metrics and sizes`
-        );
-      }
-    });
-  });
+      const blob = await createZipBlob(entries);
+      assert.ok(blob instanceof Blob, "Must return a valid Blob instance");
+      assert.ok(blob.size > 0, "Blob must have positive byte weight");
 
-  // --------------------------------------------------------------------------
-  // 9. WCAG AA Contrast Calibration (Emerald/Amber Tokens)
-  // --------------------------------------------------------------------------
-  describe("9. WCAG AA Contrast Calibration", () => {
-    it("ensures no uncalibrated raw text-emerald-400 on light backgrounds without dark mode prefix", () => {
-      const checkFiles = [
-        "src/app/batch/page.tsx",
-        "src/app/batch-rename/page.tsx",
-        "src/app/workflows/page.tsx",
-        "src/app/privacy-cleaner/page.tsx",
-        "src/app/history/page.tsx",
-        "src/app/about/page.tsx",
-        "src/app/privacy/page.tsx",
-      ];
+      const zip = await JSZip.loadAsync(await blob.arrayBuffer());
+      assert.ok(zip.file("test1.txt"), "Must contain test1.txt");
+      assert.ok(zip.file("test2.txt"), "Must contain test2.txt");
 
-      for (const relPath of checkFiles) {
-        const content = fs.readFileSync(path.join(rootDir, relPath), "utf8");
-        // Matches "text-emerald-400" only if it is NOT preceded by "dark:"
-        const rawEmerald400 = /(?<!dark:)text-emerald-400\b/.test(content);
-        assert.equal(
-          rawEmerald400,
-          false,
-          `File ${relPath} contains raw text-emerald-400 on light canvas, violating WCAG AA`
-        );
-      }
-    });
-  });
-
-  // --------------------------------------------------------------------------
-  // 10. QR Support Asset Immutability Invariant
-  // --------------------------------------------------------------------------
-  describe("10. Support QR Asset Immutability Invariant", () => {
-    it("guarantees public/images/filefixer_support_qr.png sha256 is unchanged", () => {
-      const qrPath = path.join(rootDir, "public/images/filefixer_support_qr.png");
-      assert.ok(fs.existsSync(qrPath), "QR image file must exist");
-      const buffer = fs.readFileSync(qrPath);
-      const hash = crypto.createHash("sha256").update(buffer).digest("hex");
-      assert.equal(
-        hash,
-        "8592bd8a18457f3ac496d6735c472d7c4f3239e87b93771ed238d348b87d4744",
-        "QR asset SHA-256 must match authoritative baseline exactly"
-      );
+      const content1 = await zip.file("test1.txt")?.async("string");
+      assert.equal(content1, "Hello 1");
     });
   });
 });

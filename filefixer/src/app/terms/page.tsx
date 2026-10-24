@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { FileText, ShieldCheck } from "lucide-react";
+import { FileText, ShieldCheck, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import type { Metadata } from "next";
 
@@ -79,6 +80,20 @@ export default function TermsPage() {
             . We do not require accounts, track individual files, or harvest user telemetry.
           </p>
         </section>
+      </div>
+
+      {/* Navigation Links */}
+      <div className="flex flex-wrap items-center justify-center gap-4 pt-8 border-t border-[hsl(var(--border))]">
+        <Link href="/tools">
+          <Button className="min-h-[44px] px-6 font-semibold touch-manipulation">
+            Explore All Tools <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+        </Link>
+        <Link href="/privacy">
+          <Button variant="outline" className="min-h-[44px] px-6 font-medium touch-manipulation">
+            Privacy Policy
+          </Button>
+        </Link>
       </div>
     </div>
   );

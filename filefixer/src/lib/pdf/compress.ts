@@ -1,4 +1,4 @@
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, PDFName } from "pdf-lib";
 import { fileToArrayBuffer } from "../file-utils";
 
 export interface PdfCompressOptions {
@@ -24,7 +24,9 @@ export async function compressPDF(
 
   const pageCount = pdfDoc.getPageCount();
 
-  if (options.removeMetadata || options.level === "smaller") {
+  const shouldStripMetadata = Boolean(options.removeMetadata || options.level === "smaller");
+
+  if (shouldStripMetadata) {
     pdfDoc.setTitle("");
     pdfDoc.setAuthor("");
     pdfDoc.setSubject("");
@@ -34,7 +36,7 @@ export async function compressPDF(
   }
 
   // Create a clean new PDF document to discard dead objects and unreferenced streams
-  const newPdf = await PDFDocument.create();
+  const newPdf = await PDFDocument.create({ updateMetadata: !shouldStripMetadata });
   const pageIndices = pdfDoc.getPageIndices();
   const copiedPages = await newPdf.copyPages(pdfDoc, pageIndices);
 
@@ -43,7 +45,7 @@ export async function compressPDF(
   }
 
   // Preserve document metadata unless stripping is requested
-  if (!options.removeMetadata && options.level !== "smaller") {
+  if (!shouldStripMetadata) {
     const title = pdfDoc.getTitle();
     if (title !== undefined) newPdf.setTitle(title);
     const author = pdfDoc.getAuthor();
@@ -72,6 +74,19 @@ export async function compressPDF(
     newPdf.setKeywords([]);
     newPdf.setProducer("");
     newPdf.setCreator("");
+    try {
+      const infoDict = (newPdf as any).getInfoDict?.();
+      if (infoDict && typeof infoDict.delete === "function") {
+        infoDict.delete(PDFName.of("Producer"));
+        infoDict.delete(PDFName.of("Creator"));
+        infoDict.delete(PDFName.of("Title"));
+        infoDict.delete(PDFName.of("Author"));
+        infoDict.delete(PDFName.of("Subject"));
+        infoDict.delete(PDFName.of("Keywords"));
+      }
+    } catch {
+      // Ignore if infoDict is unavailable
+    }
   }
 
   // Save with optimal object streams

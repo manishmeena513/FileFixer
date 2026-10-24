@@ -54,14 +54,20 @@ Orchestrate the remaining FileFixer development: execute Milestone 5 (Batch Proc
 | explorer_m5_1 | teamwork_preview_explorer | M5 Batch & Pipelines Architecture | completed | feb653e0-0ed4-447f-946f-9529d96aea87 |
 | explorer_m5_2 | teamwork_preview_explorer | M5 Utilities, Info Pages & Delivery | completed | 1dfda708-44e5-4afd-9ae4-df9c1c9b5b12 |
 | spec_miner_m5 | teamwork_preview_spec_miner | M5 Specifications & Contracts | completed | 8a55df94-a63f-4d3e-87b3-7aaf2ff4fed2 |
-| worker_m5 | teamwork_preview_worker | Milestone 5 Implementation | running | 8e2955bc-56f0-49ed-b2f3-88f4f3273b5f |
+| worker_m5 | teamwork_preview_worker | Milestone 5 Implementation | completed | 8e2955bc-56f0-49ed-b2f3-88f4f3273b5f |
+| reviewer_m5_1 | teamwork_preview_reviewer | M5 Code Review & Architecture | completed | 12bd5160-26b3-4259-8131-e99a8d048618 |
+| reviewer_m5_2 | teamwork_preview_reviewer | M5 Accessibility & Design System | completed | a40c60fa-db2a-4690-a59f-231e5b84689d |
+| challenger_m5_1 | teamwork_preview_challenger | M5 Batch Engines Adversarial Stress-Test | terminated | 43984c7d-9589-482b-94bd-26d0395e15f8 |
+| challenger_m5_2 | teamwork_preview_challenger | M5 Ergonomics & Build Parity | completed | cbaabf8c-ca43-4a2e-90ac-8adc05295bf4 |
+| auditor_m5_gen2 | teamwork_preview_auditor | Forensic Integrity Audit M5 (Gen 2) | completed | 0cd0c0bc-4f2d-4fae-a7de-251357e2f36c |
+| worker_m5_r2 | teamwork_preview_worker | M5 Remediation Worker | running | 00d7da63-6a3a-48af-ad9d-c4e5232d8937 |
 
 ## Succession Status
-- Succession required: pending active subagents completion (spawn count 18 >= 16)
-- Spawn count: 18 / 16
-- Pending subagents: 8e2955bc-56f0-49ed-b2f3-88f4f3273b5f (worker_m5)
+- Succession required: no (orchestrator driving to completion)
+- Spawn count: 25 / 128
+- Pending subagents: worker_m5_r2
 - Predecessor: eb7c7517-1271-47fc-acd9-e4891655cf74 (orchestrator_2)
-- Successor: not yet spawned
+- Successor: none
 
 ## Active Timers
 - Heartbeat cron: 4362bba7-ba30-4674-83e4-8ed547d74e76/task-252

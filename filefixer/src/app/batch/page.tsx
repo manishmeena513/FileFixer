@@ -36,6 +36,14 @@ import { useFileStore } from "@/stores/fileStore";
 import { calcSavings } from "@/lib/utils";
 import { ToolPageShell } from "@/components/ui/ToolPageShell";
 
+function generateDelivId() {
+  return `deliv-${Date.now()}`;
+}
+
+function getTimestamp() {
+  return Date.now();
+}
+
 export default function BatchHubPage() {
   const { toast } = useToast();
   const addMoreInputRef = useRef<HTMLInputElement>(null);
@@ -69,16 +77,19 @@ export default function BatchHubPage() {
 
   // Auto-populate from Temporary File Workspace on mount if compatible images exist
   useEffect(() => {
-    if (files.length === 0 && storeFiles.length > 0) {
-      const workspaceImages = storeFiles
-        .filter((f) => f.type.startsWith("image/"))
-        .map((f) => f.file);
-      if (workspaceImages.length > 0) {
-        setFiles(workspaceImages);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timer = setTimeout(() => {
+      setFiles((prev) => {
+        if (prev.length === 0 && storeFiles.length > 0) {
+          const workspaceImages = storeFiles
+            .filter((f) => f.type.startsWith("image/"))
+            .map((f) => f.file);
+          if (workspaceImages.length > 0) return workspaceImages;
+        }
+        return prev;
+      });
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [storeFiles]);
 
   const handleFiles = (newFiles: File[]) => {
     const valid = newFiles.filter((f) => f.type.startsWith("image/"));
@@ -203,17 +214,36 @@ export default function BatchHubPage() {
 
     await downloadAsZip(entries, "filefixer_batch_assets.zip");
     setLatestDeliveredFile({
-      id: `deliv-${Date.now()}`,
+      id: generateDelivId(),
       fileName: "filefixer_batch_assets.zip",
       originalSize: totalOriginal,
       outputSize: totalOutput,
       status: "downloaded",
-      timestamp: Date.now(),
+      timestamp: getTimestamp(),
     });
     triggerSupportPrompt();
     toast({
       title: "ZIP downloaded",
       description: `Downloaded ${entries.length} processed file(s).`,
+      variant: "success",
+    });
+  };
+
+  const handleDownloadSingle = (res: BatchItemResult, originalSize: number) => {
+    triggerDownload(res.blob, res.outputName);
+    setLatestDeliveredFile({
+      id: generateDelivId(),
+      fileName: res.outputName,
+      originalSize: originalSize,
+      outputSize: res.outputSize,
+      status: "downloaded",
+      blob: res.blob,
+      timestamp: getTimestamp(),
+    });
+    triggerSupportPrompt();
+    toast({
+      title: "File downloaded",
+      description: `Saved ${res.outputName}.`,
       variant: "success",
     });
   };
@@ -227,6 +257,16 @@ export default function BatchHubPage() {
       setTimeout(() => {
         triggerDownload(r.blob, r.outputName);
       }, idx * 150);
+    });
+    const lastItem = ready[ready.length - 1];
+    setLatestDeliveredFile({
+      id: generateDelivId(),
+      fileName: lastItem.outputName,
+      originalSize: totalOriginal,
+      outputSize: totalOutput,
+      status: "downloaded",
+      blob: lastItem.blob,
+      timestamp: getTimestamp(),
     });
     triggerSupportPrompt();
     toast({
@@ -484,10 +524,7 @@ export default function BatchHubPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => {
-                                triggerDownload(res.blob, res.outputName);
-                                triggerSupportPrompt();
-                              }}
+                              onClick={() => handleDownloadSingle(res, f.size)}
                               className="min-h-[44px] touch-manipulation px-3 text-xs"
                             >
                               <Download className="h-3.5 w-3.5 mr-1" />
@@ -559,10 +596,7 @@ export default function BatchHubPage() {
                           </div>
                           <Button
                             size="sm"
-                            onClick={() => {
-                              triggerDownload(res.blob, res.outputName);
-                              triggerSupportPrompt();
-                            }}
+                            onClick={() => handleDownloadSingle(res, f.size)}
                             className="min-h-[44px] touch-manipulation shrink-0"
                           >
                             <Download className="h-3.5 w-3.5 mr-1" />

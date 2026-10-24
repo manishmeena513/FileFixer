@@ -9,13 +9,6 @@ import {
   Plus,
   Trash2,
   X,
-  Type,
-  Hash,
-  Search,
-  Code,
-  CheckCircle2,
-  AlertCircle,
-  FileText,
 } from "lucide-react";
 import { DropZone } from "@/components/upload/DropZone";
 import { Button } from "@/components/ui/button";
@@ -33,6 +26,14 @@ import {
   packageRenamedZip,
   RenamePreviewItem,
 } from "@/lib/batch/rename";
+
+function generateDelivId() {
+  return `deliv-${Date.now()}`;
+}
+
+function getTimestamp() {
+  return Date.now();
+}
 
 const TEMPLATE_PRESETS = [
   { label: "Asset_###", pattern: "Asset_###", hint: "Asset_001, Asset_002" },
@@ -92,11 +93,16 @@ export default function BatchRenamePage() {
 
   // Sync initial store files if present
   useEffect(() => {
-    if (files.length === 0 && storeFiles.length > 0) {
-      setFiles(storeFiles.map((sf) => sf.file));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timer = setTimeout(() => {
+      setFiles((prev) => {
+        if (prev.length === 0 && storeFiles.length > 0) {
+          return storeFiles.map((sf) => sf.file);
+        }
+        return prev;
+      });
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [storeFiles]);
 
   const handleFiles = (newFiles: File[]) => {
     if (newFiles.length === 0) return;
@@ -182,23 +188,6 @@ export default function BatchRenamePage() {
     return previewRenames(files, currentRules);
   }, [files, currentRules]);
 
-  // Synchronize ready files with download queue on change
-  useEffect(() => {
-    if (previews.length > 0) {
-      previews.slice(0, 5).forEach((p) => {
-        pushDownload({
-          fileName: p.renamed,
-          originalSize: p.file.size,
-          outputSize: p.file.size,
-          savingsPct: 0,
-          status: "ready",
-          blob: p.file,
-        });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [previews.length]);
-
   const handleDownloadSingle = (item: RenamePreviewItem) => {
     triggerDownload(item.file, item.renamed);
 
@@ -212,13 +201,13 @@ export default function BatchRenamePage() {
     });
 
     setLatestDeliveredFile({
-      id: `deliv-${Date.now()}`,
+      id: generateDelivId(),
       fileName: item.renamed,
       originalSize: item.file.size,
       outputSize: item.file.size,
       status: "downloaded",
       blob: item.file,
-      timestamp: Date.now(),
+      timestamp: getTimestamp(),
     });
 
     triggerSupportPrompt();
@@ -283,13 +272,13 @@ export default function BatchRenamePage() {
       });
 
       setLatestDeliveredFile({
-        id: `deliv-${Date.now()}`,
+        id: generateDelivId(),
         fileName: zipName,
         originalSize: totalSize,
         outputSize: zipBlob.size,
         status: "downloaded",
         blob: zipBlob,
-        timestamp: Date.now(),
+        timestamp: getTimestamp(),
       });
 
       triggerSupportPrompt();

@@ -69,19 +69,22 @@ export function applyCaseTransform(input: string, transform?: CaseTransform): st
     case "uppercase":
       return input.toUpperCase();
     case "titlecase":
-      return input.replace(
-        /\b[a-zA-Z0-9]+/g,
-        (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      );
+      return input
+        .toLowerCase()
+        .replace(/(?:^|[\s_\-./\\])([a-z0-9])/g, (match) => match.toUpperCase());
     case "kebab":
       return input
         .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
         .replace(/[\s_]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-+|-+$/g, "")
         .toLowerCase();
     case "snake":
       return input
         .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
         .replace(/[\s-]+/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_+|_+$/g, "")
         .toLowerCase();
     default:
       return input;
@@ -99,9 +102,17 @@ export function validateFilename(name: string): { valid: boolean; error?: string
   if (trimmed === "." || trimmed === "..") {
     return { valid: false, error: "Reserved directory name" };
   }
+  if (trimmed.endsWith(".")) {
+    return { valid: false, error: "Filename cannot end with a period" };
+  }
   // Check for forbidden characters in Windows / POSIX (excluding path separators)
   if (/[<>:"/\\|?*\x00-\x1F]/.test(trimmed)) {
     return { valid: false, error: "Contains illegal characters (<>:\"/\\|?*)" };
+  }
+  // Check for DOS reserved device names (CON, PRN, AUX, NUL, COM1-9, LPT1-9)
+  const baseName = trimmed.split(".")[0].toUpperCase();
+  if (/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/.test(baseName)) {
+    return { valid: false, error: "Reserved system device name" };
   }
   if (trimmed.length > 255) {
     return { valid: false, error: "Filename exceeds 255 characters" };
@@ -118,9 +129,7 @@ export function applyRenameRules(
   rules: RenameRules = {}
 ): string {
   const preserveExt = rules.preserveExtension !== false;
-  const { base: origBase, ext: origExt } = preserveExt
-    ? splitFilename(filename)
-    : { base: filename, ext: "" };
+  const { base: origBase, ext: origExt } = splitFilename(filename);
 
   let base = origBase;
 
@@ -134,7 +143,9 @@ export function applyRenameRules(
     const num = (rules.numbering?.startIndex ?? 1) + index;
     const hashMatch = tpl.match(/#+/);
     const padding = hashMatch ? hashMatch[0].length : rules.numbering?.padding ?? 3;
-    const paddedNum = String(num).padStart(padding, "0");
+    const paddedNum = num < 0
+      ? `-${String(Math.abs(num)).padStart(Math.max(1, (padding || 1) - 1), "0")}`
+      : String(num).padStart(padding || 1, "0");
 
     base = tpl
       .replace(/YYYY-MM-DD/g, todayStr)
@@ -142,7 +153,9 @@ export function applyRenameRules(
       .replace(/#+/, paddedNum)
       .replace(/\{n\}/g, String(num))
       .replace(/\{index\}/g, String(num))
-      .replace(/\{orig\}/g, origBase);
+      .replace(/\{orig\}/g, () => origBase)
+      .replace(/\{name\}/g, () => origBase)
+      .replace(/\{ext\}/g, () => origExt);
   }
 
   // 2. Find and Replace
@@ -168,7 +181,9 @@ export function applyRenameRules(
   if (rules.numbering?.enabled && (!rules.template || !rules.template.includes("#"))) {
     const num = (rules.numbering.startIndex ?? 1) + index;
     const padding = rules.numbering.padding ?? 3;
-    const padded = String(num).padStart(padding, "0");
+    const padded = num < 0
+      ? `-${String(Math.abs(num)).padStart(Math.max(1, (padding || 1) - 1), "0")}`
+      : String(num).padStart(padding || 1, "0");
     const sep = rules.numbering.separator ?? "_";
     const pos = rules.numbering.position ?? "suffix";
 
@@ -195,6 +210,10 @@ export function applyRenameRules(
   }
 
   // 7. Extension handling
+  if (!preserveExt) {
+    return base;
+  }
+
   let ext = origExt;
   if (rules.lowercaseExtension) {
     ext = ext.toLowerCase();
@@ -235,19 +254,22 @@ export async function packageRenamedZip(
   const zip = new JSZip();
   const previews = previewRenames(files, rules);
   const usedNames = new Set<string>();
+  const counterMap = new Map<string, number>();
 
   for (const item of previews) {
     let finalName = item.renamed;
 
-    // Collision handling: ensure unique entries within the ZIP archive
+    // Collision handling: ensure unique entries within the ZIP archive in O(N)
     if (usedNames.has(finalName)) {
       const { base, ext } = splitFilename(finalName);
-      let counter = 1;
-      const candidate = () => (ext ? `${base}_${counter}.${ext}` : `${base}_${counter}`);
-      while (usedNames.has(candidate())) {
+      const key = `${base}__${ext}`;
+      let counter = counterMap.get(key) ?? 1;
+      const candidate = (c: number) => (ext ? `${base}_${c}.${ext}` : `${base}_${c}`);
+      while (usedNames.has(candidate(counter))) {
         counter++;
       }
-      finalName = candidate();
+      finalName = candidate(counter);
+      counterMap.set(key, counter + 1);
     }
     usedNames.add(finalName);
 
@@ -256,7 +278,5 @@ export async function packageRenamedZip(
 
   return await zip.generateAsync({
     type: "blob",
-    compression: "DEFLATE",
-    compressionOptions: { level: 6 },
   });
 }

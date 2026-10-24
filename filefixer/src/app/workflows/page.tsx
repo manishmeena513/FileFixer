@@ -8,20 +8,11 @@ import {
   ArrowDown,
   ArrowUp,
   Play,
-  RotateCcw,
   Sparkles,
   Layers,
-  Minimize2,
-  Maximize2,
-  RefreshCw,
-  Shield,
-  Download,
   Loader2,
   CheckCircle2,
-  AlertCircle,
   Archive,
-  Sliders,
-  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,9 +27,22 @@ import { compressImage } from "@/lib/image/compress";
 import { stripImageMetadata } from "@/lib/image/metadata";
 import { compressPDF } from "@/lib/pdf/compress";
 import { downloadAsZip } from "@/lib/zip";
-import { formatBytes, getExtensionFromMime, triggerDownload } from "@/lib/file-utils";
+import { formatBytes } from "@/lib/file-utils";
 import { addHistoryRecord } from "@/lib/storage/history";
 import { WorkflowStep } from "@/types";
+
+let stepIdCounter = 0;
+function generateStepId() {
+  return `step-${Date.now()}-${++stepIdCounter}`;
+}
+
+function generateDelivId() {
+  return `deliv-${Date.now()}`;
+}
+
+function getTimestamp() {
+  return Date.now();
+}
 
 interface Recipe {
   id: string;
@@ -225,11 +229,16 @@ export default function WorkflowsPage() {
 
   // Sync initial files from store
   useEffect(() => {
-    if (files.length === 0 && storeFiles.length > 0) {
-      setFiles(storeFiles.map((sf) => sf.file));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timer = setTimeout(() => {
+      setFiles((prev) => {
+        if (prev.length === 0 && storeFiles.length > 0) {
+          return storeFiles.map((sf) => sf.file);
+        }
+        return prev;
+      });
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [storeFiles]);
 
   const handleFiles = (newFiles: File[]) => {
     if (newFiles.length === 0) return;
@@ -263,7 +272,7 @@ export default function WorkflowsPage() {
   };
 
   const addStep = (type: WorkflowStep["type"]) => {
-    const newId = `step-${Date.now()}`;
+    const newId = generateStepId();
     let newStep: WorkflowStep;
 
     switch (type) {
@@ -437,12 +446,12 @@ export default function WorkflowsPage() {
 
       // Set delivered notification
       setLatestDeliveredFile({
-        id: `deliv-${Date.now()}`,
+        id: generateDelivId(),
         fileName: "filefixer-workflow-output.zip",
         originalSize: totalInputSize,
         outputSize: totalOutputSize,
         status: "downloaded",
-        timestamp: Date.now(),
+        timestamp: getTimestamp(),
       });
 
       triggerSupportPrompt();
