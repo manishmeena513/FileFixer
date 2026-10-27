@@ -195,11 +195,11 @@ describe("Milestone 5 Adversarial Challenger Verification Suite", () => {
       });
       assert.equal(unpadded, "6_img.png");
 
-      // Negative startIndex: in JavaScript String(-3).padStart(3, "0") yields "0-3"
+      // Negative startIndex: preserves negative sign at the front of padded number ("-03")
       const negStart = applyRenameRules("img.png", 2, {
         numbering: { enabled: true, startIndex: -5, padding: 3, position: "suffix" },
       });
-      assert.equal(negStart, "img_0-3.png");
+      assert.equal(negStart, "img_-03.png");
 
       // Huge padding: 25 zeroes
       const hugePadding = applyRenameRules("log.txt", 0, {
@@ -422,7 +422,7 @@ describe("Milestone 5 Adversarial Challenger Verification Suite", () => {
 
       // Verify that after cleaning, the metadata is completely purged
       const cleanedBytes = await cleanResult.blob.arrayBuffer();
-      const cleanedDoc = await PDFDocument.load(cleanedBytes, { ignoreEncryption: true });
+      const cleanedDoc = await PDFDocument.load(cleanedBytes, { ignoreEncryption: true, updateMetadata: false });
 
       assert.equal(cleanedDoc.getTitle() || "", "", "Title must be empty");
       assert.equal(cleanedDoc.getAuthor() || "", "", "Author must be empty");
@@ -430,9 +430,10 @@ describe("Milestone 5 Adversarial Challenger Verification Suite", () => {
       assert.equal(cleanedDoc.getCreator() || "", "", "Creator must be empty");
       // The original sensitive producer must be completely scrubbed
       assert.notEqual(cleanedDoc.getProducer(), sensitiveProducer, "Sensitive producer must be stripped");
+      const producer = cleanedDoc.getProducer();
       assert.ok(
-        cleanedDoc.getProducer() === "" || cleanedDoc.getProducer()?.includes("pdf-lib"),
-        "Producer should either be blank or library default"
+        !producer || producer === "" || producer.includes("pdf-lib"),
+        "Producer should either be blank, undefined, or library default"
       );
       const kw = cleanedDoc.getKeywords();
       assert.ok(!kw || kw.length === 0, "Keywords must be empty");

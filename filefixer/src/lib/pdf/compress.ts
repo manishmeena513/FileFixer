@@ -36,7 +36,7 @@ export async function compressPDF(
   }
 
   // Create a clean new PDF document to discard dead objects and unreferenced streams
-  const newPdf = await PDFDocument.create({ updateMetadata: !shouldStripMetadata });
+  const newPdf = await PDFDocument.create();
   const pageIndices = pdfDoc.getPageIndices();
   const copiedPages = await newPdf.copyPages(pdfDoc, pageIndices);
 
@@ -78,11 +78,6 @@ export async function compressPDF(
       const infoDict = (newPdf as any).getInfoDict?.();
       if (infoDict && typeof infoDict.delete === "function") {
         infoDict.delete(PDFName.of("Producer"));
-        infoDict.delete(PDFName.of("Creator"));
-        infoDict.delete(PDFName.of("Title"));
-        infoDict.delete(PDFName.of("Author"));
-        infoDict.delete(PDFName.of("Subject"));
-        infoDict.delete(PDFName.of("Keywords"));
       }
     } catch {
       // Ignore if infoDict is unavailable

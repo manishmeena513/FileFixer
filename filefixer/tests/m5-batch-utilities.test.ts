@@ -250,7 +250,7 @@ describe("Milestone 5 Comprehensive Suite: Batch Utilities, Workflows & Informat
 
       assert.ok(cleaned.blob.size > 0, "Cleaned PDF must not be empty");
       const buffer = await cleaned.blob.arrayBuffer();
-      const pdf = await PDFDocument.load(buffer, { ignoreEncryption: true });
+      const pdf = await PDFDocument.load(buffer, { ignoreEncryption: true, updateMetadata: false });
 
       assert.equal(pdf.getTitle() || "", "", "Title must be scrubbed");
       assert.equal(pdf.getAuthor() || "", "", "Author must be scrubbed");

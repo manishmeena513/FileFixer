@@ -340,7 +340,7 @@ describe("Adversarial Challenger Stress Suite: M5 Batch Processing & Privacy Cle
 
       // 3. Inspect the resulting cleaned PDF document
       const cleanBytes = await cleanResult.blob.arrayBuffer();
-      const cleanedDoc = await PDFDocument.load(cleanBytes, { ignoreEncryption: true });
+      const cleanedDoc = await PDFDocument.load(cleanBytes, { ignoreEncryption: true, updateMetadata: false });
 
       // Standard metadata fields must be sanitized / blank
       assert.equal(cleanedDoc.getTitle() || "", "", "Title must be empty");

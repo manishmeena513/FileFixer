@@ -141,6 +141,15 @@ describe("Milestone 5: Batch Processing, Pipelines & Utility Workstations", () =
         }),
         "Asset_050.jpg"
       );
+
+      // Negative start index preserves negative sign at front of padded number
+      assert.equal(
+        applyRenameRules("img.jpg", 0, {
+          template: "Asset_###",
+          numbering: { enabled: true, startIndex: -3 },
+        }),
+        "Asset_-03.jpg"
+      );
     });
 
     it("evaluates date tokens in renaming templates (YYYY-MM-DD and YYYYMMDD)", () => {
@@ -173,6 +182,11 @@ describe("Milestone 5: Batch Processing, Pipelines & Utility Workstations", () =
         numbering: { enabled: true, startIndex: 1, padding: 4, position: "replace" },
       });
       assert.equal(resReplace, "0005.jpg");
+
+      const resNeg = applyRenameRules("photo.jpg", 0, {
+        numbering: { enabled: true, startIndex: -7, padding: 4, position: "suffix", separator: "_" },
+      });
+      assert.equal(resNeg, "photo_-007.jpg");
     });
 
     it("handles safe regex pattern replacement and shields against malformed regex", () => {
@@ -427,7 +441,7 @@ describe("Milestone 5: Batch Processing, Pipelines & Utility Workstations", () =
       assert.ok(cleaned.blob.size > 0, "Cleaned PDF must not be empty");
 
       const arrayBuffer = await cleaned.blob.arrayBuffer();
-      const inspected = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+      const inspected = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true, updateMetadata: false });
 
       assert.equal(inspected.getTitle() || "", "", "Title dictionary must be erased");
       assert.equal(inspected.getAuthor() || "", "", "Author dictionary must be erased");
