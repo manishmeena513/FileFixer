@@ -114,7 +114,7 @@ export function FeaturedToolsGrid() {
             <Link
               key={tool.title}
               href={tool.href}
-              className="interactive-card group relative flex flex-col justify-between rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 hover:border-[hsl(var(--primary)/0.55)] transition-all cursor-pointer min-h-[44px]"
+              className="interactive-card group relative flex flex-col justify-between rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md p-5 sm:p-6 hover:border-[var(--glass-border-luminous)] hover:bg-[var(--glass-surface-elevated)] hover:shadow-[0_12px_36px_rgba(59,130,246,0.18)] transition-all cursor-pointer min-h-[44px]"
             >
               <div>
                 <div className="flex items-center justify-between">
@@ -125,7 +125,7 @@ export function FeaturedToolsGrid() {
                   </div>
                   <Badge
                     variant="outline"
-                    className="text-[10px] font-semibold tracking-wider"
+                    className="text-[10px] font-semibold tracking-wider border-[var(--glass-border)]"
                   >
                     {tool.badge}
                   </Badge>
@@ -139,7 +139,7 @@ export function FeaturedToolsGrid() {
                 </p>
               </div>
 
-              <div className="mt-5 pt-3.5 border-t border-[hsl(var(--border)/0.6)] flex items-center justify-between text-xs font-semibold text-[hsl(var(--primary))]">
+              <div className="mt-5 pt-3.5 border-t border-[var(--glass-border)] flex items-center justify-between text-xs font-semibold text-[hsl(var(--primary))]">
                 <span>Open Tool</span>
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </div>
@@ -149,7 +149,7 @@ export function FeaturedToolsGrid() {
       </div>
 
       {/* Explore All Tools CTA Banner */}
-      <div className="mt-10 sm:mt-12 rounded-2xl border border-[hsl(var(--border))] bg-gradient-to-r from-[hsl(var(--card))] via-[hsl(var(--secondary)/0.5)] to-[hsl(var(--card))] p-6 sm:p-8 text-center sm:flex sm:items-center sm:justify-between sm:text-left shadow-xs">
+      <div className="mt-10 sm:mt-12 rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-xl p-6 sm:p-8 text-center sm:flex sm:items-center sm:justify-between sm:text-left shadow-xl">
         <div className="space-y-1">
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))]">
             Explore all <TabularNum value={TOOLS.length} className="font-mono font-bold" /> local tools

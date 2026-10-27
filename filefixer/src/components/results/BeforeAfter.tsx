@@ -38,7 +38,7 @@ export function BeforeAfterStats({
   return (
     <div
       className={cn(
-        "animate-slide-up rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 sm:p-5 shadow-sm",
+        "animate-slide-up rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md p-4 sm:p-5 shadow-lg",
         className
       )}
     >

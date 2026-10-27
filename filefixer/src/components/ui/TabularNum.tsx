@@ -20,7 +20,7 @@ export function TabularNum({
 }: TabularNumProps) {
   return (
     <span
-      className={cn("tabular-nums inline-block font-feature-tnum", className)}
+      className={cn("tabular-nums font-mono font-feature-tnum inline-block", className)}
       {...props}
     >
       {prefix}
@@ -46,7 +46,7 @@ export function FormatBytes({
 }: FormatBytesProps) {
   return (
     <span
-      className={cn("tabular-nums font-feature-tnum inline-block", className)}
+      className={cn("tabular-nums font-mono font-feature-tnum inline-block", className)}
       {...props}
     >
       {formatBytesUtil(bytes, decimals)}
@@ -72,7 +72,7 @@ export function SavingsPct({
 }: SavingsPctProps) {
   return (
     <span
-      className={cn("tabular-nums font-feature-tnum inline-block", className)}
+      className={cn("tabular-nums font-mono font-feature-tnum inline-block", className)}
       {...props}
     >
       {prefix}{calcSavingsUtil(original, optimized)}

@@ -106,7 +106,7 @@ export function WorkspaceDrawer() {
       aria-label="Temporary Local File Workspace"
     >
       <div
-        className="relative flex h-full w-full max-w-lg flex-col border-l border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-2xl animate-scale-in"
+        className="relative flex h-full w-full max-w-lg flex-col border-l border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-2xl animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

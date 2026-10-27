@@ -40,9 +40,9 @@ export function ToolCard({ tool, className }: ToolCardProps) {
     <Link
       href={destination}
       className={cn(
-        "group relative flex flex-col justify-between rounded-xl border p-5 transition-all duration-200 cursor-pointer min-h-[44px]",
-        "border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))]",
-        "hover:-translate-y-1 hover:border-[hsl(var(--primary)/0.6)] hover:shadow-lg hover:shadow-[hsl(var(--primary)/0.06)]",
+        "group relative flex flex-col justify-between rounded-2xl border p-5 transition-all duration-300 cursor-pointer min-h-[44px]",
+        "border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md shadow-md text-[hsl(var(--foreground))]",
+        "hover:-translate-y-1 hover:border-[var(--glass-border-luminous)] hover:shadow-[0_12px_36px_rgba(59,130,246,0.18)] hover:bg-[var(--glass-surface-elevated)]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]",
         className
       )}
@@ -51,12 +51,12 @@ export function ToolCard({ tool, className }: ToolCardProps) {
       <div className="space-y-3">
         {/* Top Header: Icon + Category + Badge */}
         <div className="flex items-start justify-between gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--primary))] transition-transform duration-200 group-hover:scale-105 group-hover:border-[hsl(var(--primary)/0.4)] group-hover:bg-[hsl(var(--primary)/0.1)]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--primary))] transition-all duration-200 group-hover:scale-105 group-hover:border-[var(--glass-border-luminous)] group-hover:shadow-[0_0_15px_rgba(96,165,250,0.25)]">
             <Icon className="h-5 w-5" aria-hidden="true" />
           </div>
 
           <div className="flex flex-wrap items-center justify-end gap-1.5">
-            <Badge variant="outline" className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+            <Badge variant="outline" className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))] border-[var(--glass-border)]">
               {tool.category}
             </Badge>
             {tool.badge && (
@@ -96,7 +96,7 @@ export function ToolCard({ tool, className }: ToolCardProps) {
       </div>
 
       {/* Card Footer: Feature indicator + Primary CTA */}
-      <div className="mt-5 pt-3.5 border-t border-[hsl(var(--border))] flex items-center justify-between gap-2 text-xs">
+      <div className="mt-5 pt-3.5 border-t border-[var(--glass-border)] flex items-center justify-between gap-2 text-xs">
         <span className="text-[11px] font-medium text-[hsl(var(--muted-foreground))] truncate">
           {tool.featureIndicator || "Browser Native"}
         </span>

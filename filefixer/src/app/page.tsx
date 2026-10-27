@@ -14,9 +14,9 @@ import { HomeFAQ } from "@/components/home/HomeFAQ";
 export default function HomePage() {
   return (
     <div className="space-y-16 sm:space-y-24 pb-16">
-      {/* Background ambient light */}
-      <div className="absolute inset-0 -z-10 flex items-center justify-center opacity-30 blur-3xl pointer-events-none overflow-hidden">
-        <div className="h-[420px] w-[580px] rounded-full bg-gradient-to-tr from-[hsl(var(--primary)/0.35)] to-sky-500/20" />
+      {/* Hero ambient atmospheric light */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -z-10 w-full max-w-5xl h-[550px] pointer-events-none overflow-hidden opacity-60 dark:opacity-75 blur-3xl" aria-hidden="true">
+        <div className="mx-auto h-[380px] w-[620px] rounded-full bg-gradient-to-tr from-blue-600/30 via-indigo-500/20 to-violet-500/25" />
       </div>
 
       {/* 1. HERO + SMART DROP ZONE (Fix your files. Keep them private.) */}

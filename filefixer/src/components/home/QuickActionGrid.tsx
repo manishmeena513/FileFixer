@@ -84,7 +84,7 @@ const SMART_QUICK_ACTIONS = [
 export function QuickActionGrid() {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card)/0.6)] p-5 sm:p-8">
+      <div className="rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
           <div>
             <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[hsl(var(--foreground))]">
@@ -112,9 +112,9 @@ export function QuickActionGrid() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="interactive-card group flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] p-3 sm:p-3.5 min-h-[56px] hover:border-[hsl(var(--primary)/0.6)] transition-all cursor-pointer touch-manipulation"
+                className="interactive-card group flex items-center gap-3 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md p-3 sm:p-3.5 min-h-[56px] hover:border-[var(--glass-border-luminous)] hover:shadow-lg hover:shadow-blue-500/10 transition-all cursor-pointer touch-manipulation"
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] transition-transform group-hover:scale-105">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)] text-[hsl(var(--primary))] shadow-sm transition-transform group-hover:scale-105">
                   <Icon className="h-4 w-4" aria-hidden="true" />
                 </div>
                 <div className="min-w-0">

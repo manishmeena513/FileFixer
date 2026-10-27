@@ -13,7 +13,7 @@ import { cn, formatBytes, calcSavings } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import type { ManagedFile } from "@/types";
 
-interface FileCardProps {
+export interface FileCardProps {
   file: ManagedFile;
   onRemove?: (id: string) => void;
   showOutput?: boolean;
@@ -65,8 +65,8 @@ export function FileCard({ file, onRemove, showOutput = true }: FileCardProps) {
   return (
     <div
       className={cn(
-        "animate-scale-in group relative flex items-center gap-3 rounded-xl border p-3 transition-all",
-        "border-[hsl(var(--border))] bg-[hsl(var(--card))]",
+        "animate-scale-in group relative flex items-center gap-3 rounded-2xl border p-3.5 transition-all",
+        "border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-sm shadow-xs",
         file.status === "processing" &&
           "border-[hsl(var(--primary)/0.5)] bg-[hsl(var(--primary)/0.03)]",
         file.status === "done" && "border-[hsl(var(--success)/0.35)]",
@@ -164,7 +164,7 @@ export function FileCard({ file, onRemove, showOutput = true }: FileCardProps) {
           <button
             type="button"
             onClick={() => onRemove(file.id)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] opacity-100 sm:opacity-70 transition-all hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))] sm:group-hover:opacity-100 focus-visible:opacity-100"
+            className="flex h-11 w-11 sm:h-9 sm:w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] opacity-100 sm:opacity-70 transition-all hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))] sm:group-hover:opacity-100 focus-visible:opacity-100 touch-manipulation cursor-pointer"
             aria-label={`Remove ${file.name}`}
           >
             <X className="h-4 w-4" />

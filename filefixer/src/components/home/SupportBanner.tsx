@@ -9,7 +9,7 @@ export function SupportBanner() {
 
   return (
     <section className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-      <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left shadow-xs">
+      <div className="rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-xl p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left shadow-xl">
         <div className="space-y-1">
           <h3 className="text-base font-bold text-[hsl(var(--foreground))]">
             Support Free, Private Tools

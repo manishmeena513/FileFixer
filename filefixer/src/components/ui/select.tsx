@@ -14,8 +14,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex min-h-[44px] sm:min-h-0 sm:h-10 h-11 w-full items-center justify-between rounded-[var(--radius)] border border-[hsl(var(--input))] bg-[hsl(var(--secondary))] px-3 py-2 text-sm touch-manipulation",
-      "placeholder:text-[hsl(var(--muted-foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]",
+      "flex min-h-[44px] sm:min-h-0 sm:h-10 h-11 w-full items-center justify-between rounded-[var(--radius)] border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md px-3 py-2 text-sm touch-manipulation transition-all",
+      "placeholder:text-[hsl(var(--muted-foreground))] focus:outline-none focus:border-[var(--glass-border-luminous)] focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)]",
       "disabled:cursor-not-allowed disabled:opacity-50",
       "[&>span]:line-clamp-1",
       className
@@ -38,7 +38,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        "relative z-50 min-w-[8rem] overflow-hidden rounded-[var(--radius)] border border-[hsl(var(--border))] bg-[hsl(var(--popover))] text-[hsl(var(--popover-foreground))] shadow-lg",
+        "relative z-50 min-w-[8rem] overflow-hidden rounded-2xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl text-[hsl(var(--popover-foreground))] shadow-2xl",
         "data-[state=open]:animate-fade-in",
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1",

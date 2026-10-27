@@ -39,7 +39,7 @@ export function HomeFAQ() {
         {FAQS.map((faq, idx) => (
           <div
             key={idx}
-            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 shadow-xs"
+            className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md p-5 sm:p-6 shadow-md hover:border-[var(--glass-border-luminous)] transition-all"
           >
             <h3 className="text-sm sm:text-base font-bold text-[hsl(var(--foreground))]">
               {faq.q}

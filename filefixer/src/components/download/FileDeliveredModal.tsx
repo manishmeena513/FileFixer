@@ -121,7 +121,7 @@ export function FileDeliveredModal() {
     >
       <div
         ref={modalContainerRef}
-        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-8 shadow-2xl animate-scale-in text-center space-y-6"
+        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.7)] animate-scale-in text-center space-y-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -136,7 +136,7 @@ export function FileDeliveredModal() {
         </button>
 
         {/* Animated Checkmark Circle */}
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shadow-md">
           <svg className="h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="20 6 9 17 4 12" className="animate-check-draw" />
           </svg>
@@ -156,7 +156,7 @@ export function FileDeliveredModal() {
         </div>
 
         {/* Before / After Stats Card */}
-        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background)/0.6)] p-3 text-center tabular-nums">
+        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] p-3 text-center tabular-nums shadow-xs">
           <div className="space-y-0.5">
             <span className="text-[10px] uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
               Original

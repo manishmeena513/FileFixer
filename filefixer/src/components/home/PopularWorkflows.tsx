@@ -130,16 +130,16 @@ export function PopularWorkflows() {
           return (
             <div
               key={wf.id}
-              className="flex flex-col justify-between rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 shadow-xs hover:border-[hsl(var(--primary)/0.5)] transition-all"
+              className="flex flex-col justify-between rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md p-5 sm:p-6 shadow-lg hover:border-[var(--glass-border-luminous)] hover:shadow-[0_12px_36px_rgba(59,130,246,0.18)] transition-all duration-300"
             >
               <div className="space-y-4">
                 {/* Top: Icon + Category + Badge */}
                 <div className="flex items-center justify-between">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))]">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--primary))] shadow-sm">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Badge variant="outline" className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                    <Badge variant="outline" className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))] border-[var(--glass-border)]">
                       {wf.category}
                     </Badge>
                     <Badge variant="secondary" className="border border-[hsl(var(--primary)/0.3)] bg-[hsl(var(--primary)/0.1)] text-[10px] font-medium text-[hsl(var(--primary))]">
@@ -159,14 +159,14 @@ export function PopularWorkflows() {
                 </div>
 
                 {/* Pipeline Flow Steps */}
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.4)] p-3">
+                <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3 shadow-xs">
                   <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))] mb-2">
                     Pipeline Steps
                   </p>
                   <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
                     {wf.steps.map((step, idx) => (
                       <React.Fragment key={step}>
-                        <span className="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-2 py-0.5 font-medium text-[hsl(var(--foreground))] text-[10px]">
+                        <span className="rounded-md border border-[var(--glass-border)] bg-[var(--glass-surface)] px-2 py-0.5 font-medium text-[hsl(var(--foreground))] text-[10px]">
                           {step}
                         </span>
                         {idx < wf.steps.length - 1 && (

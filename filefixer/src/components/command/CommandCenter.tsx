@@ -481,12 +481,12 @@ export function CommandCenter() {
     >
       <div
         ref={modalContainerRef}
-        className="w-full max-w-2xl overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl animate-scale-in"
+        className="w-full max-w-2xl overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7)] animate-scale-in"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
         {/* Search Input Bar */}
-        <div className="relative flex items-center border-b border-[hsl(var(--border))] px-4 py-3.5 bg-[hsl(var(--background)/0.8)]">
+        <div className="relative flex items-center border-b border-[var(--glass-border)] px-4 py-3.5 bg-[var(--glass-surface)]">
           <Search className="h-5 w-5 text-[hsl(var(--primary))] shrink-0 mr-3" />
           <input
             ref={inputRef}

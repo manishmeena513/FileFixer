@@ -50,10 +50,10 @@ export function KeyboardShortcutsModal() {
       aria-label="Keyboard Shortcuts"
     >
       <div
-        className="w-full max-w-md overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl animate-scale-in"
+        className="w-full max-w-md overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7)] animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-[hsl(var(--border))] px-5 py-4">
+        <div className="flex items-center justify-between border-b border-[var(--glass-border)] px-5 py-4 bg-[var(--glass-surface)]">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]">
               <Keyboard className="h-5 w-5" />

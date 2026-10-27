@@ -230,9 +230,9 @@ export function StagedFilesSummary({
       : `Your ${files.length} Files`;
 
   return (
-    <div className="animate-scale-in rounded-2xl border-2 border-[hsl(var(--primary)/0.45)] bg-[hsl(var(--card))] p-4 sm:p-6 shadow-2xl space-y-5">
+    <div className="animate-scale-in rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl p-4 sm:p-6 shadow-2xl space-y-5">
       {/* Workspace Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[hsl(var(--border))] pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--glass-border)] pb-4">
         <div className="flex items-center gap-2.5">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]">
             <FolderKanban className="h-5 w-5" aria-hidden="true" />

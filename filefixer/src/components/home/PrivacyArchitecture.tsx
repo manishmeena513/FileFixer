@@ -6,10 +6,10 @@ import { Lock, FileImage, Shield, Cpu, Download, ArrowRight } from "lucide-react
 
 export function PrivacyArchitecture() {
   return (
-    <section className="border-y border-[hsl(var(--border))] bg-[hsl(var(--card)/0.4)] py-14 sm:py-20">
+    <section className="border-y border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl py-14 sm:py-20 shadow-xs">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-3">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-3 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
             <Lock className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Zero-Upload Guarantee</span>
           </div>
@@ -23,8 +23,8 @@ export function PrivacyArchitecture() {
 
         {/* 4-Step Visual Flow */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] mb-4">
+          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md shadow-md hover:border-[var(--glass-border-luminous)] transition-all">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] mb-4 border border-[var(--glass-border)] shadow-xs">
               <FileImage className="h-6 w-6" aria-hidden="true" />
             </div>
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[hsl(var(--primary))]">
@@ -38,8 +38,8 @@ export function PrivacyArchitecture() {
             </p>
           </div>
 
-          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/12 text-sky-600 dark:text-sky-400 mb-4">
+          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md shadow-md hover:border-[var(--glass-border-luminous)] transition-all">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/12 text-sky-600 dark:text-sky-400 mb-4 border border-sky-500/20 shadow-xs">
               <Shield className="h-6 w-6" aria-hidden="true" />
             </div>
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-sky-600 dark:text-sky-400">
@@ -53,8 +53,8 @@ export function PrivacyArchitecture() {
             </p>
           </div>
 
-          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/12 text-purple-600 dark:text-purple-400 mb-4">
+          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md shadow-md hover:border-[var(--glass-border-luminous)] transition-all">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/12 text-purple-600 dark:text-purple-400 mb-4 border border-purple-500/20 shadow-xs">
               <Cpu className="h-6 w-6" aria-hidden="true" />
             </div>
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-purple-600 dark:text-purple-400">
@@ -68,8 +68,8 @@ export function PrivacyArchitecture() {
             </p>
           </div>
 
-          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-emerald-500/30 bg-[hsl(var(--background))]">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/12 text-emerald-600 dark:text-emerald-400 mb-4">
+          <div className="relative flex flex-col items-center text-center p-6 rounded-2xl border border-emerald-500/40 bg-[var(--glass-surface-elevated)] backdrop-blur-md shadow-md hover:border-emerald-500/60 transition-all">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/12 text-emerald-600 dark:text-emerald-400 mb-4 border border-emerald-500/20 shadow-xs">
               <Download className="h-6 w-6" aria-hidden="true" />
             </div>
             <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">

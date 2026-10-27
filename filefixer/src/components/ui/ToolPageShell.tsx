@@ -47,7 +47,7 @@ export function ToolPageShell({
       {/* Tool Header */}
       <div className="mb-8 flex flex-col sm:flex-row sm:items-start sm:gap-4 gap-3">
         <div
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${iconColor}`}
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[var(--glass-border-luminous)] shadow-md ${iconColor}`}
         >
           <Icon className="h-6 w-6" />
         </div>
@@ -62,7 +62,7 @@ export function ToolPageShell({
                 {formats.map((fmt) => (
                   <span
                     key={fmt}
-                    className="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-1.5 py-0.5 text-[10px] font-mono font-medium text-[hsl(var(--muted-foreground))] uppercase"
+                    className="rounded-md border border-[var(--glass-border)] bg-[var(--glass-surface)] px-1.5 py-0.5 text-[10px] font-mono font-medium text-[hsl(var(--muted-foreground))] uppercase"
                   >
                     {fmt}
                   </span>
@@ -100,7 +100,7 @@ export function ToolSection({
 }: ToolSectionProps) {
   return (
     <div
-      className={`rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 ${className}`}
+      className={`rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md shadow-lg p-5 sm:p-6 transition-all duration-200 ${className}`}
     >
       {(title || description) && (
         <div className="mb-4">

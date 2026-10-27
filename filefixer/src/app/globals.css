@@ -3,9 +3,25 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-canvas-bg: var(--canvas-bg);
+  --color-glass-surface: var(--glass-surface);
+  --color-glass-surface-elevated: var(--glass-surface-elevated);
+  --color-glass-border: var(--glass-border);
+  --color-glass-border-luminous: var(--glass-border-luminous);
+  --color-blue-highlight: var(--blue-highlight);
+  --color-violet-accent: var(--violet-accent);
+  --color-violet-highlight: var(--violet-highlight);
+  --blur-glass-sm: 12px;
+  --blur-glass-md: 16px;
+  --blur-glass-lg: 20px;
 }
 
 :root {
+  /* Base & Canvas */
+  --canvas-bg: #F4F7FC;
+  --color-canvas-bg: #F4F7FC;
+  --header-glass-bg: rgba(244, 247, 252, 0.85);
+
   /* Light mode palette: Pristine Clean (#F7F9FC) */
   --background: 216 45% 97.8%;
   --foreground: 222 47% 11%;
@@ -14,7 +30,7 @@
   --card-foreground: 222 47% 11%;
 
   --surface-elevated: 0 0% 100%;
-  --surface-secondary: 210 40% 96%;
+  --surface-secondary: 215 50% 95.3%;
 
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
@@ -25,7 +41,7 @@
   --accent-subtle: 217 91% 60%;
   --accent-subtle-foreground: 222 47% 11%; /* #0F172A dark slate, 4.86:1 contrast against #3B82F6 */
 
-  --secondary: 210 40% 96%;
+  --secondary: 215 50% 95.3%;
   --secondary-foreground: 222 47% 11%;
 
   --muted: 214 32% 92%;
@@ -33,6 +49,13 @@
 
   --accent: 221 83% 53%;
   --accent-foreground: 0 0% 100%;
+  --accent-violet: #6D4AFF;
+  --violet-accent: #6D4AFF;
+  --color-violet-accent: #6D4AFF;
+  --blue-highlight: #2563EB;
+  --color-blue-highlight: #2563EB;
+  --violet-highlight: #8B5CF6;
+  --color-violet-highlight: #8B5CF6;
 
   --destructive: 0 72% 51%; /* #DC2626 red-600, 4.83:1 contrast with white text */
   --destructive-foreground: 0 0% 100%;
@@ -50,6 +73,21 @@
 
   --radius: 0.75rem;
 
+  /* Standardized Backdrop Blur Definitions */
+  --backdrop-blur-sm: 12px;
+  --backdrop-blur-md: 16px;
+  --backdrop-blur-lg: 20px;
+
+  /* Cinematic Glass Tokens (Light Theme) */
+  --glass-surface: rgba(255, 255, 255, 0.75);
+  --glass-surface-elevated: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(148, 163, 184, 0.28);
+  --glass-border-luminous: rgba(37, 99, 235, 0.35);
+  --glass-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --glass-shadow-elevated: 0 20px 40px -15px rgba(37, 99, 235, 0.12), 0 0 0 1px rgba(37, 99, 235, 0.15);
+  --ambient-glow-1: rgba(37, 99, 235, 0.07);
+  --ambient-glow-2: rgba(109, 74, 255, 0.05);
+
   /* Centralized Animation Tokens */
   --ease-out-smooth: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -59,6 +97,11 @@
 }
 
 .dark {
+  /* Base & Canvas: Cinematic Deep Obsidian & Navy (#070A12) */
+  --canvas-bg: #070A12;
+  --color-canvas-bg: #070A12;
+  --header-glass-bg: rgba(7, 10, 18, 0.85);
+
   /* Dark mode palette: Deep Midnight Obsidian (#0B1020) */
   --background: 226 49% 8.4%;
   --foreground: 210 40% 98%;
@@ -77,6 +120,15 @@
   --primary-foreground: 222 47% 11%; /* #0F172A dark slate, 4.85:1 contrast on #3B82F6 */
   --accent-subtle: 213 94% 68%;
   --accent-subtle-foreground: 222 47% 11%; /* #0F172A dark slate, 7.04:1 contrast against #60A5FA */
+
+  --blue-highlight: #60A5FA;
+  --color-blue-highlight: #60A5FA;
+  --violet-accent: #8B5CF6;
+  --color-violet-accent: #8B5CF6;
+  --violet-highlight: #A78BFA;
+  --color-violet-highlight: #A78BFA;
+  --accent-violet: #8B5CF6;
+  --accent-violet-highlight: #A78BFA;
 
   --secondary: 221 38% 15%;
   --secondary-foreground: 210 40% 95%;
@@ -100,6 +152,21 @@
   --border-subtle: 217 28% 14%;
   --input: 217 33% 18%;
   --ring: 217 91% 60%;
+
+  /* Standardized Backdrop Blur Definitions */
+  --backdrop-blur-sm: 12px;
+  --backdrop-blur-md: 16px;
+  --backdrop-blur-lg: 20px;
+
+  /* Cinematic Glass Tokens (Dark Theme ~55% glass intensity) */
+  --glass-surface: rgba(20, 29, 47, 0.68);
+  --glass-surface-elevated: rgba(29, 42, 65, 0.76);
+  --glass-border: rgba(148, 163, 184, 0.18);
+  --glass-border-luminous: rgba(96, 165, 250, 0.35);
+  --glass-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --glass-shadow-elevated: 0 20px 50px -12px rgba(0, 0, 0, 0.7), 0 0 25px -4px rgba(96, 165, 250, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --ambient-glow-1: rgba(59, 130, 246, 0.22);
+  --ambient-glow-2: rgba(139, 92, 246, 0.18);
 }
 
 * {
@@ -174,6 +241,99 @@ kbd,
   border-color: hsl(var(--border-subtle));
 }
 
+/* Cinematic Glass Studio Surface Utilities */
+@utility blur-glass-sm {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+@utility blur-glass-md {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+@utility blur-glass-lg {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@utility glass-panel {
+  background-color: var(--glass-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+@utility glass-panel-elevated {
+  background-color: var(--glass-surface-elevated);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border-luminous);
+  box-shadow: var(--glass-shadow-elevated);
+}
+
+@utility glass-input {
+  background-color: var(--glass-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+}
+
+.glass-panel {
+  background-color: var(--glass-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-panel-elevated {
+  background-color: var(--glass-surface-elevated);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border-luminous);
+  box-shadow: var(--glass-shadow-elevated);
+}
+
+.glass-panel-interactive {
+  background-color: var(--glass-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition:
+    transform var(--duration-fast) var(--ease-out-smooth),
+    border-color var(--duration-fast) var(--ease-out-smooth),
+    box-shadow var(--duration-fast) var(--ease-out-smooth),
+    background-color var(--duration-fast) var(--ease-out-smooth);
+}
+
+@media (hover: hover) {
+  .glass-panel-interactive:hover {
+    border-color: var(--glass-border-luminous);
+    box-shadow: var(--glass-shadow-elevated);
+    transform: translateY(-2px);
+  }
+}
+
+.glass-panel-interactive:active {
+  transform: scale(0.99);
+}
+
+.glass-input {
+  background-color: var(--glass-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+}
+
+.glass-input:focus,
+.glass-input:focus-within {
+  border-color: var(--glass-border-luminous);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+}
+
 /* Safe area utilities for Mobile / Installed PWA */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -187,6 +347,11 @@ kbd,
 
 /* Drop zone states */
 .drop-zone-idle {
+  background-color: var(--glass-surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-shadow);
   transition:
     transform var(--duration-normal) var(--ease-out-smooth),
     border-color var(--duration-normal) var(--ease-out-smooth),
@@ -194,11 +359,18 @@ kbd,
     box-shadow var(--duration-normal) var(--ease-out-smooth);
 }
 
+.drop-zone-idle:hover {
+  border-color: var(--glass-border-luminous);
+  box-shadow: var(--glass-shadow-elevated);
+}
+
 .drop-zone-active {
   border-color: hsl(var(--primary)) !important;
-  background-color: hsl(var(--primary) / 0.08) !important;
-  transform: scale(1.01);
-  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.12), 0 12px 32px -8px hsl(var(--primary) / 0.2);
+  background-color: hsl(var(--primary) / 0.12) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transform: scale(1.015);
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.2), 0 16px 40px -8px hsl(var(--primary) / 0.35), inset 0 0 24px hsl(var(--primary) / 0.15);
 }
 
 /* Comparison slider */

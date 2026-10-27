@@ -34,9 +34,9 @@ export function DownloadDock() {
       aria-label="Floating Download Dock"
       className="fixed bottom-20 md:bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:w-full sm:max-w-sm z-40 pointer-events-auto animate-dock-in"
     >
-      <div className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card)/0.95)] backdrop-blur-md shadow-2xl transition-all">
+      <div className="overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] transition-all">
         {/* Dock Header */}
-        <div className="flex items-center justify-between border-b border-[hsl(var(--border))] px-4 py-2.5 bg-[hsl(var(--background)/0.7)]">
+        <div className="flex items-center justify-between border-b border-[var(--glass-border)] px-4 py-2.5 bg-[var(--glass-surface)]">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]">
               <Download className="h-3.5 w-3.5" />

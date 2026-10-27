@@ -106,8 +106,7 @@ export function DropZone({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       className={cn(
-        "drop-zone-idle animate-pulse-glow relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed p-6 sm:p-10 text-center",
-        "border-[hsl(var(--border))] bg-[hsl(var(--card))]",
+        "drop-zone-idle animate-pulse-glow relative flex flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed p-6 sm:p-10 text-center",
         isDragging && "drop-zone-active",
         disabled && "opacity-50 cursor-not-allowed",
         className
@@ -130,8 +129,8 @@ export function DropZone({
         className={cn(
           "flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border transition-all duration-200",
           isDragging
-            ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.2)] text-[hsl(var(--primary))] scale-110"
-            : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
+            ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.25)] text-[hsl(var(--primary))] scale-110 shadow-[0_0_25px_rgba(96,165,250,0.4)]"
+            : "border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--primary))] shadow-sm"
         )}
       >
         {isDragging ? (
@@ -158,7 +157,7 @@ export function DropZone({
           onClick={() => inputRef.current?.click()}
           disabled={disabled}
           size="md"
-          className="min-h-[44px] px-6 text-sm font-semibold shadow-xs"
+          className="min-h-[44px] px-6 text-sm font-semibold shadow-md bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white hover:brightness-110 border border-blue-400/30"
         >
           <FolderOpen className="h-4 w-4 mr-2" />
           Select Files
@@ -169,7 +168,7 @@ export function DropZone({
             {displayFormats.slice(0, 5).map((fmt) => (
               <span
                 key={fmt}
-                className="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2 py-0.5 text-[10px] font-mono font-medium text-[hsl(var(--muted-foreground))]"
+                className="rounded-md border border-[var(--glass-border)] bg-[var(--glass-surface)] px-2 py-0.5 text-[10px] font-mono font-medium text-[hsl(var(--muted-foreground))]"
               >
                 {fmt}
               </span>

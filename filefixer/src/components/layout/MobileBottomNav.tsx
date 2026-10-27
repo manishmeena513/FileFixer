@@ -17,7 +17,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Mobile bottom navigation"
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-[hsl(var(--border))] bg-[hsl(var(--background)/0.96)] backdrop-blur-md pb-safe lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--glass-border)] bg-[var(--header-glass-bg)] backdrop-blur-xl shadow-lg pb-safe lg:hidden"
     >
       <div className="mx-auto grid h-16 max-w-md grid-cols-5 items-center px-1">
         {/* Home */}

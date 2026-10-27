@@ -125,7 +125,7 @@ export function Header() {
   }, [mobileOpen]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/0.92)] backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-[var(--glass-border)] bg-[var(--header-glass-bg)] backdrop-blur-xl shadow-xs transition-colors">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
@@ -140,7 +140,7 @@ export function Header() {
         <button
           type="button"
           onClick={() => setCommandCenterOpen(true)}
-          className="flex min-h-[44px] sm:min-h-0 sm:h-9 items-center gap-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2 sm:py-1.5 text-xs text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary)/0.6)] hover:text-[hsl(var(--foreground))] transition-all shadow-xs cursor-pointer touch-manipulation"
+          className="flex min-h-[44px] sm:min-h-0 sm:h-9 items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md px-3.5 py-2 sm:py-1.5 text-xs text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] hover:shadow-[0_0_15px_rgba(96,165,250,0.2)] transition-all shadow-xs cursor-pointer touch-manipulation"
           aria-label="Open Command Center (Ctrl+K)"
         >
           <Search className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-[hsl(var(--primary))]" />
@@ -210,7 +210,7 @@ export function Header() {
                     isDropdownOpen ? "block" : "hidden"
                   )}
                 >
-                  <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] py-1.5 shadow-xl animate-scale-in">
+                  <div className="rounded-2xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl py-1.5 shadow-2xl animate-scale-in">
                     {link.children.map((child) => (
                       <Link
                         key={child.href}
@@ -256,7 +256,7 @@ export function Header() {
               "inline-flex min-h-[44px] sm:min-h-[38px] items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all cursor-pointer touch-manipulation",
               fileCount > 0
                 ? "border-[hsl(var(--primary)/0.4)] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.18)]"
-                : "border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
+                : "border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
             )}
             aria-label={`Open Workspace (${fileCount} files)`}
           >
@@ -289,7 +289,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setShortcutsOpen(true)}
-            className="hidden sm:flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors touch-manipulation cursor-pointer"
+            className="hidden sm:flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)] transition-colors touch-manipulation cursor-pointer"
             title="Keyboard Shortcuts (?)"
             aria-label="Keyboard shortcuts"
           >
@@ -313,7 +313,7 @@ export function Header() {
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="border-b border-[hsl(var(--border))] bg-[hsl(var(--background))] px-4 pb-6 pt-3 lg:hidden max-h-[80vh] overflow-y-auto animate-slide-up">
+        <div className="border-b border-[var(--glass-border)] bg-[var(--header-glass-bg)] backdrop-blur-2xl px-4 pb-6 pt-3 lg:hidden max-h-[80vh] overflow-y-auto animate-slide-up">
           <div className="space-y-1">
             {mobileLinks.map((link) => {
               const Icon = link.icon;

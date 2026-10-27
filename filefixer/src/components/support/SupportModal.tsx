@@ -85,7 +85,7 @@ export function SupportModal() {
     >
       <div
         ref={modalContainerRef}
-        className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-7 shadow-2xl animate-slide-up sm:animate-scale-in text-center space-y-4"
+        className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl p-6 sm:p-7 shadow-[0_25px_60px_rgba(0,0,0,0.7)] animate-slide-up sm:animate-scale-in text-center space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Visible Close Button */}

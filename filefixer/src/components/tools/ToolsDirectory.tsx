@@ -151,7 +151,7 @@ export function ToolsDirectory() {
               }
             }}
             placeholder="Search tools by name, action (e.g. compress, merge), or format (PDF, JPG, PNG)..."
-            className="w-full min-h-[48px] rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] pl-12 pr-12 py-3 text-sm text-[hsl(var(--foreground))] shadow-xs transition-all focus:border-[hsl(var(--primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)] placeholder:text-[hsl(var(--muted-foreground))]"
+            className="w-full min-h-[48px] rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl pl-12 pr-12 py-3 text-sm text-[hsl(var(--foreground))] shadow-md transition-all focus:border-[var(--glass-border-luminous)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)] focus:shadow-[0_0_20px_rgba(96,165,250,0.25)] placeholder:text-[hsl(var(--muted-foreground))]"
           />
           {searchQuery && (
             <button
@@ -185,10 +185,10 @@ export function ToolsDirectory() {
                   type="button"
                   onClick={() => setSelectedCategory(cat.key)}
                   className={cn(
-                    "flex min-h-[44px] sm:min-h-[38px] items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition-all cursor-pointer touch-manipulation",
+                    "flex min-h-[44px] sm:min-h-[38px] items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold transition-all cursor-pointer touch-manipulation",
                     isActive
-                      ? "border border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-xs"
-                      : "border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))]"
+                      ? "border border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                      : "border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))]"
                   )}
                   aria-pressed={isActive}
                 >

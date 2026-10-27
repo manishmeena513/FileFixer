@@ -110,3 +110,69 @@ Refine `/about`, `/privacy`, `/terms`, `/history`, and `/branding` with clean ed
 - [ ] `npm run build --prefix filefixer` succeeds with exit code 0, generating all 33 static routes with zero TypeScript errors.
 - [ ] `npm test` passes 100% of test suites with zero failures.
 - [ ] All interactive buttons perform their advertised actions with honest indeterminate processing states.
+
+
+## 2026-10-27T17:36:51Z
+
+# Teamwork Project Prompt — Final
+
+> Status: Launched
+> Goal: Multi-agent execution of Cinematic Glass UI/UX Transformation
+> Requested team: Full team (multi-agent frontend architecture, parallel workstation implementation, adversarial review, and forensic build audit)
+
+Transform the FileFixer application across all 33 static routes into a **Cinematic Glass Utility Studio** featuring deep obsidian/navy backgrounds, electric-blue and violet atmospheric lighting, frosted glass surfaces (~55% intensity), and a dedicated high-contrast light theme, while preserving 100% on-device privacy, zero server uploads, and 100% test pass rate.
+
+Working directory: c:\Users\nives\OneDrive\Documents\FileFixer
+Integrity mode: development
+GitHub Push Policy: Commit and push changes to origin main after each milestone phase.
+
+## Baseline State & Hard Invariants
+- Application root: `c:\Users\nives\OneDrive\Documents\FileFixer\filefixer` (Next.js 14/15/16 App Router, Tailwind CSS, TypeScript).
+- All 33 routes must prerender statically (`○`) with exit code 0 (`npm run build`).
+- 376/376 tests must pass across all test suites (`npm test`).
+- Mandatory QR integrity: `filefixer/public/images/filefixer_support_qr.png` must NEVER be modified, replaced, or regenerated (SHA-256: `8592BD8A18457F3AC496D6735C472D7C4F3239E87B93771ED238D348B87D4744`).
+- Zero server uploads: 100% client-side in-browser execution with zero `src/app/api` endpoints.
+- Interactive controls must maintain touch target sizes ≥ 44×44px with `touch-manipulation`.
+- Numeric metrics, file sizes, dimensions, and counters must use `.tabular-nums font-mono`.
+
+## Requirements
+
+### R1. Cinematic Glass Design System & Tokens
+Implement the calibrated design system tokens in `globals.css` and layout:
+- **Dark Palette**: Canvas #070A12, secondary background #0B1020, primary glass surface `rgba(20, 29, 47, 0.68)`, elevated glass surface `rgba(29, 42, 65, 0.76)`, solid fallback #111827, electric blue #3B82F6, bright blue highlight #60A5FA, violet accent #8B5CF6, soft violet highlight #A78BFA, subtle border `rgba(148, 163, 184, 0.18)`, luminous border `rgba(96, 165, 250, 0.35)`.
+- **Light Palette**: Canvas #F4F7FC, primary surface #FFFFFF, secondary surface #EDF2F9, elevated surface #FFFFFF, primary blue #2563EB, violet accent #6D4AFF, subtle borders cool gray-blue.
+- **Glassmorphism Rules**: ~55% balanced glass intensity, selective backdrop blur (12-20px), fine low-opacity borders with luminous edge highlights, soft ambient shadows, and diffuse atmospheric ambient light in background.
+
+### R2. Global Application Shell Transformation
+- Glassmorphic header with frosted blur, luminous command-center search trigger, and elevated dropdown menus.
+- Floating glass mobile bottom navigation with touch targets ≥ 48px.
+- Translucent frosted footer with clean column structure and privacy indicators.
+- Elevated glass modals: Universal Command Center (`Ctrl+K`), Keyboard Shortcuts (`?`), File Delivery Dock & Modal, Session Workspace Drawer, and voluntary Support Modal.
+
+### R3. Homepage & Tools Directory
+- Hero section with electric blue-to-violet gradient typography, glowing client-side trust badges, and glass metric cards.
+- Cinematic frosted drop zone with radiant electric-blue/violet pulse on drag-over.
+- Curated workflows grid and quick action tiles styled as interactive glass cards.
+- Tools directory (`/tools`) featuring frosted search bar, category filter chips with active glowing states, dynamic tabular counters, and responsive glass tool cards.
+
+### R4. Workstations & Utility Tool Pages
+- Image Workstations (`/compress-image`, `/resize-image`, `/convert-image`, `/crop-image`, `/smart-compress`, `/image-metadata`, `/image-studio`): Frosted settings panels via `ToolSection`, before/after comparison sliders, and tabular file stats.
+- PDF Workstations (`/pdf-merge`, `/pdf-split`, `/pdf-compress`, `/pdf-workspace`, `/images-to-pdf`, `/pdf-studio`): Document workspaces with glass page thumbnail grids, range selectors, and non-blocking delivery flow.
+- Batch & Utilities (`/batch`, `/batch-rename`, `/workflows`, `/privacy-cleaner`, `/inspect`, `/history`, `/about`, `/privacy`, `/terms`, `/branding`): High-density glass panels, clear input/output differentiation, and clean typography.
+
+## Acceptance Criteria
+
+### Visual & Glassmorphism Quality
+- [ ] Balanced ~55% glass intensity applied across panels with `backdrop-filter: blur(...)` and solid surface fallbacks.
+- [ ] Electric-blue and violet atmospheric lighting visible in background without obstructing text readability.
+- [ ] Complete dark and light theme fidelity with WCAG AA contrast ratio ≥ 4.5:1 for all text and status badges.
+- [ ] Touch targets ≥ 44×44px on all interactive buttons, inputs, chips, and swatches.
+- [ ] All numeric file metrics and counts formatted with `.tabular-nums font-mono`.
+
+### Functional Preservation & Non-Regression
+- [ ] All 33 routes in Next.js App Router prerender statically (`○`) with exit code 0 (`npm run build`).
+- [ ] Test suite passes with 100% pass rate (`npm test`).
+- [ ] SHA-256 hash of `public/images/filefixer_support_qr.png` remains exactly `8592BD8A18457F3AC496D6735C472D7C4F3239E87B93771ED238D348B87D4744`.
+- [ ] Zero server uploads: 100% in-browser processing verified with zero API endpoints.
+- [ ] Voluntary support modal remains non-blocking and optional.
+- [ ] Changes committed and pushed to GitHub `origin main` after each phase.

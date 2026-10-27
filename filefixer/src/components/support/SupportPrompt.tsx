@@ -41,7 +41,7 @@ export function SupportPrompt() {
         hasDownloads ? "bottom-80 sm:bottom-72 md:bottom-6" : "bottom-20 sm:bottom-20 md:bottom-6"
       )}
     >
-      <div className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card)/0.96)] p-4 sm:p-5 shadow-2xl backdrop-blur-md transition-all">
+      <div className="overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] p-4 sm:p-5 shadow-2xl backdrop-blur-2xl transition-all">
         {/* Header */}
         <div className="flex items-start justify-between gap-3 mb-2">
           <div className="flex items-center gap-2.5">
