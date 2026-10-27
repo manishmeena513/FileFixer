@@ -41,7 +41,7 @@ export function SupportPrompt() {
         hasDownloads ? "bottom-80 sm:bottom-72 md:bottom-6" : "bottom-20 sm:bottom-20 md:bottom-6"
       )}
     >
-      <div className="overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] p-4 sm:p-5 shadow-2xl backdrop-blur-2xl transition-all">
+      <div className="overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] p-4 sm:p-5 shadow-[0_25px_60px_rgba(0,0,0,0.7),0_0_35px_rgba(59,130,246,0.18)] backdrop-blur-2xl transition-all">
         {/* Header */}
         <div className="flex items-start justify-between gap-3 mb-2">
           <div className="flex items-center gap-2.5">
@@ -55,7 +55,7 @@ export function SupportPrompt() {
           <button
             type="button"
             onClick={dismissSupportPrompt}
-            className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors shrink-0 touch-manipulation cursor-pointer"
+            className="flex h-11 w-11 sm:h-9 sm:w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors shrink-0 touch-manipulation cursor-pointer"
             aria-label="Dismiss support prompt"
           >
             <X className="h-4 w-4" />

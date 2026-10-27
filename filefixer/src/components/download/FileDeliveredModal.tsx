@@ -113,7 +113,7 @@ export function FileDeliveredModal() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-xs p-4 animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-fade-in"
       onClick={() => setLatestDeliveredFile(null)}
       role="dialog"
       aria-modal="true"
@@ -121,7 +121,7 @@ export function FileDeliveredModal() {
     >
       <div
         ref={modalContainerRef}
-        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.7)] animate-scale-in text-center space-y-6"
+        className="relative w-full max-w-md overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.7),0_0_40px_rgba(59,130,246,0.18)] animate-scale-in text-center space-y-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -129,7 +129,7 @@ export function FileDeliveredModal() {
           ref={closeButtonRef}
           type="button"
           onClick={() => setLatestDeliveredFile(null)}
-          className="absolute top-4 right-4 flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
+          className="absolute top-4 right-4 flex h-11 w-11 sm:h-9 sm:w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
           aria-label="Close delivery modal"
         >
           <X className="h-5 w-5" />
@@ -156,30 +156,30 @@ export function FileDeliveredModal() {
         </div>
 
         {/* Before / After Stats Card */}
-        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] p-3 text-center tabular-nums shadow-xs">
+        <div className="grid grid-cols-3 gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] p-3 text-center tabular-nums font-mono shadow-xs">
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+            <span className="text-[10px] uppercase tracking-wider text-[hsl(var(--muted-foreground))] font-sans font-semibold">
               Original
             </span>
-            <p className="text-xs font-bold text-[hsl(var(--foreground))] tabular-nums">
+            <p className="text-xs font-bold text-[hsl(var(--foreground))] tabular-nums font-mono">
               {formatBytes(latestDeliveredFile.originalSize)}
             </p>
           </div>
 
           <div className="space-y-0.5 border-x border-[hsl(var(--border)/0.6)]">
-            <span className="text-[10px] uppercase tracking-wider text-emerald-400">
+            <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-sans font-semibold">
               Final Size
             </span>
-            <p className="text-xs font-bold text-emerald-400 tabular-nums">
+            <p className="text-xs font-bold text-emerald-400 tabular-nums font-mono">
               {formatBytes(latestDeliveredFile.outputSize)}
             </p>
           </div>
 
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase tracking-wider text-[hsl(var(--primary))]">
+            <span className="text-[10px] uppercase tracking-wider text-[hsl(var(--primary))] font-sans font-semibold">
               Saved
             </span>
-            <p className="text-xs font-bold text-[hsl(var(--primary))] tabular-nums">
+            <p className="text-xs font-bold text-[hsl(var(--primary))] tabular-nums font-mono">
               {savingsPct && savingsPct > 0 ? `-${savingsPct.toFixed(0)}%` : "Optimized"}
             </p>
           </div>

@@ -17,9 +17,9 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Mobile bottom navigation"
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--glass-border)] bg-[var(--header-glass-bg)] backdrop-blur-xl shadow-lg pb-safe lg:hidden"
+      className="fixed bottom-3 left-3 right-3 mx-auto max-w-md z-40 rounded-2xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(59,130,246,0.15)] pb-safe lg:hidden"
     >
-      <div className="mx-auto grid h-16 max-w-md grid-cols-5 items-center px-1">
+      <div className="grid h-16 grid-cols-5 items-center px-1">
         {/* Home */}
         <Link
           href="/"
@@ -32,7 +32,7 @@ export function MobileBottomNav() {
           )}
         >
           {pathname === "/" && (
-            <span className="absolute top-1 h-0.5 w-5 rounded-full bg-[hsl(var(--primary))]" aria-hidden="true" />
+            <span className="absolute top-1.5 h-1 w-6 rounded-full bg-[hsl(var(--primary))] shadow-[0_0_10px_rgba(96,165,250,0.8)]" aria-hidden="true" />
           )}
           <Home className="h-5 w-5" />
           <span className="text-[10px] leading-none">Home</span>
@@ -51,14 +51,14 @@ export function MobileBottomNav() {
           aria-label={`Workspace (${fileCount} files)`}
         >
           {pathname === "/workspace" && (
-            <span className="absolute top-1 h-0.5 w-5 rounded-full bg-[hsl(var(--primary))]" aria-hidden="true" />
+            <span className="absolute top-1.5 h-1 w-6 rounded-full bg-[hsl(var(--primary))] shadow-[0_0_10px_rgba(96,165,250,0.8)]" aria-hidden="true" />
           )}
           <div className="relative">
             <FolderKanban className="h-5 w-5" />
             {fileCount > 0 && (
               <span
                 className={cn(
-                  "absolute -right-2.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold shadow-xs tabular-nums",
+                  "absolute -right-2.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold shadow-xs tabular-nums font-mono",
                   doneCount > 0
                     ? "bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]"
                     : "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
@@ -96,7 +96,7 @@ export function MobileBottomNav() {
           )}
         >
           {pathname === "/tools" && (
-            <span className="absolute top-1 h-0.5 w-5 rounded-full bg-[hsl(var(--primary))]" aria-hidden="true" />
+            <span className="absolute top-1.5 h-1 w-6 rounded-full bg-[hsl(var(--primary))] shadow-[0_0_10px_rgba(96,165,250,0.8)]" aria-hidden="true" />
           )}
           <LayoutGrid className="h-5 w-5" />
           <span className="text-[10px] leading-none">Tools</span>
@@ -114,7 +114,7 @@ export function MobileBottomNav() {
           )}
         >
           {pathname === "/history" && (
-            <span className="absolute top-1 h-0.5 w-5 rounded-full bg-[hsl(var(--primary))]" aria-hidden="true" />
+            <span className="absolute top-1.5 h-1 w-6 rounded-full bg-[hsl(var(--primary))] shadow-[0_0_10px_rgba(96,165,250,0.8)]" aria-hidden="true" />
           )}
           <Clock className="h-5 w-5" />
           <span className="text-[10px] leading-none">History</span>

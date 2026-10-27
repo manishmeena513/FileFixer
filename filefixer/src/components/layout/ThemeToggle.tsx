@@ -74,7 +74,7 @@ export function ThemeToggle({ showLabel = false }: { showLabel?: boolean }) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-11 w-11 sm:h-9 sm:w-9 rounded-xl opacity-50 p-0 flex items-center justify-center cursor-pointer touch-manipulation"
+        className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-xl opacity-50 p-0 flex items-center justify-center cursor-pointer touch-manipulation"
         aria-label="Toggle theme"
       >
         <Moon className="h-4 w-4" />
@@ -105,8 +105,8 @@ export function ThemeToggle({ showLabel = false }: { showLabel?: boolean }) {
       onClick={cycleTheme}
       className={
         showLabel
-          ? "h-11 sm:h-9 rounded-xl transition-all hover:bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] gap-2 px-3 flex items-center justify-center cursor-pointer touch-manipulation"
-          : "h-11 w-11 sm:h-9 sm:w-9 rounded-xl transition-all hover:bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] gap-2 p-0 flex items-center justify-center cursor-pointer touch-manipulation"
+          ? "min-h-[44px] h-11 rounded-xl transition-all hover:bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] gap-2 px-3.5 flex items-center justify-center cursor-pointer touch-manipulation"
+          : "h-11 w-11 min-h-[44px] min-w-[44px] rounded-xl transition-all hover:bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] gap-2 p-0 flex items-center justify-center cursor-pointer touch-manipulation"
       }
       title={`Theme: ${label} (Click to switch)`}
       aria-label={`Current theme is ${label}. Click to toggle dark, light, or system theme.`}

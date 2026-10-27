@@ -99,7 +99,7 @@ export function WorkspaceDrawer() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs animate-fade-in"
+      className="fixed inset-0 z-50 flex justify-end bg-black/65 backdrop-blur-md animate-fade-in"
       onClick={() => setWorkspaceOpen(false)}
       role="dialog"
       aria-modal="true"
@@ -110,7 +110,7 @@ export function WorkspaceDrawer() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[hsl(var(--border))] px-5 py-4">
+        <div className="flex items-center justify-between border-b border-[var(--glass-border)] px-5 py-4">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]">
               <FolderKanban className="h-5 w-5" />
@@ -118,7 +118,7 @@ export function WorkspaceDrawer() {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold">Session Workspace</h2>
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-xs tabular-nums font-mono">
                   {totalCount} {totalCount === 1 ? "file" : "files"}
                 </Badge>
               </div>
@@ -130,7 +130,7 @@ export function WorkspaceDrawer() {
 
           <button
             onClick={() => setWorkspaceOpen(false)}
-            className="flex h-11 w-11 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors"
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors cursor-pointer"
             aria-label="Close workspace"
           >
             <X className="h-5 w-5" />
@@ -139,26 +139,26 @@ export function WorkspaceDrawer() {
 
         {/* Status Summary Bar */}
         {totalCount > 0 && (
-          <div className="grid grid-cols-4 gap-2 border-b border-[hsl(var(--border))] bg-[hsl(var(--card))] px-5 py-3 text-center">
+          <div className="grid grid-cols-4 gap-2 border-b border-[var(--glass-border)] bg-[var(--glass-surface)]/80 backdrop-blur-sm px-5 py-3 text-center">
             <div className="rounded-lg bg-[hsl(var(--secondary)/0.6)] px-2 py-1.5">
               <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Total</p>
-              <p className="text-sm font-bold">{totalCount}</p>
+              <p className="text-sm font-bold tabular-nums font-mono">{totalCount}</p>
             </div>
             <div className="rounded-lg bg-[hsl(var(--secondary)/0.6)] px-2 py-1.5">
               <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Ready</p>
-              <p className="text-sm font-bold text-[hsl(var(--foreground))]">
+              <p className="text-sm font-bold text-[hsl(var(--foreground))] tabular-nums font-mono">
                 {pendingCount}
               </p>
             </div>
             <div className="rounded-lg bg-emerald-500/10 px-2 py-1.5">
               <p className="text-[11px] text-emerald-500">Done</p>
-              <p className="text-sm font-bold text-emerald-500">
+              <p className="text-sm font-bold text-emerald-500 tabular-nums font-mono">
                 {doneFiles.length}
               </p>
             </div>
             <div className="rounded-lg bg-[hsl(var(--secondary)/0.6)] px-2 py-1.5">
               <p className="text-[11px] text-[hsl(var(--muted-foreground))]">Size</p>
-              <p className="text-xs font-semibold truncate mt-0.5">
+              <p className="text-xs font-semibold truncate mt-0.5 tabular-nums font-mono">
                 {formatBytes(totalInputSize)}
               </p>
             </div>
@@ -178,7 +178,7 @@ export function WorkspaceDrawer() {
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-5 space-y-5">
           {totalCount === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[hsl(var(--border))] bg-[hsl(var(--card)/0.5)] p-8 text-center my-6">
+            <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--glass-border)] bg-[var(--glass-surface)]/50 p-8 text-center my-6">
               <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))]">
                 <FolderKanban className="h-7 w-7" />
               </div>
@@ -190,7 +190,7 @@ export function WorkspaceDrawer() {
               </p>
               <Button
                 onClick={() => fileInputRef.current?.click()}
-                className="min-h-[44px]"
+                className="min-h-[44px] touch-manipulation"
               >
                 <Plus className="h-4 w-4" />
                 Add Files to Workspace
@@ -199,7 +199,7 @@ export function WorkspaceDrawer() {
           ) : (
             <>
               {/* Compatible Tool Switcher */}
-              <div className="rounded-xl border border-[hsl(var(--primary)/0.25)] bg-[hsl(var(--primary)/0.05)] p-3.5">
+              <div className="rounded-2xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface)]/80 p-3.5 backdrop-blur-sm">
                 <div className="flex items-center justify-between mb-2.5">
                   <span className="text-xs font-semibold uppercase tracking-wider text-[hsl(var(--primary))] flex items-center gap-1.5">
                     <Sparkles className="h-3.5 w-3.5" />
@@ -211,42 +211,42 @@ export function WorkspaceDrawer() {
                     <>
                       <button
                         onClick={() => navigateToTool("/compress-image")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <Minimize2 className="h-3.5 w-3.5 text-[hsl(var(--primary))] shrink-0" />
                         <span className="truncate">Compress Images</span>
                       </button>
                       <button
                         onClick={() => navigateToTool("/resize-image")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <Maximize2 className="h-3.5 w-3.5 text-[hsl(var(--primary))] shrink-0" />
                         <span className="truncate">Resize Images</span>
                       </button>
                       <button
                         onClick={() => navigateToTool("/convert-image")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <RefreshCw className="h-3.5 w-3.5 text-[hsl(var(--primary))] shrink-0" />
                         <span className="truncate">Convert Format</span>
                       </button>
                       <button
                         onClick={() => navigateToTool("/smart-compress")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <Gauge className="h-3.5 w-3.5 text-[hsl(var(--primary))] shrink-0" />
                         <span className="truncate">Under X MB</span>
                       </button>
                       <button
                         onClick={() => navigateToTool("/batch")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <Layers className="h-3.5 w-3.5 text-[hsl(var(--primary))] shrink-0" />
                         <span className="truncate">Batch Pipeline</span>
                       </button>
                       <button
                         onClick={() => navigateToTool("/images-to-pdf")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <FileText className="h-3.5 w-3.5 text-[hsl(var(--primary))] shrink-0" />
                         <span className="truncate">Images to PDF</span>
@@ -257,28 +257,28 @@ export function WorkspaceDrawer() {
                     <>
                       <button
                         onClick={() => navigateToTool("/pdf-merge")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <Layers className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                         <span className="truncate">Merge PDFs</span>
                       </button>
                       <button
                         onClick={() => navigateToTool("/pdf-split")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <Scissors className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                         <span className="truncate">Split PDF</span>
                       </button>
                       <button
                         onClick={() => navigateToTool("/pdf-compress")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <Minimize2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                         <span className="truncate">Compress PDF</span>
                       </button>
                       <button
                         onClick={() => navigateToTool("/pdf-workspace")}
-                        className="flex items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2.5 text-left text-xs font-medium hover:border-[hsl(var(--primary))] transition-colors min-h-[42px]"
+                        className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] px-3 py-2 text-left text-xs font-medium hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] transition-all touch-manipulation cursor-pointer"
                       >
                         <FileText className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                         <span className="truncate">PDF Workspace</span>
@@ -322,7 +322,7 @@ export function WorkspaceDrawer() {
                   return (
                     <div
                       key={item.id}
-                      className="flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 transition-colors"
+                      className="flex items-center gap-3 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)]/60 hover:border-[var(--glass-border-luminous)] p-3 transition-colors"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[hsl(var(--secondary))]">
                         {isImage ? (
@@ -339,14 +339,14 @@ export function WorkspaceDrawer() {
                           {item.outputName || item.name}
                         </p>
                         <div className="flex flex-wrap items-center gap-2 text-xs text-[hsl(var(--muted-foreground))] mt-0.5">
-                          <span>{formatBytes(item.size)}</span>
+                          <span className="tabular-nums font-mono">{formatBytes(item.size)}</span>
                           {item.width && item.height && (
-                            <span>
+                            <span className="tabular-nums font-mono">
                               • {item.width}×{item.height}
                             </span>
                           )}
                           {item.outputSize !== undefined && (
-                            <span className="text-emerald-500 font-medium">
+                            <span className="text-emerald-500 font-medium tabular-nums font-mono">
                               → {formatBytes(item.outputSize)}
                             </span>
                           )}
@@ -354,7 +354,7 @@ export function WorkspaceDrawer() {
                       </div>
 
                       {/* Status / Actions */}
-                      <div className="flex items-center gap-1 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0">
                         {item.status === "processing" && (
                           <Loader2 className="h-4 w-4 animate-spin text-[hsl(var(--primary))]" />
                         )}
@@ -368,7 +368,7 @@ export function WorkspaceDrawer() {
                             <button
                               onClick={() => promoteOutputToInput(item.id)}
                               title="Use processed result as new input for another tool"
-                              className="flex h-9 items-center gap-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2 text-[11px] font-medium hover:border-[hsl(var(--primary))] hover:text-[hsl(var(--primary))] transition-colors"
+                              className="flex min-h-[44px] items-center gap-1.5 rounded-lg border border-[var(--glass-border)] bg-[hsl(var(--secondary))] px-3 text-[11px] font-medium hover:border-[hsl(var(--primary))] hover:text-[hsl(var(--primary))] transition-colors touch-manipulation cursor-pointer"
                             >
                               <RefreshCw className="h-3 w-3" />
                               Reuse
@@ -381,7 +381,7 @@ export function WorkspaceDrawer() {
                                 )
                               }
                               title="Download processed file"
-                              className="flex h-9 w-9 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors"
+                              className="flex h-11 w-11 sm:h-9 sm:w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors touch-manipulation cursor-pointer"
                             >
                               <Download className="h-4 w-4" />
                             </button>
@@ -390,7 +390,7 @@ export function WorkspaceDrawer() {
                         <button
                           onClick={() => removeFile(item.id)}
                           title="Remove from workspace"
-                          className="flex h-9 w-9 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))] transition-colors"
+                          className="flex h-11 w-11 sm:h-9 sm:w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))] transition-colors touch-manipulation cursor-pointer"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -405,7 +405,7 @@ export function WorkspaceDrawer() {
 
         {/* Footer Actions */}
         {totalCount > 0 && (
-          <div className="border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 pb-safe space-y-2.5">
+          <div className="border-t border-[var(--glass-border)] bg-[var(--glass-surface)]/90 backdrop-blur-md p-4 pb-safe space-y-2.5">
             <div className="flex items-center gap-2">
               {doneFiles.length > 0 && (
                 <Button

@@ -140,10 +140,10 @@ export function Header() {
         <button
           type="button"
           onClick={() => setCommandCenterOpen(true)}
-          className="flex min-h-[44px] sm:min-h-0 sm:h-9 items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md px-3.5 py-2 sm:py-1.5 text-xs text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] hover:shadow-[0_0_15px_rgba(96,165,250,0.2)] transition-all shadow-xs cursor-pointer touch-manipulation"
+          className="flex min-h-[44px] h-11 items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md px-3.5 py-2 text-xs text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] hover:shadow-[0_0_15px_rgba(96,165,250,0.2)] transition-all shadow-xs cursor-pointer touch-manipulation"
           aria-label="Open Command Center (Ctrl+K)"
         >
-          <Search className="h-4 w-4 sm:h-3.5 sm:w-3.5 text-[hsl(var(--primary))]" />
+          <Search className="h-4 w-4 text-[hsl(var(--primary))]" />
           <span className="hidden sm:inline">Search tools & actions...</span>
           <span className="sm:hidden font-medium">Search</span>
           <kbd className="hidden md:inline-flex items-center gap-0.5 rounded bg-[hsl(var(--secondary))] px-1.5 py-0.5 text-[10px] font-mono text-[hsl(var(--muted-foreground))] border border-[hsl(var(--border))]">
@@ -218,7 +218,7 @@ export function Header() {
                         role="menuitem"
                         onClick={() => setOpenDropdown(null)}
                         className={cn(
-                          "block px-4 py-2 text-xs xl:text-sm transition-colors",
+                          "min-h-[44px] flex items-center px-4 py-2 text-xs xl:text-sm rounded-xl mx-1 transition-colors",
                           pathname === child.href
                             ? "text-[hsl(var(--primary))] bg-[hsl(var(--secondary))] font-medium"
                             : "text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))]"
@@ -253,7 +253,7 @@ export function Header() {
           <Link
             href="/workspace"
             className={cn(
-              "inline-flex min-h-[44px] sm:min-h-[38px] items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-all cursor-pointer touch-manipulation",
+              "inline-flex min-h-[44px] h-11 items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer touch-manipulation",
               fileCount > 0
                 ? "border-[hsl(var(--primary)/0.4)] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.18)]"
                 : "border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
@@ -289,7 +289,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setShortcutsOpen(true)}
-            className="hidden sm:flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)] transition-colors touch-manipulation cursor-pointer"
+            className="hidden sm:flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)] transition-colors touch-manipulation cursor-pointer"
             title="Keyboard Shortcuts (?)"
             aria-label="Keyboard shortcuts"
           >

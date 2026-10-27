@@ -153,7 +153,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-[hsl(var(--border))] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[hsl(var(--muted-foreground))]">
+        <div className="mt-10 border-t border-[var(--glass-border)] pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[hsl(var(--muted-foreground))]">
           <p>© {new Date().getFullYear()} FileFixer. Open and privacy-first.</p>
           <div className="flex items-center gap-1.5 font-medium text-[hsl(var(--foreground))]">
             <span>Developed by</span>

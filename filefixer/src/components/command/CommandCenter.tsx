@@ -473,7 +473,7 @@ export function CommandCenter() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/65 backdrop-blur-xs p-3 sm:p-6 pt-[10vh] animate-fade-in"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 backdrop-blur-md p-3 sm:p-6 pt-[10vh] animate-fade-in"
       onClick={() => setCommandCenterOpen(false)}
       role="dialog"
       aria-modal="true"
@@ -481,7 +481,7 @@ export function CommandCenter() {
     >
       <div
         ref={modalContainerRef}
-        className="w-full max-w-2xl overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7)] animate-scale-in"
+        className="w-full max-w-2xl overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7),0_0_50px_rgba(59,130,246,0.18)] animate-scale-in"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
@@ -513,7 +513,7 @@ export function CommandCenter() {
                 setQuery("");
                 inputRef.current?.focus();
               }}
-              className="flex h-11 w-11 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors mr-1 shrink-0 cursor-pointer touch-manipulation"
+              className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors mr-1 shrink-0 cursor-pointer touch-manipulation"
               aria-label="Clear search input"
             >
               <X className="h-4 w-4" />
@@ -554,7 +554,7 @@ export function CommandCenter() {
                   onClick={item.action}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   onFocus={() => setSelectedIndex(idx)}
-                  className={`w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl text-left transition-colors cursor-pointer ${
+                  className={`w-full min-h-[48px] flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl text-left transition-colors cursor-pointer touch-manipulation ${
                     isSelected
                       ? "bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--foreground))] ring-1 ring-[hsl(var(--primary)/0.3)]"
                       : "hover:bg-[hsl(var(--secondary)/0.5)] text-[hsl(var(--muted-foreground))]"
@@ -581,7 +581,7 @@ export function CommandCenter() {
                           {item.category}
                         </span>
                       </div>
-                      <p className="text-xs text-[hsl(var(--muted-foreground))] truncate tabular-nums">
+                      <p className="text-xs text-[hsl(var(--muted-foreground))] truncate tabular-nums font-mono">
                         {item.subtitle}
                       </p>
                     </div>
@@ -601,7 +601,7 @@ export function CommandCenter() {
         </div>
 
         {/* Footer info bar */}
-        <div className="flex items-center justify-center sm:justify-between border-t border-[hsl(var(--border))] bg-[hsl(var(--background)/0.6)] px-4 py-2.5 text-[11px] text-[hsl(var(--muted-foreground))]">
+        <div className="flex items-center justify-center sm:justify-between border-t border-[var(--glass-border)] bg-[var(--glass-surface)]/80 backdrop-blur-sm px-4 py-2.5 text-[11px] text-[hsl(var(--muted-foreground))]">
           <div className="hidden sm:flex items-center gap-3">
             <span>
               Use <kbd className="font-mono bg-[hsl(var(--secondary))] px-1 py-0.5 rounded">↑</kbd>{" "}

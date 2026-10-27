@@ -76,7 +76,7 @@ export function SupportModal() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/65 backdrop-blur-xs p-0 sm:p-4 animate-fade-in"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-md p-0 sm:p-4 animate-fade-in"
       onClick={closeSupportModal}
       role="dialog"
       aria-modal="true"
@@ -85,7 +85,7 @@ export function SupportModal() {
     >
       <div
         ref={modalContainerRef}
-        className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl p-6 sm:p-7 shadow-[0_25px_60px_rgba(0,0,0,0.7)] animate-slide-up sm:animate-scale-in text-center space-y-4"
+        className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl p-6 sm:p-7 shadow-[0_25px_60px_rgba(0,0,0,0.7),0_0_40px_rgba(59,130,246,0.15)] animate-slide-up sm:animate-scale-in text-center space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Visible Close Button */}
@@ -93,7 +93,7 @@ export function SupportModal() {
           ref={closeButtonRef}
           type="button"
           onClick={closeSupportModal}
-          className="absolute top-4 right-4 flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
+          className="absolute top-4 right-4 flex h-11 w-11 sm:h-9 sm:w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
           aria-label="Close support dialog"
         >
           <X className="h-5 w-5" />

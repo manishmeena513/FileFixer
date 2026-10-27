@@ -34,7 +34,7 @@ export function DownloadDock() {
       aria-label="Floating Download Dock"
       className="fixed bottom-20 md:bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:w-full sm:max-w-sm z-40 pointer-events-auto animate-dock-in"
     >
-      <div className="overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] transition-all">
+      <div className="overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_25px_rgba(59,130,246,0.18)] transition-all">
         {/* Dock Header */}
         <div className="flex items-center justify-between border-b border-[var(--glass-border)] px-4 py-2.5 bg-[var(--glass-surface)]">
           <div className="flex items-center gap-2">
@@ -62,14 +62,14 @@ export function DownloadDock() {
             </button>
             <button
               onClick={() => setIsMinimized(!isMinimized)}
-              className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] touch-manipulation cursor-pointer"
+              className="flex h-11 w-11 sm:h-8 sm:w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors touch-manipulation cursor-pointer"
               aria-label={isMinimized ? "Expand dock" : "Minimize dock"}
             >
               {isMinimized ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
             <button
               onClick={clearDownloads}
-              className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] touch-manipulation cursor-pointer"
+              className="flex h-11 w-11 sm:h-8 sm:w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] transition-colors touch-manipulation cursor-pointer"
               aria-label="Clear download dock"
             >
               <X className="h-4 w-4" />
@@ -88,7 +88,7 @@ export function DownloadDock() {
               return (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-[hsl(var(--background)/0.5)] transition-colors hover:bg-[hsl(var(--secondary)/0.5)]"
+                  className="flex items-center justify-between gap-3 p-2.5 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)]/60 hover:border-[var(--glass-border-luminous)] transition-colors"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="shrink-0">
@@ -107,14 +107,14 @@ export function DownloadDock() {
                       <p className="text-xs font-semibold truncate text-[hsl(var(--foreground))]">
                         {item.fileName}
                       </p>
-                      <div className="flex items-center gap-1.5 text-[11px] text-[hsl(var(--muted-foreground))] tabular-nums">
-                        <span className="tabular-nums">{formatBytes(item.outputSize || item.originalSize)}</span>
+                      <div className="flex items-center gap-1.5 text-[11px] text-[hsl(var(--muted-foreground))] tabular-nums font-mono">
+                        <span className="tabular-nums font-mono">{formatBytes(item.outputSize || item.originalSize)}</span>
                         {item.savingsPct !== undefined && item.savingsPct > 0 && (
-                          <span className="text-emerald-500 font-medium tabular-nums">
+                          <span className="text-emerald-500 font-medium tabular-nums font-mono">
                             (-{item.savingsPct.toFixed(0)}%)
                           </span>
                         )}
-                        <span className="capitalize">• {item.status}</span>
+                        <span className="capitalize font-sans">• {item.status}</span>
                       </div>
                     </div>
                   </div>
@@ -127,14 +127,14 @@ export function DownloadDock() {
                           setLatestDeliveredFile(item);
                         }}
                         title="Re-download file"
-                        className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors touch-manipulation cursor-pointer"
+                        className="flex h-11 w-11 sm:h-8 sm:w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors touch-manipulation cursor-pointer"
                       >
                         <Download className="h-3.5 w-3.5" />
                       </button>
                     )}
                     <button
                       onClick={() => removeDownload(item.id)}
-                      className="flex h-11 w-11 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] touch-manipulation cursor-pointer"
+                      className="flex h-11 w-11 sm:h-8 sm:w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] transition-colors touch-manipulation cursor-pointer"
                       aria-label="Dismiss item"
                     >
                       <X className="h-3 w-3" />

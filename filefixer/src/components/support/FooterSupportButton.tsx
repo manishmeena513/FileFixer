@@ -11,11 +11,11 @@ export function FooterSupportButton() {
     <button
       type="button"
       onClick={openSupportModal}
-      className="inline-flex items-center gap-1.5 text-xs text-rose-400/90 hover:text-rose-400 hover:underline transition-colors cursor-pointer"
+      className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:bg-rose-500/15 hover:border-rose-500/40 transition-all touch-manipulation cursor-pointer"
       title="Voluntary Support for FileFixer"
       aria-label="Support FileFixer"
     >
-      <Heart className="h-3 w-3 fill-rose-500/20 text-rose-400" />
+      <Heart className="h-3.5 w-3.5 fill-rose-500/30 text-rose-400" />
       <span>Support FileFixer</span>
     </button>
   );

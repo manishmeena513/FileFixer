@@ -110,7 +110,7 @@ export function DownloadCenterModal() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-xs p-4 animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-fade-in"
       onClick={() => setDownloadCenterOpen(false)}
       role="dialog"
       aria-modal="true"
@@ -118,11 +118,11 @@ export function DownloadCenterModal() {
     >
       <div
         ref={modalContainerRef}
-        className="w-full max-w-xl overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl animate-scale-in flex flex-col max-h-[85vh]"
+        className="w-full max-w-xl overflow-hidden rounded-3xl border border-[var(--glass-border-luminous)] bg-[var(--glass-surface-elevated)] backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7),0_0_35px_rgba(59,130,246,0.15)] animate-scale-in flex flex-col max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[hsl(var(--border))] px-6 py-4">
+        <div className="flex items-center justify-between border-b border-[var(--glass-border)] bg-[var(--glass-surface)]/80 backdrop-blur-sm px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]">
               <Download className="h-5 w-5" />
@@ -130,7 +130,7 @@ export function DownloadCenterModal() {
             <div>
               <h2 className="text-lg font-bold">Session Download Center</h2>
               <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                {validFiles.length} delivered files ready in browser memory
+                <span className="tabular-nums font-mono">{validFiles.length}</span> delivered files ready in browser memory
               </p>
             </div>
           </div>
@@ -138,7 +138,7 @@ export function DownloadCenterModal() {
             ref={closeButtonRef}
             type="button"
             onClick={() => setDownloadCenterOpen(false)}
-            className="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
+            className="flex h-11 w-11 sm:h-9 sm:w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
             aria-label="Close download center"
           >
             <X className="h-5 w-5" />
@@ -147,26 +147,26 @@ export function DownloadCenterModal() {
 
         {/* Aggregate Stats Summary */}
         {validFiles.length > 0 && (
-          <div className="grid grid-cols-3 gap-2 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/0.5)] p-4 text-center tabular-nums">
+          <div className="grid grid-cols-3 gap-2 border-b border-[var(--glass-border)] bg-[var(--glass-surface)]/60 p-4 text-center tabular-nums font-mono">
             <div className="space-y-0.5">
-              <span className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
+              <span className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))] font-sans">
                 Total Original
               </span>
-              <p className="text-xs font-bold tabular-nums">{formatBytes(totalOriginalSize)}</p>
+              <p className="text-xs font-bold tabular-nums font-mono">{formatBytes(totalOriginalSize)}</p>
             </div>
-            <div className="space-y-0.5 border-x border-[hsl(var(--border)/0.6)]">
-              <span className="text-[10px] uppercase font-semibold text-emerald-400">
+            <div className="space-y-0.5 border-x border-[var(--glass-border)]">
+              <span className="text-[10px] uppercase font-semibold text-emerald-400 font-sans">
                 Final Size
               </span>
-              <p className="text-xs font-bold text-emerald-400 tabular-nums">
+              <p className="text-xs font-bold text-emerald-400 tabular-nums font-mono">
                 {formatBytes(totalOutputSize)}
               </p>
             </div>
             <div className="space-y-0.5">
-              <span className="text-[10px] uppercase font-semibold text-[hsl(var(--primary))]">
+              <span className="text-[10px] uppercase font-semibold text-[hsl(var(--primary))] font-sans">
                 Bandwidth Saved
               </span>
-              <p className="text-xs font-bold text-[hsl(var(--primary))] tabular-nums">
+              <p className="text-xs font-bold text-[hsl(var(--primary))] tabular-nums font-mono">
                 {formatBytes(totalSaved)} ({totalSavedPct.toFixed(0)}%)
               </p>
             </div>
@@ -187,20 +187,20 @@ export function DownloadCenterModal() {
             validFiles.map((file) => (
               <div
                 key={file.id}
-                className="flex items-center justify-between gap-3 p-3 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background)/0.5)] transition-colors hover:border-[hsl(var(--primary)/0.4)]"
+                className="flex items-center justify-between gap-3 p-3 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)]/60 hover:border-[var(--glass-border-luminous)] transition-colors"
               >
                 <div className="min-w-0">
                   <p className="text-xs font-semibold truncate text-[hsl(var(--foreground))]">
                     {file.fileName}
                   </p>
-                  <div className="flex items-center gap-2 text-[11px] text-[hsl(var(--muted-foreground))] mt-0.5 tabular-nums">
-                    <span className="tabular-nums">{formatBytes(file.outputSize)}</span>
+                  <div className="flex items-center gap-2 text-[11px] text-[hsl(var(--muted-foreground))] mt-0.5 tabular-nums font-mono">
+                    <span className="tabular-nums font-mono">{formatBytes(file.outputSize)}</span>
                     {file.originalSize > file.outputSize && (
-                      <span className="text-emerald-500 font-medium tabular-nums">
+                      <span className="text-emerald-500 font-medium tabular-nums font-mono">
                         from {formatBytes(file.originalSize)}
                       </span>
                     )}
-                    <span className="text-emerald-500 flex items-center gap-1">
+                    <span className="text-emerald-500 flex items-center gap-1 font-sans">
                       <CheckCircle2 className="h-3 w-3" /> Ready
                     </span>
                   </div>
@@ -214,7 +214,7 @@ export function DownloadCenterModal() {
                         triggerDownload(file.blob!, file.fileName);
                         setLatestDeliveredFile(file);
                       }}
-                      className="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors touch-manipulation cursor-pointer"
+                      className="flex h-11 w-11 sm:h-9 sm:w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors touch-manipulation cursor-pointer"
                       title="Download file"
                     >
                       <Download className="h-4 w-4" />
@@ -223,7 +223,7 @@ export function DownloadCenterModal() {
                   <button
                     type="button"
                     onClick={() => removeDownload(file.id)}
-                    className="flex h-11 w-11 sm:h-9 sm:w-9 items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] touch-manipulation cursor-pointer"
+                    className="flex h-11 w-11 sm:h-9 sm:w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] hover:text-[hsl(var(--foreground))] transition-colors touch-manipulation cursor-pointer"
                     aria-label="Remove from list"
                   >
                     <X className="h-4 w-4" />
@@ -236,7 +236,7 @@ export function DownloadCenterModal() {
 
         {/* Footer Actions */}
         {validFiles.length > 0 && (
-          <div className="border-t border-[hsl(var(--border))] p-4 bg-[hsl(var(--background)/0.7)] flex items-center gap-3">
+          <div className="border-t border-[var(--glass-border)] p-4 bg-[var(--glass-surface)]/80 backdrop-blur-sm flex items-center gap-3">
             <Button
               onClick={handleDownloadAllZip}
               className="flex-1 min-h-[44px]"
