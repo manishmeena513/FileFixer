@@ -238,7 +238,7 @@ export default function CompressImagePage() {
             />
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-3">
+              <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-3">
                 <span className="text-sm font-semibold text-[hsl(var(--foreground))] tabular-nums">
                   {imageFiles.length} Image{imageFiles.length > 1 ? "s" : ""} Selected
                 </span>
@@ -300,10 +300,10 @@ export default function CompressImagePage() {
                       key={cf.id}
                       type="button"
                       onClick={() => setSelectedCompareId(cf.id)}
-                      className={`min-h-[44px] px-3 py-2 rounded-xl text-xs font-medium border transition-colors touch-manipulation tabular-nums ${
+                      className={`min-h-[44px] px-3 py-2 rounded-xl text-xs font-medium border transition-all touch-manipulation tabular-nums ${
                         activeFile?.id === cf.id
-                          ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                          : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
+                          ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                          : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                       }`}
                     >
                       <span className="truncate max-w-[140px] inline-block align-middle">
@@ -314,7 +314,7 @@ export default function CompressImagePage() {
                 </div>
               )}
 
-              <div className="h-72 sm:h-80 w-full rounded-xl border border-[hsl(var(--border))] bg-black/40 overflow-hidden">
+              <div className="h-72 sm:h-80 w-full rounded-2xl border border-[var(--glass-border-luminous)] bg-black/50 backdrop-blur-md overflow-hidden shadow-2xl">
                 <CompareSlider
                   originalUrl={originalPreviewUrl}
                   outputUrl={optimizedPreviewUrl}
@@ -327,7 +327,7 @@ export default function CompressImagePage() {
 
         {/* Right column: Controls & Results */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-6">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xl">
             <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
               Compression Settings
             </h2>
@@ -356,7 +356,7 @@ export default function CompressImagePage() {
                 <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
                   Automatically calculates optimal balance between maximum file size reduction and high visual clarity.
                 </p>
-                <div className="rounded-lg bg-[hsl(var(--secondary))] p-3 text-xs text-[hsl(var(--secondary-foreground))]">
+                <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3 text-xs text-[hsl(var(--muted-foreground))]">
                   ✓ Recommended for web upload & general sharing
                 </div>
               </TabsContent>
@@ -378,10 +378,10 @@ export default function CompressImagePage() {
                       key={preset.label}
                       type="button"
                       onClick={() => setTargetSizeMB(preset.value)}
-                      className={`min-h-[44px] rounded-xl border px-2.5 py-2 text-xs font-medium transition-colors touch-manipulation tabular-nums ${
+                      className={`min-h-[44px] rounded-xl border px-2.5 py-2 text-xs font-medium transition-all touch-manipulation tabular-nums ${
                         targetSizeMB === preset.value
-                          ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                          : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
+                          ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                          : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                       }`}
                     >
                       {preset.label}
@@ -389,7 +389,7 @@ export default function CompressImagePage() {
                   ))}
                 </div>
 
-                <div className="pt-2 border-t border-[hsl(var(--border))]">
+                <div className="pt-2 border-t border-[var(--glass-border)]">
                   <label className="block text-xs font-medium text-[hsl(var(--foreground))] mb-1.5">
                     Custom Target (MB)
                   </label>
@@ -404,9 +404,9 @@ export default function CompressImagePage() {
                         const val = parseFloat(e.target.value);
                         if (!isNaN(val) && val > 0) setTargetSizeMB(val);
                       }}
-                      className="h-11 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--input))] px-3 text-xs font-medium tabular-nums focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
+                      className="h-11 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] px-3 text-xs font-mono font-medium tabular-nums focus:outline-none focus:border-[var(--glass-border-luminous)] focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)]"
                     />
-                    <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">
+                    <span className="text-xs font-mono font-medium text-[hsl(var(--muted-foreground))]">
                       MB
                     </span>
                   </div>
@@ -495,7 +495,7 @@ export default function CompressImagePage() {
 
           {/* Batch download if multiple files */}
           {imageFiles.length > 1 && anyCompleted && (
-            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 space-y-4">
+            <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 space-y-4 shadow-xl">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-semibold text-[hsl(var(--foreground))]">
                   Batch Results

@@ -244,7 +244,7 @@ export default function ImageMetadataPage() {
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3">
+                <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3">
                   <span className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                     Decimal Coordinates
                   </span>
@@ -253,7 +253,7 @@ export default function ImageMetadataPage() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3">
+                <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3">
                   <span className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                     DMS Format
                   </span>
@@ -262,7 +262,7 @@ export default function ImageMetadataPage() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3">
+                <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3">
                   <span className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                     Altitude
                   </span>
@@ -273,7 +273,7 @@ export default function ImageMetadataPage() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3">
+                <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3">
                   <span className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                     GPS Date / Time
                   </span>
@@ -320,13 +320,13 @@ export default function ImageMetadataPage() {
           )}
 
           {/* Detailed Camera & Sensor Inspection Table */}
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-3">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-5 shadow-xl">
+            <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-3">
               <h3 className="font-bold text-sm sm:text-base text-[hsl(var(--foreground))] flex items-center gap-2">
                 <Camera className="h-4 w-4 text-[hsl(var(--primary))]" />
-                Detected Camera & Sensor Diagnostics
+                Detected Camera &amp; Sensor Diagnostics
               </h3>
-              <Badge variant="outline" className="font-mono text-xs tabular-nums">
+              <Badge variant="outline" className="font-mono text-xs tabular-nums border-[var(--glass-border)]">
                 {metadata?.rawTagCount || 0} Tags Detected
               </Badge>
             </div>
@@ -451,7 +451,7 @@ export default function ImageMetadataPage() {
             )}
 
             {/* Privacy notice banner */}
-            <div className="rounded-xl bg-[hsl(var(--secondary)/0.7)] p-3.5 flex items-start gap-2.5 text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
+            <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3.5 flex items-start gap-2.5 text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
               <AlertTriangle className="h-4 w-4 text-amber-500 flex-shrink-0 mt-0.5" />
               <span>
                 <strong>Privacy Clean Strategy:</strong> Clicking the button below draws the pixel matrix directly onto a clean HTML5 canvas and re-encodes it into an uncontaminated image buffer, eliminating all EXIF, GPS, camera, and serial tags.

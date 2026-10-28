@@ -186,7 +186,7 @@ export function CompareSlider({
     <div
       ref={containerRef}
       className={cn(
-        "compare-slider relative overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-black/40 shadow-xl aspect-[4/3] max-h-[500px]",
+        "compare-slider relative overflow-hidden rounded-2xl border border-[var(--glass-border-luminous)] bg-black/50 backdrop-blur-md shadow-2xl aspect-[4/3] max-h-[500px]",
         className
       )}
       onMouseMove={handleMouseMove}

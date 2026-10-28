@@ -427,8 +427,8 @@ export default function ImageStudioPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Main Visual Stage (7-8 cols) */}
-          <div className="lg:col-span-7 xl:col-span-8 rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-4">
-            <div className="flex flex-wrap items-center justify-between border-b border-[hsl(var(--border))] pb-3 text-xs text-[hsl(var(--muted-foreground))] gap-2">
+          <div className="lg:col-span-7 xl:col-span-8 rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-4 shadow-xl">
+            <div className="flex flex-wrap items-center justify-between border-b border-[var(--glass-border)] pb-3 text-xs text-[hsl(var(--muted-foreground))] gap-2">
               <span className="font-semibold text-[hsl(var(--foreground))] truncate max-w-xs">
                 {imageFile.name}
               </span>
@@ -440,14 +440,14 @@ export default function ImageStudioPage() {
                   </span>
                 )}
                 {outputUrl && (
-                  <div className="flex rounded-lg border border-[hsl(var(--border))] p-0.5 bg-[hsl(var(--secondary))]">
+                  <div className="flex rounded-xl border border-[var(--glass-border)] p-0.5 bg-[var(--glass-surface-elevated)]">
                     <button
                       type="button"
                       onClick={() => setViewMode("stage")}
-                      className={`min-h-[44px] min-w-[44px] px-3 py-2 rounded text-xs font-sans font-medium transition-colors flex items-center justify-center ${
+                      className={`min-h-[44px] min-w-[44px] px-3 py-2 rounded-lg text-xs font-sans font-medium transition-all flex items-center justify-center ${
                         viewMode === "stage"
-                          ? "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-xs"
-                          : "text-[hsl(var(--muted-foreground))]"
+                          ? "bg-[hsl(var(--primary))] text-white shadow-xs"
+                          : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
                       }`}
                     >
                       Stage
@@ -455,10 +455,10 @@ export default function ImageStudioPage() {
                     <button
                       type="button"
                       onClick={() => setViewMode("compare")}
-                      className={`min-h-[44px] min-w-[44px] px-3 py-2 rounded text-xs font-sans font-medium transition-colors flex items-center justify-center ${
+                      className={`min-h-[44px] min-w-[44px] px-3 py-2 rounded-lg text-xs font-sans font-medium transition-all flex items-center justify-center ${
                         viewMode === "compare"
-                          ? "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-xs"
-                          : "text-[hsl(var(--muted-foreground))]"
+                          ? "bg-[hsl(var(--primary))] text-white shadow-xs"
+                          : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
                       }`}
                     >
                       Compare
@@ -469,7 +469,7 @@ export default function ImageStudioPage() {
             </div>
 
             {/* Interactive Stage Viewport */}
-            <div className="flex min-h-[440px] items-center justify-center p-4 bg-black/50 rounded-2xl overflow-hidden relative">
+            <div className="flex min-h-[440px] items-center justify-center p-4 bg-black/60 rounded-2xl overflow-hidden relative border border-[var(--glass-border-luminous)] shadow-2xl">
               {viewMode === "compare" && workingUrl && outputUrl ? (
                 <div className="w-full max-w-xl h-80 sm:h-96">
                   <CompareSlider
@@ -567,8 +567,8 @@ export default function ImageStudioPage() {
           </div>
 
           {/* Controls Sidebar (4-5 cols) */}
-          <div className="lg:col-span-5 xl:col-span-4 rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-3">
+          <div className="lg:col-span-5 xl:col-span-4 rounded-3xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xl">
+            <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-3">
               <h2 className="text-base font-bold text-[hsl(var(--foreground))] flex items-center gap-2">
                 <Sliders className="h-4 w-4 text-[hsl(var(--primary))]" /> Workstation Tools
               </h2>
@@ -623,10 +623,10 @@ export default function ImageStudioPage() {
                           key={p.key}
                           type="button"
                           onClick={() => handleAspectPresetSelect(p)}
-                          className={`min-h-[44px] rounded-xl border text-xs font-medium transition-colors touch-manipulation tabular-nums ${
+                          className={`min-h-[44px] rounded-xl border text-xs font-medium transition-all touch-manipulation tabular-nums ${
                             activePreset === p.key
-                              ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                              : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))]"
+                              ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                              : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                           }`}
                         >
                           {p.label}
@@ -636,7 +636,7 @@ export default function ImageStudioPage() {
                   </div>
                 )}
 
-                <div className="space-y-2 pt-2 border-t border-[hsl(var(--border))]">
+                <div className="space-y-2 pt-2 border-t border-[var(--glass-border)]">
                   <span className="text-xs font-semibold text-[hsl(var(--foreground))]">
                     Orientation &amp; Flips
                   </span>
@@ -697,7 +697,7 @@ export default function ImageStudioPage() {
                         onChange={(e) =>
                           handleWidthChange(parseInt(e.target.value, 10) || 1)
                         }
-                        className="h-11 w-full mt-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 text-xs font-mono tabular-nums"
+                        className="h-11 w-full mt-1 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] px-3 text-xs font-mono tabular-nums focus:outline-none focus:border-[var(--glass-border-luminous)] focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)]"
                       />
                     </div>
                     <div>
@@ -712,7 +712,7 @@ export default function ImageStudioPage() {
                         onChange={(e) =>
                           handleHeightChange(parseInt(e.target.value, 10) || 1)
                         }
-                        className="h-11 w-full mt-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 text-xs font-mono tabular-nums"
+                        className="h-11 w-full mt-1 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] px-3 text-xs font-mono tabular-nums focus:outline-none focus:border-[var(--glass-border-luminous)] focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)]"
                       />
                     </div>
                   </div>
@@ -854,10 +854,10 @@ export default function ImageStudioPage() {
                         key={fp.key}
                         type="button"
                         onClick={() => setFilterPreset(fp.key)}
-                        className={`min-h-[44px] rounded-xl border text-xs font-medium transition-colors touch-manipulation ${
+                        className={`min-h-[44px] rounded-xl border text-xs font-medium transition-all touch-manipulation ${
                           filterPreset === fp.key
-                            ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                            : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))]"
+                            ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                            : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                         }`}
                       >
                         {fp.label}
@@ -885,10 +885,10 @@ export default function ImageStudioPage() {
                         onClick={() =>
                           setTargetFormat(f.format as SupportedImageFormat)
                         }
-                        className={`min-h-[44px] rounded-xl border text-xs font-bold transition-colors touch-manipulation ${
+                        className={`min-h-[44px] rounded-xl border text-xs font-bold transition-all touch-manipulation ${
                           targetFormat === f.format
-                            ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                            : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))]"
+                            ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                            : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                         }`}
                       >
                         {f.label}

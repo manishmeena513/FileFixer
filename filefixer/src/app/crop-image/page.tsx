@@ -351,7 +351,7 @@ export default function CropImagePage() {
       ) : (
         <div className="space-y-6">
           {/* Action Toolbar & Preset Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-4 shadow-xl">
             {/* Aspect Presets */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-semibold text-[hsl(var(--foreground))] mr-1">
@@ -362,10 +362,10 @@ export default function CropImagePage() {
                   key={preset.key}
                   type="button"
                   onClick={() => handleAspectPresetSelect(preset)}
-                  className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-medium border transition-colors touch-manipulation tabular-nums ${
+                  className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-medium border transition-all touch-manipulation tabular-nums ${
                     activePreset === preset.key
-                      ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                      : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
+                      ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                      : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                   }`}
                 >
                   {preset.label}
@@ -450,7 +450,7 @@ export default function CropImagePage() {
           </div>
 
           {/* Interactive Canvas Stage */}
-          <div className="flex min-h-[420px] items-center justify-center rounded-2xl border border-[hsl(var(--border))] bg-black/60 p-6 overflow-hidden">
+          <div className="flex min-h-[420px] items-center justify-center rounded-2xl border border-[var(--glass-border-luminous)] bg-black/60 backdrop-blur-md p-6 overflow-hidden shadow-2xl">
             {workingUrl ? (
               <ReactCrop
                 crop={crop}
@@ -499,8 +499,8 @@ export default function CropImagePage() {
           </div>
 
           {/* Live Crop Dimension Inspector */}
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 sm:p-5">
-            <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-2 mb-3">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-4 sm:p-5 shadow-xl">
+            <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-2 mb-3">
               <span className="text-xs font-semibold text-[hsl(var(--foreground))]">
                 Live Crop Dimension Inspector
               </span>
@@ -509,37 +509,37 @@ export default function CropImagePage() {
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-2.5">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-2.5">
                 <div className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                   Crop Dimensions
                 </div>
-                <div className="text-sm font-bold text-[hsl(var(--primary))] tabular-nums">
+                <div className="text-sm font-bold font-mono text-[hsl(var(--primary))] tabular-nums">
                   {actualCropW} × {actualCropH} px
                 </div>
               </div>
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-2.5">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-2.5">
                 <div className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                   Source Dimensions
                 </div>
-                <div className="text-sm font-bold text-[hsl(var(--foreground))] tabular-nums">
+                <div className="text-sm font-bold font-mono text-[hsl(var(--foreground))] tabular-nums">
                   {workingDims.width} × {workingDims.height} px
                 </div>
               </div>
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-2.5">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-2.5">
                 <div className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                   Aspect Ratio
                 </div>
-                <div className="text-sm font-bold text-[hsl(var(--foreground))] tabular-nums">
+                <div className="text-sm font-bold font-mono text-[hsl(var(--foreground))] tabular-nums">
                   {actualCropH > 0
                     ? `${(actualCropW / actualCropH).toFixed(2)}:1`
                     : "—"}
                 </div>
               </div>
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-2.5">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-2.5">
                 <div className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                   Area Coverage
                 </div>
-                <div className="text-sm font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
+                <div className="text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400 tabular-nums">
                   {areaCoveragePct}%
                 </div>
               </div>

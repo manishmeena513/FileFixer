@@ -325,8 +325,8 @@ export default function ResizeImagePage() {
           )}
 
           {/* High-Clarity Live Dimension Inspector */}
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 sm:p-5 space-y-3">
-            <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-2">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-4 sm:p-5 space-y-3 shadow-xl">
+            <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-2">
               <span className="text-xs font-semibold text-[hsl(var(--foreground))]">
                 Live Dimension Inspector
               </span>
@@ -335,36 +335,36 @@ export default function ResizeImagePage() {
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-2.5">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-2.5">
                 <div className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                   Original
                 </div>
-                <div className="text-sm font-bold text-[hsl(var(--foreground))] tabular-nums">
+                <div className="text-sm font-bold font-mono text-[hsl(var(--foreground))] tabular-nums">
                   {origW && origH ? `${origW} × ${origH}` : "—"}
                 </div>
               </div>
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-2.5">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-2.5">
                 <div className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                   Target
                 </div>
-                <div className="text-sm font-bold text-[hsl(var(--primary))] tabular-nums">
+                <div className="text-sm font-bold font-mono text-[hsl(var(--primary))] tabular-nums">
                   {width} × {height}
                 </div>
               </div>
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-2.5">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-2.5">
                 <div className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                   Aspect Ratio
                 </div>
-                <div className="text-sm font-bold text-[hsl(var(--foreground))] tabular-nums">
+                <div className="text-sm font-bold font-mono text-[hsl(var(--foreground))] tabular-nums">
                   {height > 0 ? `${(width / height).toFixed(2)}:1` : "—"}
                 </div>
               </div>
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-2.5">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-2.5">
                 <div className="text-[10px] uppercase font-semibold text-[hsl(var(--muted-foreground))]">
                   Resolution Delta
                 </div>
                 <div
-                  className={`text-sm font-bold tabular-nums ${
+                  className={`text-sm font-bold font-mono tabular-nums ${
                     scaleDelta >= 0
                       ? "text-emerald-600 dark:text-emerald-400"
                       : "text-amber-600 dark:text-amber-400"
@@ -377,13 +377,13 @@ export default function ResizeImagePage() {
             <div className="flex items-center justify-between text-xs text-[hsl(var(--muted-foreground))] pt-1">
               <span>
                 Megapixels:{" "}
-                <strong className="text-[hsl(var(--foreground))] tabular-nums">
+                <strong className="text-[hsl(var(--foreground))] font-mono tabular-nums">
                   {((width * height) / 1000000).toFixed(2)} MP
                 </strong>
               </span>
               <span>
                 Aspect Preset:{" "}
-                <strong className="text-[hsl(var(--foreground))] uppercase">
+                <strong className="text-[hsl(var(--foreground))] uppercase font-mono">
                   {activeAspectPreset}
                 </strong>
               </span>
@@ -391,9 +391,9 @@ export default function ResizeImagePage() {
           </div>
 
           {/* Social Media & Standard Presets Grid */}
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-4">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-4 shadow-xl">
             <h3 className="text-sm font-bold text-[hsl(var(--foreground))] flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[hsl(var(--primary))]" /> Social &
+              <Sparkles className="h-4 w-4 text-[hsl(var(--primary))]" /> Social &amp;
               Standard Size Presets
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -402,16 +402,16 @@ export default function ResizeImagePage() {
                   key={p.label}
                   type="button"
                   onClick={() => handlePresetSelect(p)}
-                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-colors min-h-[52px] touch-manipulation tabular-nums ${
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all min-h-[52px] touch-manipulation tabular-nums ${
                     width === p.width && height === p.height
-                      ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--foreground))]"
-                      : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--secondary)/0.8)] text-[hsl(var(--muted-foreground))]"
+                      ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                      : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] hover:border-[var(--glass-border-luminous)] text-[hsl(var(--muted-foreground))]"
                   }`}
                 >
-                  <span className="text-xs font-semibold text-[hsl(var(--foreground))]">
+                  <span className={`text-xs font-semibold ${width === p.width && height === p.height ? "text-white" : "text-[hsl(var(--foreground))]"}`}>
                     {p.label}
                   </span>
-                  <span className="text-[11px] font-mono mt-0.5 text-[hsl(var(--primary))] tabular-nums">
+                  <span className={`text-[11px] font-mono mt-0.5 tabular-nums ${width === p.width && height === p.height ? "text-blue-100" : "text-[hsl(var(--primary))]"}`}>
                     {p.width} × {p.height} px
                   </span>
                 </button>
@@ -422,9 +422,9 @@ export default function ResizeImagePage() {
 
         {/* Right: Controls & Actions */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-6">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xl">
             <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
-              Dimensions & Options
+              Dimensions &amp; Options
             </h2>
 
             {/* Aspect Presets Chips */}
@@ -438,10 +438,10 @@ export default function ResizeImagePage() {
                     key={preset.label}
                     type="button"
                     onClick={() => handleSelectAspectPreset(preset)}
-                    className={`min-h-[44px] rounded-xl border px-2.5 py-2 text-xs font-medium transition-colors touch-manipulation tabular-nums ${
+                    className={`min-h-[44px] rounded-xl border px-2.5 py-2 text-xs font-medium transition-all touch-manipulation tabular-nums ${
                       activeAspectPreset === preset.key
-                        ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                        : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
+                        ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                        : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                     }`}
                   >
                     {preset.label}
@@ -465,7 +465,7 @@ export default function ResizeImagePage() {
                     onChange={(e) =>
                       handleWidthChange(parseInt(e.target.value, 10) || 1)
                     }
-                    className="h-11 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 text-sm font-mono text-[hsl(var(--foreground))] tabular-nums focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]"
+                    className="h-11 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] px-3 text-sm font-mono text-[hsl(var(--foreground))] tabular-nums focus:outline-none focus:border-[var(--glass-border-luminous)] focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)]"
                   />
                 </div>
 
@@ -479,10 +479,10 @@ export default function ResizeImagePage() {
                         setAspectRatio(width / height);
                       }
                     }}
-                    className={`h-11 w-11 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center border transition-colors touch-manipulation ${
+                    className={`h-11 w-11 min-h-[44px] min-w-[44px] rounded-xl flex items-center justify-center border transition-all touch-manipulation ${
                       lockAspect
-                        ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                        : "border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+                        ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                        : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                     }`}
                     aria-label={
                       lockAspect ? "Unlock aspect ratio" : "Lock aspect ratio"
@@ -511,7 +511,7 @@ export default function ResizeImagePage() {
                     onChange={(e) =>
                       handleHeightChange(parseInt(e.target.value, 10) || 1)
                     }
-                    className="h-11 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 text-sm font-mono text-[hsl(var(--foreground))] tabular-nums focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]"
+                    className="h-11 w-full rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] px-3 text-sm font-mono text-[hsl(var(--foreground))] tabular-nums focus:outline-none focus:border-[var(--glass-border-luminous)] focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)]"
                   />
                 </div>
               </div>
@@ -527,10 +527,10 @@ export default function ResizeImagePage() {
                       key={pct}
                       type="button"
                       onClick={() => handlePercentageScale(pct)}
-                      className={`min-h-[44px] rounded-xl px-2.5 py-2 text-xs font-mono font-medium border transition-colors touch-manipulation tabular-nums ${
+                      className={`min-h-[44px] rounded-xl px-2.5 py-2 text-xs font-mono font-medium border transition-all touch-manipulation tabular-nums ${
                         percentage === pct
-                          ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                          : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary)/0.7)]"
+                          ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                          : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                       }`}
                     >
                       {pct}%
@@ -550,10 +550,10 @@ export default function ResizeImagePage() {
                       key={mode}
                       type="button"
                       onClick={() => setFitMode(mode)}
-                      className={`min-h-[44px] rounded-xl border px-3 py-2 text-xs capitalize transition-colors touch-manipulation ${
+                      className={`min-h-[44px] rounded-xl border px-3 py-2 text-xs capitalize transition-all touch-manipulation ${
                         fitMode === mode
-                          ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] font-medium"
-                          : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
+                          ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 font-semibold"
+                          : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)]"
                       }`}
                     >
                       {mode}
@@ -617,7 +617,7 @@ export default function ResizeImagePage() {
           )}
 
           {imageFiles.length > 1 && anyCompleted && (
-            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 space-y-3">
+            <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 space-y-3 shadow-xl">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-semibold text-[hsl(var(--foreground))]">
                   Batch Resizing Complete

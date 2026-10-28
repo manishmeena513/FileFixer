@@ -231,7 +231,7 @@ export default function ConvertImagePage() {
             />
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-3">
+              <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-3">
                 <span className="text-sm font-semibold text-[hsl(var(--foreground))] tabular-nums">
                   {imageFiles.length} Image{imageFiles.length > 1 ? "s" : ""} Selected
                 </span>
@@ -303,12 +303,12 @@ export default function ConvertImagePage() {
           )}
 
           {/* Format Guide */}
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 text-xs text-[hsl(var(--muted-foreground))] space-y-3">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 text-xs text-[hsl(var(--muted-foreground))] space-y-3 shadow-xl">
             <h3 className="font-semibold text-sm text-[hsl(var(--foreground))]">
               Format Selection Guide
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-3 space-y-1">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3 space-y-1">
                 <span className="font-bold text-[hsl(var(--foreground))]">
                   WebP (Recommended)
                 </span>
@@ -316,7 +316,7 @@ export default function ConvertImagePage() {
                   Modern web standard. ~30% smaller than JPG with lossy or lossless compression and full alpha transparency.
                 </p>
               </div>
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-3 space-y-1">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3 space-y-1">
                 <span className="font-bold text-[hsl(var(--foreground))]">
                   PNG (Lossless)
                 </span>
@@ -324,7 +324,7 @@ export default function ConvertImagePage() {
                   Pixel-perfect raster format. Ideal for screenshots, icons, and graphics where compression artifacts must be zero.
                 </p>
               </div>
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-3 space-y-1">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3 space-y-1">
                 <span className="font-bold text-[hsl(var(--foreground))]">
                   JPG (Universal)
                 </span>
@@ -338,7 +338,7 @@ export default function ConvertImagePage() {
 
         {/* Right: Controls & Actions */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-6">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xl">
             <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
               Conversion Target
             </h2>
@@ -356,19 +356,19 @@ export default function ConvertImagePage() {
                     onClick={() => setTargetFormat(fo.mime)}
                     className={`flex flex-col items-start justify-center p-3 rounded-xl border text-left transition-all min-h-[48px] touch-manipulation ${
                       targetFormat === fo.mime
-                        ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--foreground))]"
-                        : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
+                        ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                        : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)]"
                     }`}
                   >
                     <div className="flex items-center justify-between w-full">
-                      <span className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                      <span className={`text-sm font-semibold ${targetFormat === fo.mime ? "text-white" : "text-[hsl(var(--foreground))]"}`}>
                         {fo.label}
                       </span>
-                      <span className="text-xs font-mono font-bold uppercase text-[hsl(var(--primary))]">
+                      <span className={`text-xs font-mono font-bold uppercase ${targetFormat === fo.mime ? "text-blue-100" : "text-[hsl(var(--primary))]"}`}>
                         .{fo.ext}
                       </span>
                     </div>
-                    <span className="text-[11px] text-[hsl(var(--muted-foreground))] mt-0.5">
+                    <span className={`text-[11px] mt-0.5 ${targetFormat === fo.mime ? "text-blue-100" : "text-[hsl(var(--muted-foreground))]"}`}>
                       {fo.description}
                     </span>
                   </button>
@@ -378,7 +378,7 @@ export default function ConvertImagePage() {
 
             {/* Quality Dial for JPG/WebP */}
             {targetFormat !== "image/png" ? (
-              <div className="space-y-3 pt-2 border-t border-[hsl(var(--border))]">
+              <div className="space-y-3 pt-2 border-t border-[var(--glass-border)]">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-[hsl(var(--foreground))]">
                     Export Quality
@@ -400,14 +400,14 @@ export default function ConvertImagePage() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-lg bg-[hsl(var(--secondary))] p-3 text-xs text-[hsl(var(--secondary-foreground))]">
+              <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-3 text-xs text-[hsl(var(--muted-foreground))]">
                 ✓ PNG is always 100% lossless with uncompressed pixel fidelity.
               </div>
             )}
 
             {/* Background Color Compositing Controls (for JPG) */}
             {targetFormat === "image/jpeg" && (
-              <div className="space-y-3 pt-3 border-t border-[hsl(var(--border))]">
+              <div className="space-y-3 pt-3 border-t border-[var(--glass-border)]">
                 <label className="text-xs font-semibold text-[hsl(var(--foreground))]">
                   Background Color (Replaces Transparency)
                 </label>
@@ -417,10 +417,10 @@ export default function ConvertImagePage() {
                       key={swatch.value}
                       type="button"
                       onClick={() => setBgColor(swatch.value)}
-                      className={`min-h-[44px] rounded-xl flex items-center justify-center gap-1.5 px-2 py-1.5 border text-xs font-medium transition-colors touch-manipulation ${
+                      className={`min-h-[44px] rounded-xl flex items-center justify-center gap-1.5 px-2 py-1.5 border text-xs font-medium transition-all touch-manipulation ${
                         bgColor.toLowerCase() === swatch.value.toLowerCase()
-                          ? "border-[hsl(var(--primary))] ring-2 ring-[hsl(var(--primary)/0.25)]"
-                          : "border-[hsl(var(--border))]"
+                          ? "border-[hsl(var(--primary))] ring-2 ring-[hsl(var(--primary)/0.25)] bg-[var(--glass-surface-elevated)]"
+                          : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)]"
                       }`}
                     >
                       <span
@@ -433,7 +433,7 @@ export default function ConvertImagePage() {
                 </div>
 
                 <div className="flex items-center gap-3 pt-1">
-                  <div className="flex items-center gap-2 h-11 px-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] min-w-[140px]">
+                  <div className="flex items-center gap-2 h-11 px-3 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] min-w-[140px]">
                     <input
                       type="color"
                       value={bgColor}
@@ -509,7 +509,7 @@ export default function ConvertImagePage() {
 
           {/* Download batch ZIP */}
           {imageFiles.length > 1 && anyCompleted && (
-            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 space-y-3">
+            <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 space-y-3 shadow-xl">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-semibold text-[hsl(var(--foreground))]">
                   Batch Conversion Ready

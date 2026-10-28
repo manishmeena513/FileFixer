@@ -225,9 +225,9 @@ export default function SmartCompressPage() {
           ) : (
             <div className="space-y-5">
               {/* File card */}
-              <div className="flex items-center justify-between rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4">
+              <div className="flex items-center justify-between rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-4 shadow-lg">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--primary))] shadow-sm">
                     {isImage ? (
                       <ImageIcon className="h-5 w-5" />
                     ) : (
@@ -238,7 +238,7 @@ export default function SmartCompressPage() {
                     <p className="truncate text-sm font-semibold text-[hsl(var(--foreground))]">
                       {selectedFile.name}
                     </p>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums">
+                    <p className="text-xs text-[hsl(var(--muted-foreground))] font-mono tabular-nums">
                       Original Size:{" "}
                       <strong className="text-[hsl(var(--foreground))] font-semibold">
                         {formatBytes(selectedFile.size)}
@@ -268,7 +268,7 @@ export default function SmartCompressPage() {
                     outputSize={finalResult.bestSize}
                   />
                   {origPreviewUrl && outPreviewUrl && (
-                    <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3">
+                    <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-3 shadow-lg">
                       <p className="mb-2 text-xs font-medium text-[hsl(var(--muted-foreground))] text-center tabular-nums">
                         Drag slider to compare Original vs {targetFormatted} Target Result
                       </p>
@@ -284,13 +284,13 @@ export default function SmartCompressPage() {
 
               {/* Live attempts progress dashboard */}
               {(isProcessing || liveAttempts.length > 0) && (
-                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-4">
+                <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-4 shadow-xl">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="text-sm font-bold text-[hsl(var(--foreground))] flex items-center gap-2">
                       <Target className="h-4 w-4 text-[hsl(var(--primary))]" />
                       Progressive Optimization Passes
                     </h3>
-                    <Badge variant="outline" className="font-mono text-xs tabular-nums">
+                    <Badge variant="outline" className="font-mono text-xs tabular-nums border-[var(--glass-border)]">
                       Goal: &lt; {targetFormatted} (
                       {formatBytes(targetMB * 1024 * 1024)})
                     </Badge>
@@ -298,7 +298,7 @@ export default function SmartCompressPage() {
 
                   <div className="space-y-2">
                     {/* Original baseline */}
-                    <div className="flex items-center justify-between p-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] text-xs">
+                    <div className="flex items-center justify-between p-3 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-xs">
                       <span className="font-medium text-[hsl(var(--muted-foreground))]">
                         Original Baseline
                       </span>
@@ -314,7 +314,7 @@ export default function SmartCompressPage() {
                         className={`animate-slide-up flex items-center justify-between p-3 rounded-xl border text-xs transition-all ${
                           attempt.success
                             ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
-                            : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))]"
+                            : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))]"
                         }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
@@ -357,7 +357,7 @@ export default function SmartCompressPage() {
 
         {/* Right: Target controls & Final result */}
         <div className="space-y-6">
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-5">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-5 shadow-xl">
             <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
               Select Target Size
             </h2>
@@ -376,12 +376,12 @@ export default function SmartCompressPage() {
                     }}
                     className={`flex flex-col items-start justify-center p-3 rounded-xl border text-left transition-all min-h-[54px] touch-manipulation tabular-nums ${
                       active
-                        ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.14)] text-[hsl(var(--primary))]"
-                        : "border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.7)] text-[hsl(var(--foreground))] hover:border-[hsl(var(--primary)/0.4)]"
+                        ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                        : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"
                     }`}
                   >
-                    <span className="text-xs font-bold">{p.label}</span>
-                    <span className="text-[10px] text-[hsl(var(--muted-foreground))]">
+                    <span className={`text-xs font-bold ${active ? "text-white" : "text-[hsl(var(--foreground))]"}`}>{p.label}</span>
+                    <span className={`text-[10px] ${active ? "text-blue-100" : "text-[hsl(var(--muted-foreground))]"}`}>
                       {p.sub}
                     </span>
                   </button>
@@ -390,7 +390,7 @@ export default function SmartCompressPage() {
             </div>
 
             {/* Custom MB input */}
-            <div className="space-y-1.5 pt-3 border-t border-[hsl(var(--border))]">
+            <div className="space-y-1.5 pt-3 border-t border-[var(--glass-border)]">
               <label className="text-xs font-semibold text-[hsl(var(--foreground))]">
                 Custom Target Size (MB)
               </label>
@@ -407,7 +407,7 @@ export default function SmartCompressPage() {
                     setTargetMB(parsed);
                   }
                 }}
-                className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3.5 py-2.5 text-sm font-mono text-[hsl(var(--foreground))] min-h-[44px] tabular-nums focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]"
+                className="w-full rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] px-3.5 py-2.5 text-sm font-mono text-[hsl(var(--foreground))] min-h-[44px] tabular-nums focus:outline-none focus:border-[var(--glass-border-luminous)] focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)]"
               />
               <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
                 Tip: Enter 0.1 for 100 KB, 0.5 for 500 KB, or 2 for 2 MB.
