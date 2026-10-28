@@ -48,8 +48,8 @@
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
 | G1 | Design System & Token Foundation | `globals.css`, `tailwind.config.ts`, `ToolSection.tsx`, `TabularNum.tsx`, `FileCard.tsx` touch target | none | DONE |
-| G2 | Global Application Shell & Modals | `Header`, `MobileBottomNav` (floating dock), `Footer`, `CommandCenter`, `DownloadDock`, `DownloadCenterModal`, `SupportModal` | G1 | PLANNED |
-| G3 | Homepage & Central Tools Directory | `/` (Hero, DropZone, Workflows), `/tools` (Search, Filters, dynamic counters, glass cards) | G1, G2 | PLANNED |
+| G2 | Global Application Shell & Modals | `Header`, `MobileBottomNav` (floating dock), `Footer`, `CommandCenter`, `DownloadDock`, `DownloadCenterModal`, `SupportModal` | G1 | DONE |
+| G3 | Homepage & Central Tools Directory | `/` (Hero, DropZone, Workflows), `/tools` (Search, Filters, dynamic counters, glass cards) | G1, G2 | IN_PROGRESS |
 | G4 | Image Workstations Suite | `/compress-image`, `/resize-image`, `/convert-image`, `/crop-image`, `/smart-compress`, `/image-metadata`, `/image-studio` | G1 | PLANNED |
 | G5 | PDF Workstations Suite | `/pdf-merge`, `/pdf-split`, `/pdf-compress`, `/pdf-workspace`, `/images-to-pdf`, `/pdf-studio` | G1 | PLANNED |
 | G6 | Batch, Utilities & Informational Pages | `/batch`, `/batch-rename`, `/workflows`, `/privacy-cleaner`, `/inspect`, `/history`, `/about`, `/privacy`, `/terms`, `/branding` | G1 | PLANNED |

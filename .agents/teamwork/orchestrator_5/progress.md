@@ -1,23 +1,20 @@
 # Progress — Orchestrator 5 (Cinematic Glass Transformation)
 
 ## Current Status
-Last visited: 2026-10-27T18:55:00Z
+Last visited: 2026-10-27T19:35:00Z
 
 - [x] Survey & Architecture Assessment
   - [x] Completed by `explorer_glass_survey_1`, `explorer_glass_survey_2`, `explorer_glass_survey_3`
   - [x] `PROJECT.md` updated with Feature Inventory & 7-Milestone Decomposition
 - [x] Milestone G1: Cinematic Glass Design System, Tokens & Core Component Elevation
-  - [x] Implementation completed by `worker_g1`
-  - [x] Unanimous approval: `reviewer_g1_1` (APPROVE), `reviewer_g1_2` (APPROVE), `challenger_g1_1` (APPROVE), `challenger_g1_2_rep` (APPROVE)
-  - [x] Forensic integrity audit: `auditor_g1` (CLEAN)
-  - [x] Gate Result: **PASS** — Milestone G1 marked DONE in `PROJECT.md`
-- [ ] Milestone G2: Global Application Shell & Modals
-  - [x] Dispatched `worker_g2` (`4036fa63-f3eb-498d-ba3d-fa40f01771d9`)
-  - [ ] Running: Header (h-11 min-h-[44px]), Floating Glass MobileBottomNav (≥48px), Footer, WorkspaceDrawer, CommandCenter, DownloadCenterModal glass migration, SupportModal QR preservation
-  - [ ] Await `worker_g2` completion (382 tests pass, 33/33 static build clean, QR hash intact)
-  - [ ] Dispatch Reviewers, Challengers, and Forensic Auditor for G2 gate
-  - [ ] Gate check Milestone G2
-- [ ] Milestone G3: Homepage & Tools Directory
+  - [x] Completed and verified (Unanimous PASS: 2 reviewers APPROVE, 2 challengers APPROVE, auditor CLEAN)
+  - [x] Marked DONE in `PROJECT.md`
+- [x] Milestone G2: Global Application Shell & Modals
+  - [x] `worker_g2` completed, committed (`a558b62`), and pushed to `origin main`
+  - [x] Unanimous approval: `reviewer_g2_1` (APPROVE), `reviewer_g2_2` (APPROVE), `challenger_g2_1` (APPROVE), `challenger_g2_2` (APPROVE)
+  - [x] Forensic integrity audit: `auditor_g2` (CLEAN)
+  - [x] Gate Result: **PASS** — Milestone G2 marked DONE in `PROJECT.md`
+- [ ] Milestone G3: Homepage & Central Tools Directory (IN PROGRESS - Worker G3 dispatch)
 - [ ] Milestone G4: Image Workstations
 - [ ] Milestone G5: PDF Workstations
 - [ ] Milestone G6: Batch & Utility Workstations
@@ -25,5 +22,5 @@ Last visited: 2026-10-27T18:55:00Z
 
 ## Iteration Status
 Current iteration: 1 / 32
-Spawn count: 11 / 16
-Status: Milestone G1 PASSED. Milestone G2 dispatched to worker_g2.
+Spawn count: 1 / 16
+Status: worker_g3 active (ca1f2b16-ead5-4ad1-866b-ac2033bd2dc7) implementing Milestone G3 (Homepage & Central Tools Directory)

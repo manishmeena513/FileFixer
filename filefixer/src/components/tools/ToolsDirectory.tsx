@@ -225,12 +225,12 @@ export function ToolsDirectory() {
 
       {/* Popular Tools Strip (Shown on default view) */}
       {isDefaultView && (
-        <div className="max-w-6xl mx-auto rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card)/0.6)] p-5 space-y-3">
+        <div className="max-w-6xl mx-auto rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-3 shadow-lg">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] flex items-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" /> Popular Tools
             </span>
-            <span className="text-[11px] text-[hsl(var(--muted-foreground))]">Quick Access</span>
+            <span className="text-[11px] text-[hsl(var(--muted-foreground))] font-mono">Quick Access</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
@@ -240,7 +240,7 @@ export function ToolsDirectory() {
                 <Link
                   key={pt.id}
                   href={pt.slug}
-                  className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-2.5 text-xs font-medium text-[hsl(var(--foreground))] transition-colors hover:border-[hsl(var(--primary)/0.5)] hover:text-[hsl(var(--primary))]"
+                  className="flex min-h-[44px] items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md p-2.5 text-xs font-medium text-[hsl(var(--foreground))] transition-all hover:border-[var(--glass-border-luminous)] hover:shadow-md hover:text-[hsl(var(--primary))] cursor-pointer touch-manipulation"
                 >
                   <Icon className="h-4 w-4 text-[hsl(var(--primary))] shrink-0" aria-hidden="true" />
                   <span className="truncate">{pt.name}</span>
@@ -283,10 +283,10 @@ export function ToolsDirectory() {
           <div className="space-y-12">
             {groupedCategories.map((group) => (
               <section key={group.key} className="space-y-4">
-                <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-2.5">
+                <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-2.5">
                   <h2 className="text-lg font-bold tracking-tight text-[hsl(var(--foreground))] flex items-center gap-2">
                     <span>{group.label}</span>
-                    <Badge variant="outline" className="text-[11px] font-mono font-normal">
+                    <Badge variant="outline" className="text-[11px] font-mono font-normal border-[var(--glass-border)]">
                       <TabularNum value={group.tools.length} />
                     </Badge>
                   </h2>
@@ -303,7 +303,7 @@ export function ToolsDirectory() {
         ) : (
           /* Filtered or Searched Grid */
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-2.5">
+            <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-2.5">
               <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
                 {searchQuery ? `Search Results for "${searchQuery}"` : `${CATEGORIES.find((c) => c.key === selectedCategory)?.label || selectedCategory} Tools`}
               </h2>
@@ -333,7 +333,7 @@ export function ToolsDirectory() {
       </div>
 
       {/* Bottom Tagline */}
-      <div className="text-center pt-8 border-t border-[hsl(var(--border))] max-w-xl mx-auto space-y-1">
+      <div className="text-center pt-8 border-t border-[var(--glass-border)] max-w-xl mx-auto space-y-1">
         <p className="text-xs font-semibold uppercase tracking-wider text-[hsl(var(--primary))]">
           Explore FileFixer
         </p>

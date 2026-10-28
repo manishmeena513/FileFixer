@@ -201,7 +201,7 @@ export function PopularWorkflows() {
               </div>
 
               {/* Card Footer: Launch Button */}
-              <div className="mt-5 pt-4 border-t border-[hsl(var(--border))]">
+              <div className="mt-5 pt-4 border-t border-[var(--glass-border)]">
                 <Link href={wf.route} className="block">
                   <Button
                     variant="outline"
