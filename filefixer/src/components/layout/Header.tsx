@@ -126,26 +126,31 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--glass-border)] bg-[var(--header-glass-bg)] backdrop-blur-xl shadow-xs transition-colors">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center group transition-opacity hover:opacity-95 mr-4"
+          className="flex items-center group transition-opacity hover:opacity-95 mr-2 sm:mr-4 shrink-0"
           aria-label="FileFixer Home"
         >
-          <Logo variant="full" size="md" />
+          <div className="sm:hidden">
+            <Logo variant="full" size="xs" />
+          </div>
+          <div className="hidden sm:block">
+            <Logo variant="full" size="md" />
+          </div>
         </Link>
 
         {/* Universal Command Center Search Trigger */}
         <button
           type="button"
           onClick={() => setCommandCenterOpen(true)}
-          className="flex min-h-[44px] h-11 items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md px-3.5 py-2 text-xs text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] hover:shadow-[0_0_15px_rgba(96,165,250,0.2)] transition-all shadow-xs cursor-pointer touch-manipulation"
+          className="flex min-h-[44px] h-11 items-center justify-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md px-2.5 sm:px-3.5 py-2 text-xs text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))] hover:shadow-[0_0_15px_rgba(96,165,250,0.2)] transition-all shadow-xs cursor-pointer touch-manipulation"
           aria-label="Open Command Center (Ctrl+K)"
         >
           <Search className="h-4 w-4 text-[hsl(var(--primary))]" />
-          <span className="hidden sm:inline">Search tools & actions...</span>
-          <span className="sm:hidden font-medium">Search</span>
+          <span className="hidden md:inline">Search tools & actions...</span>
+          <span className="hidden sm:inline md:hidden font-medium">Search</span>
           <kbd className="hidden md:inline-flex items-center gap-0.5 rounded bg-[hsl(var(--secondary))] px-1.5 py-0.5 text-[10px] font-mono text-[hsl(var(--muted-foreground))] border border-[hsl(var(--border))]">
             Ctrl+K
           </kbd>
@@ -248,12 +253,12 @@ export function Header() {
         </nav>
 
         {/* Right side tools */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           {/* Workspace Route Link with live badge */}
           <Link
             href="/workspace"
             className={cn(
-              "inline-flex min-h-[44px] h-11 items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer touch-manipulation",
+              "inline-flex min-h-[44px] h-11 items-center justify-center gap-1.5 rounded-full border px-2.5 sm:px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer touch-manipulation",
               fileCount > 0
                 ? "border-[hsl(var(--primary)/0.4)] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary)/0.18)]"
                 : "border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-md text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:border-[var(--glass-border-luminous)]"

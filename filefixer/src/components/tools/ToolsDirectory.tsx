@@ -240,10 +240,10 @@ export function ToolsDirectory() {
                 <Link
                   key={pt.id}
                   href={pt.slug}
-                  className="flex min-h-[44px] items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md p-2.5 text-xs font-medium text-[hsl(var(--foreground))] transition-all hover:border-[var(--glass-border-luminous)] hover:shadow-md hover:text-[hsl(var(--primary))] cursor-pointer touch-manipulation"
+                  className="flex min-w-0 min-h-[44px] items-center gap-2 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md p-2.5 text-xs font-medium text-[hsl(var(--foreground))] transition-all hover:border-[var(--glass-border-luminous)] hover:shadow-md hover:text-[hsl(var(--primary))] cursor-pointer touch-manipulation"
                 >
                   <Icon className="h-4 w-4 text-[hsl(var(--primary))] shrink-0" aria-hidden="true" />
-                  <span className="truncate">{pt.name}</span>
+                  <span className="truncate min-w-0">{pt.name}</span>
                 </Link>
               );
             })}

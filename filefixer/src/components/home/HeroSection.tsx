@@ -10,9 +10,9 @@ export function HeroSection() {
   return (
     <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
       {/* 1. Top Zero-Upload Trust Badge */}
-      <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-md px-4 py-1.5 text-xs font-semibold tracking-wide text-[hsl(var(--primary))] mb-5 shadow-[0_0_20px_rgba(59,130,246,0.2)] animate-fade-in">
-        <LogoMark size={15} animated={false} />
-        <span className="font-semibold text-xs tracking-wide">
+      <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 backdrop-blur-md px-3 sm:px-4 py-1.5 text-[11px] sm:text-xs font-semibold tracking-wide text-[hsl(var(--primary))] mb-5 shadow-[0_0_20px_rgba(59,130,246,0.2)] animate-fade-in">
+        <LogoMark size={14} animated={false} />
+        <span className="font-semibold truncate">
           100% CLIENT-SIDE • ZERO SERVER UPLOADS
         </span>
       </div>

@@ -112,15 +112,15 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-[hsl(var(--background))] text-[hsl(var(--foreground))] relative selection:bg-blue-500/20 selection:text-blue-200">
         {/* Cinematic Atmospheric Light Engine */}
-        <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
-          <div className="absolute -top-[15%] left-[10%] w-[680px] h-[520px] rounded-full bg-[radial-gradient(ellipse_at_center,var(--ambient-glow-1)_0%,transparent_70%)] blur-[90px]" />
-          <div className="absolute top-[32%] -right-[10%] w-[580px] h-[480px] rounded-full bg-[radial-gradient(ellipse_at_center,var(--ambient-glow-2)_0%,transparent_70%)] blur-[90px]" />
-          <div className="absolute -bottom-[10%] left-[25%] w-[620px] h-[440px] rounded-full bg-[radial-gradient(ellipse_at_center,var(--ambient-glow-1)_0%,transparent_70%)] blur-[90px]" />
+        <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden max-w-full" aria-hidden="true">
+          <div className="absolute -top-[15%] left-[10%] w-[320px] sm:w-[680px] h-[320px] sm:h-[520px] max-w-full rounded-full bg-[radial-gradient(ellipse_at_center,var(--ambient-glow-1)_0%,transparent_70%)] blur-[60px] sm:blur-[90px]" />
+          <div className="absolute top-[32%] -right-[10%] w-[280px] sm:w-[580px] h-[280px] sm:h-[480px] max-w-full rounded-full bg-[radial-gradient(ellipse_at_center,var(--ambient-glow-2)_0%,transparent_70%)] blur-[60px] sm:blur-[90px]" />
+          <div className="absolute -bottom-[10%] left-[25%] w-[300px] sm:w-[620px] h-[300px] sm:h-[440px] max-w-full rounded-full bg-[radial-gradient(ellipse_at_center,var(--ambient-glow-1)_0%,transparent_70%)] blur-[60px] sm:blur-[90px]" />
         </div>
         <PwaRegistration />
         <Toaster>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 pb-24 lg:pb-0">{children}</main>
           <Footer />
           <WorkspaceDrawer />
           <MobileBottomNav />

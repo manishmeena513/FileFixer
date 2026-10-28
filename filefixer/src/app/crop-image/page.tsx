@@ -423,12 +423,12 @@ export default function CropImagePage() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-2 ml-auto">
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto sm:ml-auto">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSelectedFile(null)}
-                className="min-h-[44px] touch-manipulation"
+                className="flex-1 sm:flex-none min-h-[44px] touch-manipulation"
               >
                 Change Image
               </Button>
@@ -437,7 +437,7 @@ export default function CropImagePage() {
                 size="sm"
                 disabled={isProcessing}
                 onClick={handleExport}
-                className="min-h-[44px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-[hsl(var(--success-foreground))] font-semibold touch-manipulation"
+                className="flex-1 sm:flex-none min-h-[44px] bg-[hsl(var(--success))] hover:bg-emerald-600 text-[hsl(var(--success-foreground))] font-semibold touch-manipulation"
               >
                 {isProcessing ? (
                   <RefreshCw className="h-4 w-4 animate-spin mr-1.5" />
@@ -450,14 +450,14 @@ export default function CropImagePage() {
           </div>
 
           {/* Interactive Canvas Stage */}
-          <div className="flex min-h-[420px] items-center justify-center rounded-2xl border border-[var(--glass-border-luminous)] bg-black/60 backdrop-blur-md p-6 overflow-hidden shadow-2xl">
+          <div className="flex min-h-[360px] sm:min-h-[420px] items-center justify-center rounded-2xl border border-[var(--glass-border-luminous)] bg-black/60 backdrop-blur-md p-3 sm:p-6 overflow-hidden shadow-2xl max-w-full">
             {workingUrl ? (
               <ReactCrop
                 crop={crop}
                 aspect={aspect}
                 onChange={(c) => setCrop(c)}
                 onComplete={(c) => setCompletedCrop(c)}
-                className="max-h-[600px] select-none"
+                className="max-h-[600px] max-w-full select-none"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

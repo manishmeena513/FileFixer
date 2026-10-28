@@ -358,8 +358,8 @@ export default function BatchRenamePage() {
                 </div>
               </div>
 
-              {/* Before/After Preview Table */}
-              <div className="glass-panel rounded-xl overflow-hidden shadow-lg">
+              {/* DESKTOP TABLE VIEW (md and up) */}
+              <div className="hidden md:block glass-panel rounded-xl overflow-hidden shadow-lg">
                 <div className="grid grid-cols-12 gap-2 border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                   <div className="col-span-5">Original Filename</div>
                   <div className="col-span-5">Renamed Output</div>
@@ -433,6 +433,73 @@ export default function BatchRenamePage() {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* MOBILE CARDS VIEW (< md) */}
+              <div className="md:hidden space-y-3">
+                {previews.map((item, idx) => (
+                  <div
+                    key={`${item.original}-${idx}`}
+                    className="glass-panel rounded-xl p-3.5 space-y-2.5 shadow-md"
+                  >
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-[hsl(var(--muted-foreground))]">
+                        <span>Original</span>
+                        <span>{formatBytes(item.file.size)}</span>
+                      </div>
+                      <p className="truncate text-xs font-medium text-[hsl(var(--foreground))]" title={item.original}>
+                        {item.original}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1 min-w-0 pt-2 border-t border-[hsl(var(--border))]">
+                      <div className="flex items-center justify-between text-[10px] font-mono text-[hsl(var(--primary))]">
+                        <span>Renamed</span>
+                        {!item.valid && (
+                          <Badge variant="destructive" className="text-[9px]">
+                            Invalid
+                          </Badge>
+                        )}
+                      </div>
+                      <p
+                        className={`truncate font-semibold font-mono text-xs tabular-nums ${
+                          item.valid
+                            ? "text-[hsl(var(--primary))]"
+                            : "text-[hsl(var(--destructive))]"
+                        }`}
+                        title={item.renamed}
+                      >
+                        {item.renamed}
+                      </p>
+                      {item.error && (
+                        <p className="text-[10px] text-[hsl(var(--destructive))] truncate">
+                          {item.error}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-[hsl(var(--border))]">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDownloadSingle(item)}
+                        disabled={!item.valid}
+                        className="flex-1 min-h-[44px] text-xs touch-manipulation"
+                      >
+                        <Download className="h-3.5 w-3.5 mr-1" />
+                        Save Single
+                      </Button>
+                      <button
+                        type="button"
+                        onClick={() => removeSingleFile(idx)}
+                        className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))] transition-colors touch-manipulation"
+                        aria-label={`Remove ${item.original}`}
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}

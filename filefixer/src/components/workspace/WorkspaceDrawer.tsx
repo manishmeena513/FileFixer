@@ -406,11 +406,11 @@ export function WorkspaceDrawer() {
         {/* Footer Actions */}
         {totalCount > 0 && (
           <div className="border-t border-[var(--glass-border)] bg-[var(--glass-surface)]/90 backdrop-blur-md p-4 pb-safe space-y-2.5">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
               {doneFiles.length > 0 && (
                 <Button
                   onClick={handleDownloadAllZip}
-                  className="flex-1 min-h-[44px]"
+                  className="w-full sm:flex-1 min-h-[44px]"
                 >
                   <Archive className="h-4 w-4" />
                   Download Ready ({doneFiles.length}) ZIP
@@ -419,7 +419,7 @@ export function WorkspaceDrawer() {
               <Button
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                className="min-h-[44px]"
+                className="flex-1 sm:flex-none min-h-[44px]"
               >
                 <Plus className="h-4 w-4" />
                 Add Files

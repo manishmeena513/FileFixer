@@ -180,9 +180,9 @@ export default function HistoryPage() {
             {records.map((r) => (
               <div
                 key={r.id}
-                className="flex flex-wrap sm:flex-nowrap items-center justify-between p-4 text-xs gap-3 transition-colors hover:bg-[hsl(var(--secondary)/0.5)]"
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 text-xs gap-3 transition-colors hover:bg-[hsl(var(--secondary)/0.5)]"
               >
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 w-full sm:w-auto">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-sm text-[hsl(var(--foreground))] truncate max-w-sm" title={r.filename}>
                       {r.filename}
@@ -196,8 +196,8 @@ export default function HistoryPage() {
                   </p>
                 </div>
 
-                <div className="text-right sm:text-right">
-                  <div className="flex items-center justify-end gap-2 tabular-nums font-mono">
+                <div className="text-left sm:text-right w-full sm:w-auto">
+                  <div className="flex items-center justify-start sm:justify-end gap-2 tabular-nums font-mono">
                     <span className="text-[hsl(var(--muted-foreground))]">{formatBytes(r.originalSize)}</span>
                     <span className="text-[hsl(var(--muted-foreground))]">→</span>
                     <span className="font-bold text-emerald-700 dark:text-emerald-400">{formatBytes(r.outputSize)}</span>
@@ -210,7 +210,7 @@ export default function HistoryPage() {
                 </div>
 
                 {/* Actions: Replay / Reopen Tool + Delete */}
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-[hsl(var(--border)/0.5)]">
                   <Link
                     href={getToolHref(r.tool)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))] transition-colors min-h-[44px] touch-manipulation"

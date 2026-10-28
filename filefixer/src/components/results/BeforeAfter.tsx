@@ -44,7 +44,7 @@ export function BeforeAfterStats({
     >
       <div className="flex items-center justify-between gap-2 sm:gap-4">
         {/* Original */}
-        <div className="flex-1 text-center">
+        <div className="flex-1 text-center min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
             Original
           </p>
@@ -52,7 +52,7 @@ export function BeforeAfterStats({
             {formatBytes(originalSize)}
           </p>
           {(originalDimensions || originalFormat) && (
-            <p className="mt-1 text-[11px] text-[hsl(var(--muted-foreground))]">
+            <p className="mt-1 text-[11px] text-[hsl(var(--muted-foreground))] truncate">
               {[originalFormat?.toUpperCase(), originalDimensions]
                 .filter(Boolean)
                 .join(" • ")}
@@ -61,7 +61,7 @@ export function BeforeAfterStats({
         </div>
 
         {/* Arrow + Badge */}
-        <div className="flex flex-col items-center gap-1.5 px-2">
+        <div className="flex flex-col items-center gap-1.5 px-2 shrink-0">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[hsl(var(--secondary))]">
             <ArrowRight className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
           </div>
@@ -74,7 +74,7 @@ export function BeforeAfterStats({
         </div>
 
         {/* Output */}
-        <div className="flex-1 text-center">
+        <div className="flex-1 text-center min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--primary))]">
             Optimized
           </p>
@@ -82,7 +82,7 @@ export function BeforeAfterStats({
             {formatBytes(actualOutputSize)}
           </p>
           {(actualOutputDims || outputFormat) && (
-            <p className="mt-1 text-[11px] text-[hsl(var(--muted-foreground))]">
+            <p className="mt-1 text-[11px] text-[hsl(var(--muted-foreground))] truncate">
               {[outputFormat?.toUpperCase(), actualOutputDims]
                 .filter(Boolean)
                 .join(" • ")}

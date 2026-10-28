@@ -16,7 +16,7 @@ export default function HomePage() {
     <div className="space-y-16 sm:space-y-24 pb-16">
       {/* Hero ambient atmospheric light */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 -z-10 w-full max-w-5xl h-[550px] pointer-events-none overflow-hidden opacity-60 dark:opacity-75 blur-3xl" aria-hidden="true">
-        <div className="mx-auto h-[380px] w-[620px] rounded-full bg-gradient-to-tr from-blue-600/30 via-indigo-500/20 to-violet-500/25" />
+        <div className="mx-auto h-[380px] w-full max-w-[620px] rounded-full bg-gradient-to-tr from-blue-600/30 via-indigo-500/20 to-violet-500/25" />
       </div>
 
       {/* 1. HERO + SMART DROP ZONE (Fix your files. Keep them private.) */}
