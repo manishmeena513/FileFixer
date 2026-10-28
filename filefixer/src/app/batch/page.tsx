@@ -331,7 +331,7 @@ export default function BatchHubPage() {
             <div className="space-y-5">
               {/* Stats Bar */}
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-3">
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 text-center">
+                <div className="glass-panel rounded-xl p-3 text-center">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                     Files
                   </span>
@@ -339,7 +339,7 @@ export default function BatchHubPage() {
                     {files.length}
                   </p>
                 </div>
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 text-center">
+                <div className="glass-panel rounded-xl p-3 text-center">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                     Done / Failed
                   </span>
@@ -359,7 +359,7 @@ export default function BatchHubPage() {
                     </span>
                   </p>
                 </div>
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 text-center">
+                <div className="glass-panel rounded-xl p-3 text-center">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                     Before
                   </span>
@@ -367,7 +367,7 @@ export default function BatchHubPage() {
                     {formatBytes(totalOriginal)}
                   </p>
                 </div>
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 text-center">
+                <div className="glass-panel rounded-xl p-3 text-center">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                     After
                   </span>
@@ -375,7 +375,7 @@ export default function BatchHubPage() {
                     {completedCount > 0 ? formatBytes(totalOutput) : "—"}
                   </p>
                 </div>
-                <div className="col-span-2 sm:col-span-1 rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-3 text-center">
+                <div className="col-span-2 sm:col-span-1 rounded-xl border border-emerald-500/25 bg-emerald-500/5 dark:bg-emerald-950/20 backdrop-blur-sm p-3 text-center">
                   <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                     Space Saved
                   </span>
@@ -389,7 +389,7 @@ export default function BatchHubPage() {
 
               {/* Live Progress Bar */}
               {(isProcessing || definedResults.length > 0) && (
-                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 space-y-2">
+                <div className="glass-panel rounded-xl p-4 space-y-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-semibold text-[hsl(var(--foreground))]">
                       {isProcessing
@@ -456,7 +456,7 @@ export default function BatchHubPage() {
               </div>
 
               {/* DESKTOP TABLE VIEW (md and up) */}
-              <div className="hidden md:block rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] overflow-hidden">
+              <div className="hidden md:block glass-panel rounded-xl overflow-hidden shadow-lg">
                 <div className="grid grid-cols-12 gap-3 border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                   <div className="col-span-5">Original File</div>
                   <div className="col-span-4">Pipeline Output</div>
@@ -559,7 +559,7 @@ export default function BatchHubPage() {
                   return (
                     <div
                       key={`${f.name}-${idx}-mobile`}
-                      className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3.5 space-y-2.5"
+                      className="glass-panel rounded-xl p-3.5 space-y-2.5"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
@@ -627,7 +627,8 @@ export default function BatchHubPage() {
 
         {/* Right: Pipeline Settings & Batch Download Actions */}
         <div className="space-y-6">
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-5">
+          <div className="glass-panel-elevated rounded-2xl p-5 sm:p-6 space-y-5 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[hsl(var(--primary)/0.08)] rounded-full blur-2xl pointer-events-none" />
             <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
               Multi-Stage Pipeline
             </h2>
@@ -655,7 +656,7 @@ export default function BatchHubPage() {
                       onChange={(e) =>
                         setTargetWidth(parseInt(e.target.value, 10) || 1080)
                       }
-                      className="mt-1 w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2.5 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                      className="mt-1 w-full rounded-lg glass-input px-2.5 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                     />
                   </div>
                   <div>
@@ -668,7 +669,7 @@ export default function BatchHubPage() {
                       onChange={(e) =>
                         setTargetHeight(parseInt(e.target.value, 10) || 1080)
                       }
-                      className="mt-1 w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2.5 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                      className="mt-1 w-full rounded-lg glass-input px-2.5 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                     />
                   </div>
                 </div>
@@ -696,8 +697,8 @@ export default function BatchHubPage() {
                         onClick={() => setTargetFormat(fmt)}
                         className={`rounded-lg border py-2 text-xs uppercase font-mono transition-colors min-h-[44px] touch-manipulation ${
                           targetFormat === fmt
-                            ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] font-bold"
-                            : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
+                            ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] font-bold shadow-sm"
+                            : "border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]"
                         }`}
                       >
                         {fmt.replace("image/", "")}
@@ -758,7 +759,7 @@ export default function BatchHubPage() {
                     value={renamePattern}
                     onChange={(e) => setRenamePattern(e.target.value)}
                     placeholder="e.g. asset_###"
-                    className="w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                    className="w-full rounded-lg glass-input px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                   />
                   <p className="mt-1 text-[11px] text-[hsl(var(--muted-foreground))]">
                     Use ### for zero-padded numbering (001, 002...)
@@ -789,7 +790,7 @@ export default function BatchHubPage() {
 
           {/* Download Results Card */}
           {completedCount > 0 && (
-            <div className="animate-slide-up rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 space-y-3.5">
+            <div className="animate-slide-up rounded-2xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20 backdrop-blur-md p-5 space-y-3.5 shadow-[0_0_24px_rgba(16,185,129,0.12)]">
               <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm">
                 <CheckCircle2 className="h-5 w-5 shrink-0" />
                 <span>Batch Ready ({completedCount} files)</span>

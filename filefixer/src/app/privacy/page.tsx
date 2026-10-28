@@ -101,7 +101,8 @@ export default function PrivacyPage() {
       </div>
 
       {/* Visual Architecture Flow */}
-      <section className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-10 space-y-8">
+      <section className="glass-panel-elevated rounded-3xl p-6 sm:p-10 space-y-8 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[hsl(var(--border))] pb-6">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
@@ -123,7 +124,7 @@ export default function PrivacyPage() {
             return (
               <div
                 key={item.step}
-                className="relative flex flex-col justify-between rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background)/0.6)] p-5"
+                className="relative flex flex-col justify-between glass-panel rounded-2xl p-5 shadow-sm"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -158,7 +159,7 @@ export default function PrivacyPage() {
 
       {/* What Stays vs What We Never Collect */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-6 sm:p-8 space-y-4">
+        <div className="glass-panel-elevated rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg border-emerald-500/25 bg-emerald-500/5 dark:bg-emerald-950/20">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
               <Check className="h-5 w-5" />
@@ -195,7 +196,7 @@ export default function PrivacyPage() {
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-8 space-y-4">
+        <div className="glass-panel-elevated rounded-2xl p-6 sm:p-8 space-y-4 shadow-lg">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]">
               <Lock className="h-5 w-5" />
@@ -234,7 +235,7 @@ export default function PrivacyPage() {
       </section>
 
       {/* Don't Trust Us — Verify It Yourself */}
-      <section className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card)/0.7)] p-6 sm:p-8 space-y-5">
+      <section className="glass-panel rounded-2xl p-6 sm:p-8 space-y-5 shadow-lg">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
             <Terminal className="h-5 w-5" />

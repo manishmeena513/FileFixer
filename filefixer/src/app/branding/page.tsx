@@ -213,7 +213,7 @@ export default function BrandingPage() {
         {/* Mark, Wordmark, and App Icon Row */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {/* Standalone Mark */}
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 flex flex-col items-center justify-center text-center space-y-4">
+          <div className="glass-panel rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-4 shadow-md">
             <div className="h-28 flex items-center justify-center">
               <LogoMark size={64} />
             </div>
@@ -226,7 +226,7 @@ export default function BrandingPage() {
           </div>
 
           {/* Wordmark */}
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 flex flex-col items-center justify-center text-center space-y-4">
+          <div className="glass-panel rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-4 shadow-md">
             <div className="h-28 flex items-center justify-center">
               <LogoWordmark fontSize="text-3xl" showTagline={true} taglineSize="text-[10px]" />
             </div>
@@ -239,7 +239,7 @@ export default function BrandingPage() {
           </div>
 
           {/* App Icon Squircle */}
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 flex flex-col items-center justify-center text-center space-y-4">
+          <div className="glass-panel rounded-xl p-6 flex flex-col items-center justify-center text-center space-y-4 shadow-md">
             <div className="h-28 flex items-center justify-center">
               <img
                 src="/icons/icon-192.png"
@@ -258,7 +258,8 @@ export default function BrandingPage() {
       </section>
 
       {/* Geometry & Brand Metaphor */}
-      <section className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-8 sm:p-10 space-y-8">
+      <section className="glass-panel-elevated rounded-3xl p-8 sm:p-10 space-y-8 shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
         <div>
           <h2 className="text-2xl font-bold text-[hsl(var(--foreground))] flex items-center gap-2.5">
             <Layers className="h-6 w-6 text-[#2563EB]" /> Geometry &amp; Anatomy
@@ -269,7 +270,7 @@ export default function BrandingPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="space-y-3 p-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.3)]">
+          <div className="space-y-3 p-5 rounded-xl glass-panel shadow-sm">
             <div className="h-8 w-8 rounded-lg bg-blue-500/10 text-[#3882F6] flex items-center justify-center font-bold text-sm">
               01
             </div>
@@ -279,7 +280,7 @@ export default function BrandingPage() {
             </p>
           </div>
 
-          <div className="space-y-3 p-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.3)]">
+          <div className="space-y-3 p-5 rounded-xl glass-panel shadow-sm">
             <div className="h-8 w-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold text-sm">
               02
             </div>
@@ -289,7 +290,7 @@ export default function BrandingPage() {
             </p>
           </div>
 
-          <div className="space-y-3 p-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.3)]">
+          <div className="space-y-3 p-5 rounded-xl glass-panel shadow-sm">
             <div className="h-8 w-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center font-bold text-sm">
               03
             </div>
@@ -316,7 +317,7 @@ export default function BrandingPage() {
               key={color.hex}
               onClick={() => copyToClipboard(color.hex)}
               type="button"
-              className="group text-left rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] overflow-hidden transition-all hover:border-[hsl(var(--primary))] hover:shadow-md"
+              className="group text-left rounded-xl glass-panel overflow-hidden transition-all hover:border-[hsl(var(--primary))] hover:shadow-lg"
             >
               <div className={`h-20 ${color.darkClass} flex items-end p-2 transition-transform group-hover:scale-[1.02]`}>
                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/50 backdrop-blur text-white">
@@ -371,7 +372,7 @@ export default function BrandingPage() {
           {downloadableAssets.map((asset) => (
             <div
               key={asset.path}
-              className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 flex flex-col justify-between space-y-4 hover:border-blue-500/40 transition-colors"
+              className="glass-panel rounded-xl p-5 flex flex-col justify-between space-y-4 hover:border-[hsl(var(--primary)/0.5)] transition-all shadow-md"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">

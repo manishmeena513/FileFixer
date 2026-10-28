@@ -359,7 +359,7 @@ export default function BatchRenamePage() {
               </div>
 
               {/* Before/After Preview Table */}
-              <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] overflow-hidden shadow-sm">
+              <div className="glass-panel rounded-xl overflow-hidden shadow-lg">
                 <div className="grid grid-cols-12 gap-2 border-b border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
                   <div className="col-span-5">Original Filename</div>
                   <div className="col-span-5">Renamed Output</div>
@@ -440,7 +440,8 @@ export default function BatchRenamePage() {
 
         {/* Right: Comprehensive Rule Engine Controls */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-5 shadow-sm">
+          <div className="glass-panel-elevated rounded-2xl p-5 sm:p-6 space-y-5 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[hsl(var(--primary)/0.08)] rounded-full blur-2xl pointer-events-none" />
             <div className="flex items-center justify-between">
               <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
                 Rename Rules
@@ -451,14 +452,14 @@ export default function BatchRenamePage() {
             </div>
 
             {/* Mode Tabs */}
-            <div className="grid grid-cols-4 gap-1 rounded-lg bg-[hsl(var(--secondary))] p-1">
+            <div className="grid grid-cols-4 gap-1 rounded-xl glass-panel p-1 border border-[hsl(var(--border))]">
               <button
                 type="button"
                 onClick={() => {
                   setActiveTab("template");
                   setUseTemplate(true);
                 }}
-                className={`rounded-md py-2 text-xs font-semibold min-h-[44px] touch-manipulation transition-colors ${
+                className={`rounded-lg py-2 text-xs font-semibold min-h-[44px] touch-manipulation transition-colors ${
                   activeTab === "template"
                     ? "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm"
                     : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
@@ -472,7 +473,7 @@ export default function BatchRenamePage() {
                   setActiveTab("rules");
                   setUseTemplate(false);
                 }}
-                className={`rounded-md py-2 text-xs font-semibold min-h-[44px] touch-manipulation transition-colors ${
+                className={`rounded-lg py-2 text-xs font-semibold min-h-[44px] touch-manipulation transition-colors ${
                   activeTab === "rules"
                     ? "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm"
                     : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
@@ -483,7 +484,7 @@ export default function BatchRenamePage() {
               <button
                 type="button"
                 onClick={() => setActiveTab("findReplace")}
-                className={`rounded-md py-2 text-xs font-semibold min-h-[44px] touch-manipulation transition-colors ${
+                className={`rounded-lg py-2 text-xs font-semibold min-h-[44px] touch-manipulation transition-colors ${
                   activeTab === "findReplace"
                     ? "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm"
                     : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
@@ -494,7 +495,7 @@ export default function BatchRenamePage() {
               <button
                 type="button"
                 onClick={() => setActiveTab("regex")}
-                className={`rounded-md py-2 text-xs font-semibold min-h-[44px] touch-manipulation transition-colors ${
+                className={`rounded-lg py-2 text-xs font-semibold min-h-[44px] touch-manipulation transition-colors ${
                   activeTab === "regex"
                     ? "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-sm"
                     : "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
@@ -523,7 +524,7 @@ export default function BatchRenamePage() {
                         className={`flex flex-col items-start p-2.5 rounded-lg border text-left min-h-[44px] touch-manipulation transition-colors ${
                           template === p.pattern && useTemplate
                             ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--primary))]"
-                            : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
+                            : "border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]"
                         }`}
                       >
                         <span className="text-xs font-mono font-bold text-[hsl(var(--foreground))]">
@@ -549,7 +550,7 @@ export default function BatchRenamePage() {
                       setUseTemplate(true);
                     }}
                     placeholder="e.g. Asset_### or Photo_YYYYMMDD_##"
-                    className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-sm font-mono text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))] min-h-[44px] touch-manipulation"
+                    className="w-full rounded-md glass-input px-3 py-2 text-sm font-mono text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))] min-h-[44px] touch-manipulation"
                   />
                   <p className="text-[11px] text-[hsl(var(--muted-foreground))]">
                     <code className="text-[hsl(var(--primary))] font-mono">###</code> = zero-padded count;{" "}
@@ -568,7 +569,7 @@ export default function BatchRenamePage() {
                       min={0}
                       value={startIndex}
                       onChange={(e) => setStartIndex(parseInt(e.target.value, 10) || 0)}
-                      className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-sm font-mono min-h-[44px] touch-manipulation tabular-nums"
+                      className="w-full rounded-md glass-input px-3 py-2 text-sm font-mono min-h-[44px] touch-manipulation tabular-nums"
                     />
                   </div>
                   <div className="space-y-1">
@@ -581,7 +582,7 @@ export default function BatchRenamePage() {
                       max={8}
                       value={padding}
                       onChange={(e) => setPadding(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                      className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-sm font-mono min-h-[44px] touch-manipulation tabular-nums"
+                      className="w-full rounded-md glass-input px-3 py-2 text-sm font-mono min-h-[44px] touch-manipulation tabular-nums"
                     />
                   </div>
                 </div>
@@ -600,7 +601,7 @@ export default function BatchRenamePage() {
                     value={prefix}
                     onChange={(e) => setPrefix(e.target.value)}
                     placeholder="e.g. 2026_Project_"
-                    className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                    className="w-full rounded-md glass-input px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                   />
                 </div>
 
@@ -613,7 +614,7 @@ export default function BatchRenamePage() {
                     value={suffix}
                     onChange={(e) => setSuffix(e.target.value)}
                     placeholder="e.g. _reviewed"
-                    className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                    className="w-full rounded-md glass-input px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                   />
                 </div>
 
@@ -640,7 +641,7 @@ export default function BatchRenamePage() {
                             min={0}
                             value={startIndex}
                             onChange={(e) => setStartIndex(parseInt(e.target.value, 10) || 0)}
-                            className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation tabular-nums"
+                            className="w-full rounded-md glass-input px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation tabular-nums"
                           />
                         </div>
                         <div>
@@ -653,7 +654,7 @@ export default function BatchRenamePage() {
                             max={6}
                             value={padding}
                             onChange={(e) => setPadding(parseInt(e.target.value, 10) || 1)}
-                            className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation tabular-nums"
+                            className="w-full rounded-md glass-input px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation tabular-nums"
                           />
                         </div>
                       </div>
@@ -671,7 +672,7 @@ export default function BatchRenamePage() {
                               className={`rounded-md py-1.5 text-xs capitalize min-h-[44px] touch-manipulation border transition-colors ${
                                 numberPosition === pos
                                   ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))] font-bold"
-                                  : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
+                                  : "border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]"
                               }`}
                             >
                               {pos}
@@ -697,7 +698,7 @@ export default function BatchRenamePage() {
                     value={findText}
                     onChange={(e) => setFindText(e.target.value)}
                     placeholder="Text to search for..."
-                    className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                    className="w-full rounded-md glass-input px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                   />
                 </div>
 
@@ -710,7 +711,7 @@ export default function BatchRenamePage() {
                     value={replaceText}
                     onChange={(e) => setReplaceText(e.target.value)}
                     placeholder="Replacement text..."
-                    className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                    className="w-full rounded-md glass-input px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                   />
                 </div>
 
@@ -742,7 +743,7 @@ export default function BatchRenamePage() {
                     value={regexPattern}
                     onChange={(e) => setRegexPattern(e.target.value)}
                     placeholder="e.g. ^IMG_\d+ or \s+"
-                    className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                    className="w-full rounded-md glass-input px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                   />
                 </div>
 
@@ -755,7 +756,7 @@ export default function BatchRenamePage() {
                     value={regexReplacement}
                     onChange={(e) => setRegexReplacement(e.target.value)}
                     placeholder="e.g. photo or _"
-                    className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                    className="w-full rounded-md glass-input px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                   />
                 </div>
 
@@ -768,7 +769,7 @@ export default function BatchRenamePage() {
                     value={regexFlags}
                     onChange={(e) => setRegexFlags(e.target.value)}
                     placeholder="e.g. g, i, or gi"
-                    className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
+                    className="w-full rounded-md glass-input px-3 py-2 text-xs font-mono min-h-[44px] touch-manipulation"
                   />
                 </div>
               </div>

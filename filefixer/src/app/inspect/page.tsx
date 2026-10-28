@@ -88,7 +88,7 @@ export default function InspectPage() {
         ) : (
           <div className="space-y-6">
             {/* Header Selected File Card */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 sm:p-5 gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between glass-panel rounded-2xl p-4 sm:p-5 gap-3 shadow-md">
               <div className="flex items-center gap-3.5 min-w-0">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
                   {metadata?.category === "image" ? (
@@ -124,7 +124,7 @@ export default function InspectPage() {
 
             {/* Quick Routing Actions Bar */}
             {metadata && (
-              <div className="rounded-2xl border border-[hsl(var(--primary)/0.25)] bg-[hsl(var(--primary)/0.06)] p-4 sm:p-5 space-y-3">
+              <div className="rounded-2xl border border-[hsl(var(--primary)/0.25)] bg-[hsl(var(--primary)/0.06)] backdrop-blur-md p-4 sm:p-5 space-y-3 shadow-md">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))]">
                   <Tag className="h-3.5 w-3.5" />
                   <span>Quick Actions For This File</span>
@@ -206,7 +206,7 @@ export default function InspectPage() {
             {!isLoading && metadata && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* General File Information */}
-                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-4">
+                <div className="glass-panel-elevated rounded-2xl p-6 space-y-4 shadow-xl">
                   <h3 className="font-bold text-sm text-[hsl(var(--foreground))] flex items-center gap-2">
                     <Info className="h-4 w-4 text-[hsl(var(--primary))]" /> General
                     File Attributes
@@ -252,7 +252,7 @@ export default function InspectPage() {
                 </div>
 
                 {/* Format-Specific Technical Information */}
-                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-4">
+                <div className="glass-panel-elevated rounded-2xl p-6 space-y-4 shadow-xl">
                   <h3 className="font-bold text-sm text-[hsl(var(--foreground))] flex items-center gap-2">
                     <Cpu className="h-4 w-4 text-[hsl(var(--primary))]" />
                     {metadata.category === "image"

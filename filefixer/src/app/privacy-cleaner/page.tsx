@@ -219,7 +219,8 @@ export default function PrivacyCleanerPage() {
             />
           </div>
         ) : (
-          <div className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 sm:p-8 space-y-6 shadow-xl">
+          <div className="glass-panel-elevated rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
             {/* File Info Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[hsl(var(--border))] pb-4">
               <div>
@@ -273,7 +274,7 @@ export default function PrivacyCleanerPage() {
                 </p>
               </div>
             ) : hasSensitives ? (
-              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 space-y-3">
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 backdrop-blur-md p-5 space-y-3">
                 <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
                   <AlertTriangle className="h-5 w-5 shrink-0" />
                   <span className="text-sm font-bold">
@@ -309,7 +310,7 @@ export default function PrivacyCleanerPage() {
                 </ul>
               </div>
             ) : (
-              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-center space-y-2">
+              <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20 backdrop-blur-md p-5 text-center space-y-2">
                 <CheckCircle2 className="h-8 w-8 mx-auto text-emerald-700 dark:text-emerald-400" />
                 <h3 className="text-sm font-bold text-[hsl(var(--foreground))]">
                   No Sensitive GPS or Author Tags Detected
@@ -322,7 +323,7 @@ export default function PrivacyCleanerPage() {
 
             {/* Cleaned Result Celebration */}
             {cleanBlob && (
-              <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/15 p-5 text-center space-y-3 animate-scale-in">
+              <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/15 dark:bg-emerald-950/25 backdrop-blur-md p-5 text-center space-y-3 animate-scale-in shadow-[0_0_24px_rgba(16,185,129,0.15)]">
                 <span className="inline-block text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/20 px-3 py-1 rounded-full">
                   Privacy Cleaned ✓
                 </span>

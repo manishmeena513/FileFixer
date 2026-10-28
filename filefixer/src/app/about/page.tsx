@@ -52,7 +52,7 @@ export default function AboutPage() {
 
       {/* Principles */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-3">
+        <div className="glass-panel rounded-xl p-6 space-y-3 shadow-md transition-all hover:scale-[1.01]">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
             <ShieldCheck className="h-5 w-5" />
           </div>
@@ -62,7 +62,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-3">
+        <div className="glass-panel rounded-xl p-6 space-y-3 shadow-md transition-all hover:scale-[1.01]">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))]">
             <Lock className="h-5 w-5" />
           </div>
@@ -72,7 +72,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-3">
+        <div className="glass-panel rounded-xl p-6 space-y-3 shadow-md transition-all hover:scale-[1.01]">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400">
             <HardDrive className="h-5 w-5" />
           </div>
@@ -84,7 +84,8 @@ export default function AboutPage() {
       </div>
 
       {/* Architecture overview */}
-      <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-8 space-y-4">
+      <div className="glass-panel-elevated rounded-2xl p-8 space-y-4 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[hsl(var(--primary)/0.08)] rounded-full blur-2xl pointer-events-none" />
         <h2 className="text-xl font-bold text-[hsl(var(--foreground))] flex items-center gap-2">
           <Cpu className="h-5 w-5 text-[hsl(var(--primary))]" /> Under the Hood
         </h2>
@@ -106,7 +107,7 @@ export default function AboutPage() {
       </div>
 
       {/* Developer Credit */}
-      <div className="rounded-xl border border-[hsl(var(--primary)/0.3)] bg-[hsl(var(--primary)/0.04)] p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="glass-panel rounded-xl border border-[hsl(var(--primary)/0.3)] bg-[hsl(var(--primary)/0.06)] backdrop-blur-md p-6 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <span className="text-xs uppercase font-semibold tracking-wider text-[hsl(var(--primary))]">Creator &amp; Lead Engineer</span>
           <h3 className="text-lg font-bold text-[hsl(var(--foreground))] mt-0.5">Manish Meena</h3>

@@ -502,7 +502,7 @@ export default function WorkflowsPage() {
         {/* Left Column: Preconfigured Recipes & File Drop Zone */}
         <div className="space-y-6 lg:col-span-1">
           {/* Recipes Card */}
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 space-y-4 shadow-sm">
+          <div className="glass-panel-elevated rounded-2xl p-5 space-y-4 shadow-xl relative overflow-hidden">
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold text-[hsl(var(--foreground))] flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-[hsl(var(--primary))]" />
@@ -521,8 +521,8 @@ export default function WorkflowsPage() {
                   onClick={() => loadRecipe(recipe)}
                   className={`w-full text-left p-3 rounded-xl border transition-colors min-h-[44px] touch-manipulation ${
                     selectedRecipeId === recipe.id
-                      ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--foreground))]"
-                      : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--foreground)/0.2)]"
+                      ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--foreground))] shadow-sm"
+                      : "border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--foreground)/0.2)] hover:bg-[hsl(var(--secondary))]"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -544,7 +544,7 @@ export default function WorkflowsPage() {
           </div>
 
           {/* Files Input Card */}
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 space-y-4 shadow-sm">
+          <div className="glass-panel-elevated rounded-2xl p-5 space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold text-[hsl(var(--foreground))] flex items-center gap-2">
                 <Layers className="h-4 w-4 text-[hsl(var(--primary))]" />
@@ -606,7 +606,8 @@ export default function WorkflowsPage() {
         {/* Right Columns: Pipeline Step Builder & Execution */}
         <div className="space-y-6 lg:col-span-2">
           {/* Steps List */}
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 sm:p-6 space-y-5 shadow-sm">
+          <div className="glass-panel-elevated rounded-2xl p-5 sm:p-6 space-y-5 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-[hsl(var(--primary)/0.06)] rounded-full blur-3xl pointer-events-none" />
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[hsl(var(--border))] pb-4">
               <div>
                 <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
@@ -652,7 +653,7 @@ export default function WorkflowsPage() {
                 {steps.map((step, idx) => (
                   <div
                     key={step.id}
-                    className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.4)] p-4 space-y-3 transition-colors hover:border-[hsl(var(--foreground)/0.2)]"
+                    className="glass-panel rounded-xl p-4 space-y-3 transition-colors hover:border-[hsl(var(--primary)/0.3)] shadow-sm"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2.5 min-w-0">
@@ -716,7 +717,7 @@ export default function WorkflowsPage() {
                                 )
                               );
                             }}
-                            className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation tabular-nums"
+                            className="w-full rounded-md glass-input px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation tabular-nums"
                           />
                         </div>
                         <div>
@@ -732,7 +733,7 @@ export default function WorkflowsPage() {
                                 )
                               );
                             }}
-                            className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation tabular-nums"
+                            className="w-full rounded-md glass-input px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation tabular-nums"
                           />
                         </div>
                       </div>
@@ -783,7 +784,7 @@ export default function WorkflowsPage() {
                               className={`rounded-md py-1.5 text-xs font-mono uppercase min-h-[44px] touch-manipulation border transition-colors ${
                                 step.config.targetFormat === fmt
                                   ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] font-bold"
-                                  : "border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))]"
+                                  : "border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]"
                               }`}
                             >
                               {fmt.replace("image/", "")}
@@ -809,7 +810,7 @@ export default function WorkflowsPage() {
                               )
                             );
                           }}
-                          className="w-full rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation"
+                          className="w-full rounded-md glass-input px-2.5 py-1.5 text-xs font-mono min-h-[44px] touch-manipulation"
                         />
                       </div>
                     )}
@@ -821,7 +822,7 @@ export default function WorkflowsPage() {
 
           {/* Execution Progress Bar */}
           {isExecuting && (
-            <div className="rounded-2xl border border-[hsl(var(--primary)/0.3)] bg-[hsl(var(--primary)/0.08)] p-4 space-y-2 text-center animate-fade-in shadow-sm">
+            <div className="rounded-2xl border border-[hsl(var(--primary)/0.3)] bg-[hsl(var(--primary)/0.08)] backdrop-blur-md p-4 space-y-2 text-center animate-fade-in shadow-sm">
               <div className="flex items-center justify-center gap-2 text-sm font-bold text-[hsl(var(--primary))]">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Processing File{" "}
@@ -842,7 +843,7 @@ export default function WorkflowsPage() {
 
           {/* Completed Delivery Summary Card */}
           {completedResults.length > 0 && !isExecuting && (
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5 space-y-4 animate-scale-in shadow-sm">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 dark:bg-emerald-950/20 backdrop-blur-md p-5 space-y-4 animate-scale-in shadow-[0_0_24px_rgba(16,185,129,0.12)]">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />

@@ -132,7 +132,7 @@ export default function HistoryPage() {
 
       {/* Summary KPI Bar */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 text-center">
+        <div className="glass-panel rounded-xl p-4 text-center shadow-md">
           <span className="text-xs text-[hsl(var(--muted-foreground))] uppercase font-semibold tracking-wider">
             Files Processed Locally
           </span>
@@ -141,7 +141,7 @@ export default function HistoryPage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 text-center">
+        <div className="glass-panel rounded-xl p-4 text-center shadow-md">
           <span className="text-xs text-[hsl(var(--muted-foreground))] uppercase font-semibold tracking-wider">
             Total Bandwidth Saved
           </span>
@@ -150,7 +150,7 @@ export default function HistoryPage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 text-center">
+        <div className="glass-panel rounded-xl p-4 text-center shadow-md">
           <span className="text-xs text-[hsl(var(--muted-foreground))] uppercase font-semibold tracking-wider">
             Privacy Status
           </span>
@@ -161,7 +161,7 @@ export default function HistoryPage() {
       </div>
 
       {/* Records list */}
-      <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] overflow-hidden shadow-sm">
+      <div className="glass-panel-elevated rounded-2xl overflow-hidden shadow-xl">
         {isLoading ? (
           <div className="flex items-center justify-center p-12 text-sm text-[hsl(var(--muted-foreground))]">
             <RefreshCw className="h-4 w-4 animate-spin mr-2" />
