@@ -208,12 +208,12 @@ export default function PdfStudioPage() {
         ) : (
           <div className="space-y-6">
             {/* Action Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+            <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl shadow-xl">
               <div className="flex items-center gap-2 text-xs">
                 <span className="font-bold text-[hsl(var(--foreground))] truncate max-w-xs">
                   {pdfFile.name}
                 </span>
-                <Badge variant="outline" className="font-mono tabular-nums">
+                <Badge variant="outline" className="font-mono tabular-nums border-[var(--glass-border)]">
                   <span className="tabular-nums font-semibold">{pages.length}</span> Pages •{" "}
                   <span className="tabular-nums font-semibold">{formatBytes(pdfFile.size)}</span>
                 </Badge>
@@ -260,11 +260,11 @@ export default function PdfStudioPage() {
               {pages.map((p, idx) => (
                 <div
                   key={p.id}
-                  className="group relative flex flex-col rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 space-y-3 transition-all hover:border-emerald-500/50 shadow-sm"
+                  className="group relative flex flex-col rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md p-3 space-y-3 transition-all hover:border-[var(--glass-border-luminous)] shadow-md"
                 >
                   {/* Header: Page Number Badge */}
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="font-bold bg-[hsl(var(--secondary))] px-2 py-0.5 rounded-md text-[hsl(var(--foreground))] tabular-nums">
+                    <span className="font-bold border border-[var(--glass-border)] bg-[var(--glass-surface)] px-2 py-0.5 rounded-md text-[hsl(var(--foreground))] tabular-nums">
                       Page <span className="tabular-nums">{idx + 1}</span>
                     </span>
                     {p.rotation > 0 && (
@@ -275,7 +275,7 @@ export default function PdfStudioPage() {
                   </div>
 
                   {/* Preview Box */}
-                  <div className="flex items-center justify-center bg-[hsl(var(--secondary)/0.5)] rounded-xl aspect-[3/4] overflow-hidden p-2">
+                  <div className="flex items-center justify-center bg-black/30 rounded-xl aspect-[3/4] overflow-hidden p-2 border border-[var(--glass-border)]">
                     {p.thumbnailUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -290,12 +290,12 @@ export default function PdfStudioPage() {
                   </div>
 
                   {/* Page Controls Toolbar */}
-                  <div className="grid grid-cols-5 gap-1 pt-1 border-t border-[hsl(var(--border))]">
+                  <div className="grid grid-cols-5 gap-1 pt-1 border-t border-[var(--glass-border)]">
                     <button
                       type="button"
                       onClick={() => movePage(idx, "left")}
                       disabled={idx === 0}
-                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[hsl(var(--border))] disabled:opacity-30 hover:bg-[hsl(var(--secondary))] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] disabled:opacity-30 hover:border-[var(--glass-border-luminous)] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
                       title="Move page left"
                       aria-label={`Move page ${idx + 1} left`}
                     >
@@ -305,7 +305,7 @@ export default function PdfStudioPage() {
                       type="button"
                       onClick={() => movePage(idx, "right")}
                       disabled={idx === pages.length - 1}
-                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[hsl(var(--border))] disabled:opacity-30 hover:bg-[hsl(var(--secondary))] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] disabled:opacity-30 hover:border-[var(--glass-border-luminous)] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
                       title="Move page right"
                       aria-label={`Move page ${idx + 1} right`}
                     >
@@ -314,7 +314,7 @@ export default function PdfStudioPage() {
                     <button
                       type="button"
                       onClick={() => rotatePage(idx)}
-                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[hsl(var(--border))] hover:bg-[hsl(var(--secondary))] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]"
+                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] hover:border-[var(--glass-border-luminous)] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]"
                       title="Rotate 90° Clockwise"
                       aria-label={`Rotate page ${idx + 1} clockwise`}
                     >
@@ -323,7 +323,7 @@ export default function PdfStudioPage() {
                     <button
                       type="button"
                       onClick={() => duplicatePage(idx)}
-                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[hsl(var(--border))] hover:bg-[hsl(var(--secondary))] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] hover:border-[var(--glass-border-luminous)] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
                       title="Duplicate page"
                       aria-label={`Duplicate page ${idx + 1}`}
                     >
@@ -332,7 +332,7 @@ export default function PdfStudioPage() {
                     <button
                       type="button"
                       onClick={() => removePage(idx)}
-                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[hsl(var(--border))] hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))]"
+                      className="min-h-[44px] min-w-[44px] rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] hover:bg-[hsl(var(--destructive)/0.1)] hover:text-[hsl(var(--destructive))] flex items-center justify-center touch-manipulation text-[hsl(var(--muted-foreground))]"
                       title="Delete page"
                       aria-label={`Delete page ${idx + 1}`}
                     >

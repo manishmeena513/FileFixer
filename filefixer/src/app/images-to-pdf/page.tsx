@@ -242,23 +242,23 @@ export default function ImagesToPdfPage() {
                 {items.map((it, idx) => (
                   <div
                     key={it.id}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-2.5"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md p-2.5 shadow-sm hover:border-[var(--glass-border-luminous)] transition-all"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="flex h-7 w-7 items-center justify-center rounded bg-[hsl(var(--secondary))] text-xs font-mono font-bold text-[hsl(var(--primary))] tabular-nums">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] text-xs font-mono font-bold text-[hsl(var(--primary))] tabular-nums">
                         {idx + 1}
                       </span>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={it.previewUrl}
                         alt={it.file.name}
-                        className="h-10 w-10 rounded object-cover flex-shrink-0"
+                        className="h-10 w-10 rounded-lg object-cover flex-shrink-0 border border-[var(--glass-border)]"
                       />
                       <div className="min-w-0">
                         <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
                           {it.file.name}
                         </p>
-                        <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums">
+                        <p className="text-xs text-[hsl(var(--muted-foreground))] font-mono tabular-nums">
                           {formatBytes(it.file.size)}
                         </p>
                       </div>
@@ -307,7 +307,7 @@ export default function ImagesToPdfPage() {
 
         {/* Right: Options & Output */}
         <div className="space-y-6">
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-6">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xl">
             <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
               PDF Layout Options
             </h2>
@@ -325,10 +325,10 @@ export default function ImagesToPdfPage() {
                     key={opt.value}
                     type="button"
                     onClick={() => setPageSize(opt.value as any)}
-                    className={`min-h-[44px] px-2 py-2 rounded-lg border text-xs font-medium transition-colors touch-manipulation flex items-center justify-center ${
+                    className={`min-h-[44px] px-2 py-2 rounded-xl border text-xs font-medium transition-all touch-manipulation flex items-center justify-center ${
                       pageSize === opt.value
-                        ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                        : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
+                        ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                        : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)]"
                     }`}
                   >
                     {opt.label}
@@ -350,10 +350,10 @@ export default function ImagesToPdfPage() {
                     key={opt.value}
                     type="button"
                     onClick={() => setOrientation(opt.value as any)}
-                    className={`min-h-[44px] px-2 py-2 rounded-lg border text-xs font-medium transition-colors touch-manipulation flex items-center justify-center ${
+                    className={`min-h-[44px] px-2 py-2 rounded-xl border text-xs font-medium transition-all touch-manipulation flex items-center justify-center ${
                       orientation === opt.value
-                        ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                        : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
+                        ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                        : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)]"
                     }`}
                   >
                     {opt.label}
@@ -375,10 +375,10 @@ export default function ImagesToPdfPage() {
                     key={opt.value}
                     type="button"
                     onClick={() => setMargin(opt.value)}
-                    className={`min-h-[44px] px-2 py-2 rounded-lg border text-xs font-medium transition-colors touch-manipulation flex items-center justify-center ${
+                    className={`min-h-[44px] px-2 py-2 rounded-xl border text-xs font-medium transition-all touch-manipulation flex items-center justify-center ${
                       margin === opt.value
-                        ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]"
-                        : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))]"
+                        ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                        : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)]"
                     }`}
                   >
                     {opt.label}
@@ -410,7 +410,7 @@ export default function ImagesToPdfPage() {
 
           {/* Download button */}
           {resultBlob && (
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-5 space-y-3">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md p-5 space-y-3 shadow-xl">
               <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400 font-semibold">
                 <CheckCircle2 className="h-4 w-4" /> PDF Document Compiled
               </div>

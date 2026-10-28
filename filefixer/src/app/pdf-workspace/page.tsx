@@ -219,16 +219,16 @@ export default function PdfWorkspacePage() {
       ) : (
         <div className="space-y-6">
           {/* Top action toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-4 shadow-xl">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--primary))] shadow-sm">
                 <FileText className="h-5 w-5" />
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-[hsl(var(--foreground))]">
                   {selectedFile.name}
                 </p>
-                <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                <p className="text-xs text-[hsl(var(--muted-foreground))] font-mono">
                   <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
                     {pages.length}
                   </span>{" "}
@@ -271,15 +271,15 @@ export default function PdfWorkspacePage() {
           </div>
 
           {/* Page workspace cards grid */}
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 shadow-xl">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {pages.map((p, idx) => (
                 <div
                   key={p.id}
-                  className="flex flex-col rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] overflow-hidden transition-all hover:border-[hsl(var(--primary)/0.5)] shadow-sm"
+                  className="flex flex-col rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md overflow-hidden transition-all hover:border-[var(--glass-border-luminous)] shadow-md"
                 >
                   {/* Page header tag */}
-                  <div className="flex items-center justify-between bg-[hsl(var(--secondary))] px-2.5 py-1.5 text-[11px] font-mono">
+                  <div className="flex items-center justify-between border-b border-[var(--glass-border)] bg-[var(--glass-surface)] px-2.5 py-1.5 text-[11px] font-mono">
                     <span className="font-bold text-[hsl(var(--primary))] tabular-nums">
                       #{idx + 1}
                     </span>
@@ -289,7 +289,7 @@ export default function PdfWorkspacePage() {
                   </div>
 
                   {/* Visual card content */}
-                  <div className="flex flex-1 items-center justify-center p-6 bg-[hsl(var(--card))] min-h-[140px] text-center">
+                  <div className="flex flex-1 items-center justify-center p-6 bg-black/20 min-h-[140px] text-center">
                     <div
                       style={{
                         transform: `rotate(${p.rotation}deg)`,
@@ -305,7 +305,7 @@ export default function PdfWorkspacePage() {
                   </div>
 
                   {/* Actions footer */}
-                  <div className="grid grid-cols-4 border-t border-[hsl(var(--border))] bg-[hsl(var(--secondary)/0.5)] divide-x divide-[hsl(var(--border))]">
+                  <div className="grid grid-cols-4 border-t border-[var(--glass-border)] bg-[var(--glass-surface)] divide-x divide-[var(--glass-border)]">
                     <button
                       type="button"
                       disabled={idx === 0}
@@ -350,7 +350,7 @@ export default function PdfWorkspacePage() {
                   <button
                     type="button"
                     onClick={() => duplicatePage(idx)}
-                    className="min-h-[44px] w-full border-t border-[hsl(var(--border))] py-2 text-xs font-medium text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--secondary))] flex items-center justify-center touch-manipulation transition-colors"
+                    className="min-h-[44px] w-full border-t border-[var(--glass-border)] py-2 text-xs font-medium text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[var(--glass-surface-elevated)] flex items-center justify-center touch-manipulation transition-colors"
                   >
                     + Duplicate
                   </button>
@@ -361,7 +361,7 @@ export default function PdfWorkspacePage() {
 
           {/* Download card */}
           {savedResult && (
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
               <div className="flex items-center gap-3">
                 <CheckCircle2 className="h-6 w-6 text-emerald-700 dark:text-emerald-400 flex-shrink-0" />
                 <div>

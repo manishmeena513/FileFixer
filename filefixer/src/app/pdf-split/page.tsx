@@ -274,16 +274,16 @@ export default function PdfSplitPage() {
       ) : (
         <div className="space-y-6">
           {/* File summary */}
-          <div className="flex items-center justify-between rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4">
+          <div className="flex items-center justify-between rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-4 shadow-lg">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--primary))] shadow-sm">
                 <FileText className="h-5 w-5" />
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-[hsl(var(--foreground))]">
                   {selectedFile.name}
                 </p>
-                <p className="text-xs text-[hsl(var(--muted-foreground))]">
+                <p className="text-xs text-[hsl(var(--muted-foreground))] font-mono">
                   <span className="tabular-nums">{formatBytes(selectedFile.size)}</span> ·{" "}
                   {totalPages > 0 ? (
                     <>
@@ -306,7 +306,7 @@ export default function PdfSplitPage() {
           </div>
 
           {/* Mode Selector */}
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-6">
+          <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xl">
             <Tabs value={mode} onValueChange={(v: any) => setMode(v)}>
               <TabsList className="grid w-full grid-cols-3 min-h-[48px] p-1">
                 <TabsTrigger
@@ -343,12 +343,12 @@ export default function PdfSplitPage() {
                     value={rangeInput}
                     onChange={(e) => setRangeInput(e.target.value)}
                     placeholder="e.g. 1-3, 5, 8-10"
-                    className="mt-1.5 w-full min-h-[44px] rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] px-3 py-2 text-sm font-mono text-[hsl(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))]"
+                    className="mt-1.5 w-full min-h-[44px] rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] px-3 py-2 text-sm font-mono text-[hsl(var(--foreground))] focus:outline-none focus:border-[var(--glass-border-luminous)] focus:ring-2 focus:ring-[hsl(var(--ring)/0.3)]"
                   />
                   <p className="mt-1.5 text-xs text-[hsl(var(--muted-foreground))]">
                     Example: <code className="text-[hsl(var(--primary))] font-mono">1-5</code> or{" "}
                     <code className="text-[hsl(var(--primary))] font-mono">2, 4, 7-9</code> (Total:{" "}
-                    <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">{totalPages}</span> pages)
+                    <span className="tabular-nums font-mono font-medium text-[hsl(var(--foreground))]">{totalPages}</span> pages)
                   </p>
                 </div>
 
@@ -413,15 +413,15 @@ export default function PdfSplitPage() {
                         key={num}
                         type="button"
                         onClick={() => togglePageSelection(num)}
-                        className={`flex flex-col items-center justify-center rounded-lg border p-3 text-xs font-mono transition-colors min-h-[44px] min-w-[44px] touch-manipulation ${
+                        className={`flex flex-col items-center justify-center rounded-xl border p-3 text-xs font-mono transition-all min-h-[44px] min-w-[44px] touch-manipulation ${
                           isSelected
-                            ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))] font-bold shadow-sm"
-                            : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
+                            ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-blue-500/25"
+                            : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)] hover:text-[hsl(var(--foreground))]"
                         }`}
                         aria-pressed={isSelected}
                         aria-label={`Page ${num}`}
                       >
-                        <FileText className="h-5 w-5 mb-1" />
+                        <FileText className={`h-5 w-5 mb-1 ${isSelected ? "text-white" : "text-[hsl(var(--muted-foreground))]"}`} />
                         <span className="tabular-nums">p. {num}</span>
                       </button>
                     );
@@ -450,10 +450,10 @@ export default function PdfSplitPage() {
 
               {/* Mode C: Split All to individual PDFs */}
               <TabsContent value="all" className="space-y-4 pt-4">
-                <div className="rounded-lg bg-[hsl(var(--secondary))] p-4 text-xs text-[hsl(var(--secondary-foreground))] leading-relaxed">
+                <div className="rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] p-4 text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
                   Breaks each of the{" "}
-                  <strong>
-                    <span className="tabular-nums">{totalPages}</span>
+                  <strong className="text-[hsl(var(--foreground))]">
+                    <span className="tabular-nums font-mono">{totalPages}</span>
                   </strong>{" "}
                   pages in this PDF into its own separate single-page document and bundles them into a ZIP file.
                 </div>
@@ -471,7 +471,7 @@ export default function PdfSplitPage() {
                   ) : (
                     <>
                       <Archive className="h-4 w-4 mr-2" />
-                      Split All to ZIP (<span className="tabular-nums">{totalPages}</span> files)
+                      Split All to ZIP (<span className="tabular-nums font-mono">{totalPages}</span> files)
                     </>
                   )}
                 </Button>
@@ -481,7 +481,7 @@ export default function PdfSplitPage() {
 
           {/* Download card */}
           {extractedResult && (
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
               <div className="flex items-center gap-3">
                 <CheckCircle2 className="h-6 w-6 text-emerald-700 dark:text-emerald-400 flex-shrink-0" />
                 <div>

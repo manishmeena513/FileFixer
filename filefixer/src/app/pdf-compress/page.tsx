@@ -154,16 +154,16 @@ export default function PdfCompressPage() {
         ) : (
           <div className="space-y-6">
             {/* File header */}
-            <div className="flex items-center justify-between rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4">
+            <div className="flex items-center justify-between rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-4 shadow-lg">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--primary))] shadow-sm">
                   <FileText className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-[hsl(var(--foreground))]">
                     {selectedFile.name}
                   </p>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums">
+                  <p className="text-xs text-[hsl(var(--muted-foreground))] font-mono tabular-nums">
                     {formatBytes(selectedFile.size)}
                   </p>
                 </div>
@@ -179,7 +179,7 @@ export default function PdfCompressPage() {
             </div>
 
             {/* Optimization mode selection */}
-            <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-6">
+            <div className="rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-surface)] backdrop-blur-xl p-5 sm:p-6 space-y-6 shadow-xl">
               <h2 className="text-base font-bold text-[hsl(var(--foreground))]">
                 Optimization Profile
               </h2>
@@ -190,15 +190,15 @@ export default function PdfCompressPage() {
                   onClick={() => setLevel("balanced")}
                   className={`flex flex-col items-start p-4 rounded-xl border text-left transition-all min-h-[44px] touch-manipulation ${
                     level === "balanced"
-                      ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--foreground))]"
-                      : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
+                      ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                      : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)]"
                   }`}
                 >
                   <div className="flex items-center justify-between w-full">
-                    <span className="font-bold text-sm text-[hsl(var(--foreground))]">Balanced Mode</span>
-                    <Badge variant="outline" className="text-[10px]">Recommended</Badge>
+                    <span className={`font-bold text-sm ${level === "balanced" ? "text-white" : "text-[hsl(var(--foreground))]"}`}>Balanced Mode</span>
+                    <Badge variant="outline" className={`text-[10px] ${level === "balanced" ? "border-blue-200/40 text-blue-100" : "border-[var(--glass-border)]"}`}>Recommended</Badge>
                   </div>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))] mt-2 leading-relaxed">
+                  <p className={`text-xs mt-2 leading-relaxed ${level === "balanced" ? "text-blue-100" : "text-[hsl(var(--muted-foreground))]"}`}>
                     Deduplicates shared objects and compacts internal streams while keeping full vector clarity and original layout metadata.
                   </p>
                 </button>
@@ -208,22 +208,22 @@ export default function PdfCompressPage() {
                   onClick={() => setLevel("smaller")}
                   className={`flex flex-col items-start p-4 rounded-xl border text-left transition-all min-h-[44px] touch-manipulation ${
                     level === "smaller"
-                      ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.12)] text-[hsl(var(--foreground))]"
-                      : "border-[hsl(var(--border))] bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary)/0.8)]"
+                      ? "border-blue-400/50 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25"
+                      : "border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] text-[hsl(var(--muted-foreground))] hover:border-[var(--glass-border-luminous)]"
                   }`}
                 >
                   <div className="flex items-center justify-between w-full">
-                    <span className="font-bold text-sm text-[hsl(var(--foreground))]">Smaller File</span>
-                    <Badge variant="outline" className="text-[10px]">Maximum Savings</Badge>
+                    <span className={`font-bold text-sm ${level === "smaller" ? "text-white" : "text-[hsl(var(--foreground))]"}`}>Smaller File</span>
+                    <Badge variant="outline" className={`text-[10px] ${level === "smaller" ? "border-blue-200/40 text-blue-100" : "border-[var(--glass-border)]"}`}>Maximum Savings</Badge>
                   </div>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))] mt-2 leading-relaxed">
+                  <p className={`text-xs mt-2 leading-relaxed ${level === "smaller" ? "text-blue-100" : "text-[hsl(var(--muted-foreground))]"}`}>
                     Aggressively discards unreferenced PDF trailers, creator tags, and rebuilds object cross-reference tables from scratch.
                   </p>
                 </button>
               </div>
 
               {/* Strip metadata switch */}
-              <div className="flex items-center justify-between pt-2 border-t border-[hsl(var(--border))] min-h-[44px]">
+              <div className="flex items-center justify-between pt-2 border-t border-[var(--glass-border)] min-h-[44px]">
                 <label
                   htmlFor="strip-meta-toggle"
                   className="text-xs text-[hsl(var(--foreground))] font-medium cursor-pointer flex-1"
@@ -267,7 +267,7 @@ export default function PdfCompressPage() {
                   originalFormat="PDF"
                   outputFormat={`PDF • ${result.pageCount} pages`}
                 />
-                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="h-6 w-6 text-emerald-700 dark:text-emerald-400 shrink-0" />
                     <div>

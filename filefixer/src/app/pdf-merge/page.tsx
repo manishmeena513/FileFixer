@@ -186,9 +186,9 @@ export default function PdfMergePage() {
 
         {items.length > 0 && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-3">
+            <div className="flex items-center justify-between border-b border-[var(--glass-border)] pb-3">
               <span className="text-sm font-semibold text-[hsl(var(--foreground))]">
-                Merge Order (<span className="tabular-nums">{items.length}</span> files)
+                Merge Order (<span className="tabular-nums font-mono">{items.length}</span> files)
               </span>
               <Button
                 variant="ghost"
@@ -205,10 +205,10 @@ export default function PdfMergePage() {
               {items.map((it, idx) => (
                 <div
                   key={it.id}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3"
+                  className="flex items-center justify-between gap-4 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-surface-elevated)] backdrop-blur-md p-3 shadow-sm hover:border-[var(--glass-border-luminous)] transition-all"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="flex h-7 w-7 items-center justify-center rounded bg-[hsl(var(--secondary))] text-xs font-mono font-bold text-[hsl(var(--primary))] tabular-nums">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-[var(--glass-border)] bg-[var(--glass-surface)] text-xs font-mono font-bold text-[hsl(var(--primary))] tabular-nums">
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     <FileText className="h-5 w-5 flex-shrink-0 text-[hsl(var(--muted-foreground))]" />
@@ -216,7 +216,7 @@ export default function PdfMergePage() {
                       <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
                         {it.file.name}
                       </p>
-                      <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums">
+                      <p className="text-xs text-[hsl(var(--muted-foreground))] font-mono tabular-nums">
                         {formatBytes(it.file.size)}
                       </p>
                     </div>
@@ -289,7 +289,7 @@ export default function PdfMergePage() {
 
         {/* Result ready card */}
         {mergedBlob && mergedStats && (
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 backdrop-blur-md p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
             <div className="flex items-center gap-3">
               <CheckCircle2 className="h-6 w-6 text-emerald-700 dark:text-emerald-400 flex-shrink-0" />
               <div>
