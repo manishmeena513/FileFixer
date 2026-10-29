@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Live Production App
+    url: https://filefixer.vercel.app/
+    about: Experience FileFixer live in your browser.
+  - name: Security Vulnerability Reporting
+    url: https://github.com/manishmeena513/FileFixer/security/policy
+    about: Please report security vulnerabilities responsibly via our security advisory policy.

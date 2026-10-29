@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Build & Test Invariants
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: filefixer
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+          cache-dependency-path: filefixer/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run automated test suite
+        run: npm test
+
+      - name: Run Next.js production build
+        run: npm run build
+
+      - name: Verify zero-server-upload invariant (empty api directory)
+        run: |
+          if [ -d "src/app/api" ]; then
+            ENDPOINT_COUNT=$(find src/app/api -type f \( -name "*.ts" -o -name "*.js" \) | wc -l)
+            if [ "$ENDPOINT_COUNT" -ne 0 ]; then
+              echo "Error: Zero-server upload invariant violated! Found $ENDPOINT_COUNT API endpoint files in src/app/api."
+              exit 1
+            fi
+          fi
+          echo "Zero-server upload invariant verified: 0 API route files."
+
+      - name: Verify voluntary support QR asset integrity
+        run: |
+          EXPECTED_HASH="8592bd8a18457f3ac496d6735c472d7c4f3239e87b93771ed238d348b87d4744"
+          ACTUAL_HASH=$(sha256sum public/images/filefixer_support_qr.png | awk '{print $1}')
+          if [ "$ACTUAL_HASH" != "$EXPECTED_HASH" ]; then
+            echo "Error: Support QR checksum mismatch! Expected $EXPECTED_HASH but got $ACTUAL_HASH."
+            exit 1
+          fi
+          echo "Support QR asset integrity verified: SHA-256 match."
